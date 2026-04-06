@@ -29,6 +29,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { expenses as initialExpenses } from "@/lib/mock/expenses";
 import { operators } from "@/lib/mock/operators";
 import { formatCurrency, formatDateShort } from "@/lib/format";
@@ -135,14 +137,10 @@ export default function ExpensesPage() {
           title="Расходы операторов"
           description="Заявки на расходы и контроль бюджета"
         >
-          <button
-            type="button"
-            onClick={() => setDialogOpen(true)}
-            className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-blue-500"
-          >
-            <Plus className="h-4 w-4" />
+          <Button size="sm" onClick={() => setDialogOpen(true)} className="bg-blue-600 hover:bg-blue-700 text-white">
+            <Plus className="h-4 w-4 mr-1.5" />
             Новая заявка
-          </button>
+          </Button>
         </PageHeader>
       </MotionItem>
 
@@ -268,10 +266,10 @@ export default function ExpensesPage() {
 
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-stone-700">Описание</label>
-              <textarea
+              <Textarea
                 rows={3}
                 placeholder="Опишите расход..."
-                className="flex w-full rounded-md border border-input bg-white px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                className="bg-white"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
               />
@@ -279,21 +277,17 @@ export default function ExpensesPage() {
           </div>
 
           <DialogFooter className="gap-2 sm:gap-0">
-            <button
-              type="button"
-              onClick={() => handleOpenChange(false)}
-              className="rounded-lg border border-stone-200 bg-white px-4 py-2.5 text-sm font-medium text-stone-700 transition-colors hover:bg-stone-50"
-            >
+            <Button type="button" variant="outline" onClick={() => handleOpenChange(false)}>
               Отмена
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
               disabled={!canSubmit}
               onClick={handleSubmit}
-              className="rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-blue-500 disabled:pointer-events-none disabled:opacity-50"
+              className="bg-blue-600 hover:bg-blue-700 text-white"
             >
               Создать
-            </button>
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

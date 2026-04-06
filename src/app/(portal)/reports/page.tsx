@@ -28,6 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import { reports as initialReports } from "@/lib/mock/reports";
 import { operators } from "@/lib/mock/operators";
 import { BASE_LABELS } from "@/lib/constants";
@@ -272,18 +273,18 @@ function ReportDetailSheet({
 
           {report.status === "pending" && (
             <div className="flex gap-3 pt-2">
-              <button
+              <Button
                 onClick={() => onApprove(report.id)}
-                className="flex-1 rounded-xl bg-emerald-600 py-2.5 text-sm font-medium text-white hover:bg-emerald-700 transition-colors"
+                className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white"
               >
                 Подтвердить
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => onReject(report.id)}
-                className="flex-1 rounded-xl bg-rose-600 py-2.5 text-sm font-medium text-white hover:bg-rose-700 transition-colors"
+                className="flex-1 bg-rose-600 hover:bg-rose-700 text-white"
               >
                 Отклонить
-              </button>
+              </Button>
             </div>
           )}
         </div>

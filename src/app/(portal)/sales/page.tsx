@@ -29,6 +29,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { deals as initialDeals } from "@/lib/mock/sales";
 import { clients } from "@/lib/mock/clients";
 import { managers } from "@/lib/mock/managers";
@@ -216,13 +217,10 @@ export default function SalesPage() {
     <MotionContainer>
       <MotionItem>
         <PageHeader title="Продажи">
-          <button
-            onClick={openNewDeal}
-            className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-blue-500"
-          >
-            <Plus className="h-4 w-4" />
+          <Button onClick={openNewDeal} size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
+            <Plus className="h-4 w-4 mr-1.5" />
             Новая сделка
-          </button>
+          </Button>
         </PageHeader>
       </MotionItem>
 
@@ -345,11 +343,11 @@ export default function SalesPage() {
 
           <div className="mt-6 space-y-5">
             <FormField label="Дата сделки">
-              <input
+              <Input
                 type="date"
                 value={form.date}
                 onChange={(e) => setForm((p) => ({ ...p, date: e.target.value }))}
-                className="w-full rounded-md border border-stone-200 bg-white px-3 py-2 text-sm text-stone-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="bg-white"
               />
             </FormField>
 
@@ -497,13 +495,13 @@ export default function SalesPage() {
               </Select>
             </FormField>
 
-            <button
+            <Button
               onClick={handleCreateDeal}
               disabled={!form.clientId || !form.tankerId || !form.volume}
-              className="w-full rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white"
             >
               Создать сделку
-            </button>
+            </Button>
           </div>
         </SheetContent>
       </Sheet>
