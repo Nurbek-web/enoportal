@@ -57,6 +57,9 @@ export const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
   // Trips
   booked: { bg: 'bg-emerald-50', text: 'text-emerald-700' },
   planned: { bg: 'bg-amber-50', text: 'text-amber-700' },
+  // Payment types
+  cash: { bg: 'bg-amber-50', text: 'text-amber-700' },
+  bank: { bg: 'bg-blue-50', text: 'text-blue-700' },
 };
 
 export const STATUS_LABELS: Record<string, string> = {
@@ -80,6 +83,8 @@ export const STATUS_LABELS: Record<string, string> = {
   novice: 'Новый',
   booked: 'Забронирован',
   planned: 'Планируется',
+  cash: 'Наличные',
+  bank: 'Банк',
 };
 
 export const BASE_LABELS: Record<string, string> = {

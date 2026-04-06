@@ -131,15 +131,7 @@ export default function TankersPage() {
                         <TableCell className="font-medium text-stone-900">{tanker?.plateNumber ?? "—"}</TableCell>
                         <TableCell className="text-right tabular-nums text-stone-700">{formatCurrency(payment.amount)}</TableCell>
                         <TableCell>
-                          <span
-                            className={`inline-flex items-center px-2.5 py-0.5 text-xs font-medium rounded-full ${
-                              payment.type === "cash"
-                                ? "bg-amber-50 text-amber-700"
-                                : "bg-blue-50 text-blue-700"
-                            }`}
-                          >
-                            {payment.type === "cash" ? "Наличные" : "Банк"}
-                          </span>
+                          <StatusBadge status={payment.type} />
                         </TableCell>
                         <TableCell className="text-stone-600">
                           {deal ? `Сделка ${deal.id.replace("deal-", "№")}` : "—"}
@@ -272,15 +264,7 @@ function TankerDetailSheet({
                             {formatCurrency(p.amount)}
                           </td>
                           <td className="px-3 py-2">
-                            <span
-                              className={`inline-flex items-center px-2.5 py-0.5 text-xs font-medium rounded-full ${
-                                p.type === "cash"
-                                  ? "bg-amber-50 text-amber-700"
-                                  : "bg-blue-50 text-blue-700"
-                              }`}
-                            >
-                              {p.type === "cash" ? "Наличные" : "Банк"}
-                            </span>
+                            <StatusBadge status={p.type} />
                           </td>
                           <td className="px-3 py-2 text-stone-600">
                             {deal ? `№ ${deal.id.replace("deal-", "")}` : "—"}
