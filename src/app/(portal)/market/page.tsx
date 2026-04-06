@@ -1,0 +1,256 @@
+"use client";
+
+import { useMemo } from "react";
+import { TrendingDown, TrendingUp } from "lucide-react";
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import { MotionContainer, MotionItem } from "@/components/shared/motion-container";
+import { PageHeader } from "@/components/shared/page-header";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { marketPrices } from "@/lib/mock/market";
+import { formatCurrency } from "@/lib/format";
+import { ENO_PRICES } from "@/lib/constants";
+
+function CustomTooltip({ active, payload, label }: { active?: boolean; payload?: Array<{ value: number; dataKey: string; color: string }>; label?: string }) {
+  if (!active || !payload?.length) return null;
+  return (
+    <div className="rounded-xl border border-slate-200/60 bg-white px-4 py-3 shadow-lg shadow-slate-950/[0.08]">
+      <p className="mb-2 text-xs font-medium text-slate-500">{label}</p>
+      {payload.map((entry) => (
+        <div key={entry.dataKey} className="flex items-center gap-2 text-sm">
+          <span className="h-2 w-2 rounded-full" style={{ backgroundColor: entry.color }} />
+          <span className="text-slate-600">{entry.dataKey}:</span>
+          <span className="font-semibold text-slate-900">{formatCurrency(entry.value)}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default function MarketPage() {
+  const chartData = useMemo(() => {
+    const weekMap = new Map<string, { date: string; sum92: number; count92: number; sum95: number; count95: number }>();
+
+    for (const p of marketPrices) {
+      const dateKey = p.date.split("T")[0];
+      const entry = weekMap.get(dateKey) || { date: dateKey, sum92: 0, count92: 0, sum95: 0, count95: 0 };
+      if (p.fuelType === "AI-92") {
+        entry.sum92 += p.price;
+        entry.count92 += 1;
+      } else {
+        entry.sum95 += p.price;
+        entry.count95 += 1;
+      }
+      weekMap.set(dateKey, entry);
+    }
+
+    return Array.from(weekMap.values())
+      .sort((a, b) => a.date.localeCompare(b.date))
+      .map((w) => ({
+        date: new Date(w.date).toLocaleDateString("ru-RU", { day: "numeric", month: "short" }),
+        "AI-92": Math.round(w.sum92 / (w.count92 || 1)),
+        "AI-95": Math.round(w.sum95 / (w.count95 || 1)),
+      }));
+  }, []);
+
+  const latestAvg = useMemo(() => {
+    const last = chartData[chartData.length - 1];
+    return { "AI-92": last?.["AI-92"] ?? 0, "AI-95": last?.["AI-95"] ?? 0 };
+  }, [chartData]);
+
+  const comparisonCards = useMemo(() => {
+    return (["AI-92", "AI-95"] as const).map((fuel) => {
+      const enoPrice = ENO_PRICES[fuel];
+      const marketAvg = latestAvg[fuel];
+      const diff = enoPrice - marketAvg;
+      const isLower = diff < 0;
+      return { fuel, enoPrice, marketAvg, diff, isLower };
+    });
+  }, [latestAvg]);
+
+  const latestDate = useMemo(() => {
+    const dates = marketPrices.map((p) => p.date);
+    dates.sort();
+    return dates[dates.length - 1];
+  }, []);
+
+  const regionalPrices = useMemo(() => {
+    const latest = marketPrices.filter((p) => p.date === latestDate);
+    const regionMap = new Map<string, { ai92: number; ai95: number }>();
+    for (const p of latest) {
+      const entry = regionMap.get(p.region) || { ai92: 0, ai95: 0 };
+      if (p.fuelType === "AI-92") entry.ai92 = p.price;
+      else entry.ai95 = p.price;
+      regionMap.set(p.region, entry);
+    }
+    return Array.from(regionMap.entries()).map(([region, prices]) => ({
+      region,
+      ...prices,
+    }));
+  }, [latestDate]);
+
+  return (
+    <MotionContainer>
+      <MotionItem>
+        <PageHeader
+          title="Рынок топлива"
+          description="Средние цены на бензин по регионам Узбекистана"
+        />
+      </MotionItem>
+
+      <MotionItem>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {comparisonCards.map((card) => {
+            const absDiff = Math.abs(card.diff);
+            return (
+              <div
+                key={card.fuel}
+                className="rounded-2xl border border-slate-200/60 bg-white p-5 shadow-sm shadow-slate-950/[0.03]"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-base font-semibold text-slate-900">{card.fuel}</span>
+                  <div
+                    className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${
+                      card.isLower
+                        ? "bg-emerald-50 text-emerald-700"
+                        : "bg-rose-50 text-rose-700"
+                    }`}
+                  >
+                    {card.isLower ? (
+                      <TrendingDown className="h-3.5 w-3.5" />
+                    ) : (
+                      <TrendingUp className="h-3.5 w-3.5" />
+                    )}
+                    {card.isLower ? "Ниже рынка" : "Выше рынка"}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 mb-3">
+                  <div>
+                    <p className="text-xs text-slate-500">Ваша цена</p>
+                    <p className="text-lg font-semibold text-slate-900">{formatCurrency(card.enoPrice)}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500">Среднерыночная</p>
+                    <p className="text-lg font-semibold text-slate-900">{formatCurrency(card.marketAvg)}</p>
+                  </div>
+                </div>
+
+                <p className={`text-sm font-medium ${card.isLower ? "text-emerald-600" : "text-rose-600"}`}>
+                  Ваша цена на {formatCurrency(absDiff)} {card.isLower ? "ниже" : "выше"} рынка
+                </p>
+              </div>
+            );
+          })}
+        </div>
+      </MotionItem>
+
+      <MotionItem>
+        <div className="rounded-2xl border border-slate-200/60 bg-white p-5 shadow-sm shadow-slate-950/[0.03]">
+          <div className="mb-5">
+            <h2 className="text-sm font-semibold text-slate-900">Динамика цен за 12 недель</h2>
+            <p className="text-xs text-slate-500 mt-0.5">Средние по всем регионам</p>
+          </div>
+          <ResponsiveContainer width="100%" height={320}>
+            <AreaChart data={chartData} margin={{ top: 5, right: 10, left: 10, bottom: 0 }}>
+              <defs>
+                <linearGradient id="gradient92" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.15} />
+                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                </linearGradient>
+                <linearGradient id="gradient95" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.15} />
+                  <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
+              <XAxis
+                dataKey="date"
+                tick={{ fontSize: 12, fill: "#94a3b8" }}
+                axisLine={false}
+                tickLine={false}
+              />
+              <YAxis
+                tick={{ fontSize: 12, fill: "#94a3b8" }}
+                axisLine={false}
+                tickLine={false}
+                domain={["dataMin - 200", "dataMax + 200"]}
+                tickFormatter={(v: number) => `${(v / 1000).toFixed(1)}к`}
+              />
+              <Tooltip content={<CustomTooltip />} />
+              <Area
+                type="monotone"
+                dataKey="AI-92"
+                stroke="#3b82f6"
+                strokeWidth={2}
+                fill="url(#gradient92)"
+                dot={false}
+                activeDot={{ r: 4, stroke: "#3b82f6", strokeWidth: 2, fill: "#fff" }}
+              />
+              <Area
+                type="monotone"
+                dataKey="AI-95"
+                stroke="#8b5cf6"
+                strokeWidth={2}
+                fill="url(#gradient95)"
+                dot={false}
+                activeDot={{ r: 4, stroke: "#8b5cf6", strokeWidth: 2, fill: "#fff" }}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+          <div className="flex items-center justify-center gap-6 mt-4">
+            <div className="flex items-center gap-2 text-sm text-slate-600">
+              <span className="h-2.5 w-2.5 rounded-full bg-blue-500" />
+              AI-92
+            </div>
+            <div className="flex items-center gap-2 text-sm text-slate-600">
+              <span className="h-2.5 w-2.5 rounded-full bg-violet-500" />
+              AI-95
+            </div>
+          </div>
+        </div>
+      </MotionItem>
+
+      <MotionItem>
+        <div className="rounded-2xl border border-slate-200/60 bg-white shadow-sm shadow-slate-950/[0.03]">
+          <div className="px-5 py-4 border-b border-slate-100">
+            <h2 className="text-sm font-semibold text-slate-900">Цены по регионам</h2>
+            <p className="text-xs text-slate-500 mt-0.5">Последняя неделя</p>
+          </div>
+          <Table>
+            <TableHeader>
+              <TableRow className="border-b border-slate-100 hover:bg-transparent">
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500">Регион</TableHead>
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500 text-right">АИ-92</TableHead>
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500 text-right">АИ-95</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {regionalPrices.map((row) => (
+                <TableRow key={row.region} className="border-b border-slate-100">
+                  <TableCell className="font-medium text-slate-900">{row.region}</TableCell>
+                  <TableCell className="text-right tabular-nums text-slate-700">{formatCurrency(row.ai92)}</TableCell>
+                  <TableCell className="text-right tabular-nums text-slate-700">{formatCurrency(row.ai95)}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </MotionItem>
+    </MotionContainer>
+  );
+}

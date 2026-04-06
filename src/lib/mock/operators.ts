@@ -1,0 +1,68 @@
+import type { Operator } from '@/lib/types';
+
+export const operators: Operator[] = [
+  {
+    id: 'op-001',
+    name: 'Алишер Каримов',
+    phone: '+998901234567',
+    telegramId: '@alisher_karimov',
+    base: 'chirchik',
+    shiftStartDate: '2026-03-30T00:00:00.000Z',
+  },
+  {
+    id: 'op-002',
+    name: 'Бахтиёр Рахимов',
+    phone: '+998901234568',
+    telegramId: '@bakhtiyor_rakhimov',
+    base: 'chirchik',
+    shiftStartDate: '2026-03-25T00:00:00.000Z',
+  },
+  {
+    id: 'op-003',
+    name: 'Дильшод Юсупов',
+    phone: '+998901234569',
+    telegramId: '@dilshod_yusupov',
+    base: 'chirchik',
+    shiftStartDate: '2026-03-10T00:00:00.000Z',
+  },
+  {
+    id: 'op-004',
+    name: 'Нодир Абдуллаев',
+    phone: '+998901234570',
+    telegramId: '@nodir_abdullaev',
+    base: 'chirchik',
+    shiftStartDate: '2026-04-01T00:00:00.000Z',
+  },
+  {
+    id: 'op-005',
+    name: 'Сардор Мирзаев',
+    phone: '+998901234571',
+    telegramId: '@sardor_mirzaev',
+    base: 'akhangaran',
+    shiftStartDate: '2026-03-28T00:00:00.000Z',
+  },
+  {
+    id: 'op-006',
+    name: 'Фарход Тошматов',
+    phone: '+998901234572',
+    telegramId: '@farkhod_toshmatov',
+    base: 'akhangaran',
+    shiftStartDate: '2026-03-14T00:00:00.000Z',
+  },
+  {
+    id: 'op-007',
+    name: 'Жасур Хакимов',
+    phone: '+998901234573',
+    telegramId: '@jasur_khakimov',
+    base: 'akhangaran',
+    shiftStartDate: '2026-04-04T00:00:00.000Z',
+  },
+  {
+    id: 'op-008',
+    name: 'Отабек Назаров',
+    phone: '+998901234574',
+    telegramId: '@otabek_nazarov',
+    base: 'akhangaran',
+    shiftStartDate: '2026-03-18T00:00:00.000Z',
+  },
+];
