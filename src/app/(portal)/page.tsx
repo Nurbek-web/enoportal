@@ -1,15 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+import dynamic from "next/dynamic";
 import {
   Droplets,
   TrendingUp,
@@ -37,8 +29,16 @@ import { deals } from "@/lib/mock/sales";
 import { clients } from "@/lib/mock/clients";
 import { currentFuelStatus } from "@/lib/mock/fuel";
 import { activities } from "@/lib/mock/market";
-import { formatCurrency, formatVolume, formatPercent, formatRelativeDate, formatNumber } from "@/lib/format";
+import { formatCurrency, formatVolume, formatPercent, formatRelativeDate } from "@/lib/format";
 import { BASE_LABELS } from "@/lib/constants";
+
+const WeeklySalesChart = dynamic(
+  () => import("@/components/charts/weekly-sales-chart"),
+  {
+    ssr: false,
+    loading: () => <div className="h-64 animate-pulse rounded-xl bg-stone-100" />,
+  }
+);
 
 const ACTIVITY_COLORS: Record<string, string> = {
   deal: "bg-blue-500",
@@ -53,18 +53,6 @@ const FUEL_STATUS_DOT: Record<string, string> = {
   warning: "bg-amber-500",
   critical: "bg-rose-500",
 };
-
-function CustomTooltip({ active, payload, label }: { active?: boolean; payload?: { value: number }[]; label?: string }) {
-  if (!active || !payload?.length) return null;
-  return (
-    <div className="rounded-lg bg-white px-4 py-3 shadow-lg border border-slate-100">
-      <p className="text-xs font-medium text-slate-500">{label}</p>
-      <p className="mt-1 text-sm font-semibold text-slate-900">
-        {formatNumber(payload[0].value)} л
-      </p>
-    </div>
-  );
-}
 
 export default function DashboardPage() {
   const totalVolume = useMemo(() => deals.reduce((s, d) => s + d.volume, 0), []);
@@ -177,31 +165,7 @@ export default function DashboardPage() {
           <div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm shadow-slate-950/[0.03] p-5">
             <h3 className="text-sm font-medium text-slate-800 mb-4">Продажи по неделям</h3>
             <div className="h-64 min-h-[256px] w-full min-w-0">
-              <ResponsiveContainer width="100%" height={256}>
-                <BarChart data={weeklyData} barCategoryGap="20%">
-                  <defs>
-                    <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.9} />
-                      <stop offset="100%" stopColor="#3b82f6" stopOpacity={0.4} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
-                  <XAxis
-                    dataKey="label"
-                    tick={{ fontSize: 12, fill: "#94a3b8" }}
-                    axisLine={false}
-                    tickLine={false}
-                  />
-                  <YAxis
-                    tick={{ fontSize: 12, fill: "#94a3b8" }}
-                    axisLine={false}
-                    tickLine={false}
-                    tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`}
-                  />
-                  <Tooltip content={<CustomTooltip />} cursor={{ fill: "#f8fafc" }} />
-                  <Bar dataKey="volume" fill="url(#barGradient)" radius={[6, 6, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
+              <WeeklySalesChart data={weeklyData} />
             </div>
           </div>
 
