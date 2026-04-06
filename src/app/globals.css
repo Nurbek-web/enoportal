@@ -52,21 +52,6 @@
   background: linear-gradient(180deg, #0f172a 0%, #162040 100%);
 }
 
-@keyframes fade-slide-in {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-fade-slide-in {
-  animation: fade-slide-in 0.4s ease-out both;
-}
-
 /* Scrollbar */
 .custom-scrollbar::-webkit-scrollbar {
   width: 4px;

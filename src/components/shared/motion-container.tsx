@@ -1,8 +1,9 @@
 "use client";
 
 import React, { ReactNode } from "react";
+import { cn } from "@/lib/utils";
 
-interface MotionItemProps {
+export interface MotionItemProps {
   children: ReactNode;
   className?: string;
 }
@@ -11,15 +12,19 @@ interface MotionItemInternalProps extends MotionItemProps {
   _index?: number;
 }
 
-export function MotionItem({ children, className, _index }: MotionItemInternalProps) {
+function MotionItemInternal({ children, className, _index }: MotionItemInternalProps) {
   return (
     <div
-      className={`animate-fade-slide-in${className ? ` ${className}` : ""}`}
+      className={cn("animate-fade-slide-in", className)}
       style={{ animationDelay: `${(_index ?? 0) * 50}ms` }}
     >
       {children}
     </div>
   );
+}
+
+export function MotionItem(props: MotionItemProps) {
+  return <MotionItemInternal {...props} />;
 }
 
 export function MotionContainer({ children }: { children: ReactNode }) {
