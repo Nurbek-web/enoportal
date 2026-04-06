@@ -16,12 +16,6 @@ const STATUS_STROKE: Record<string, string> = {
   critical: "#ef4444", // rose-500
 };
 
-const STATUS_GLOW: Record<string, string> = {
-  ok:       "drop-shadow(0 0 6px rgba(16,185,129,0.5))",
-  warning:  "drop-shadow(0 0 6px rgba(245,158,11,0.5))",
-  critical: "drop-shadow(0 0 8px rgba(239,68,68,0.6))",
-};
-
 const RADIUS = 52;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
@@ -35,7 +29,6 @@ export function FuelGauge({
   index = 0,
 }: FuelGaugeProps) {
   const strokeColor = STATUS_STROKE[status];
-  const glowFilter = STATUS_GLOW[status];
   const target = CIRCUMFERENCE - (CIRCUMFERENCE * level) / 100;
   const delay = index * 150;
 
@@ -46,7 +39,6 @@ export function FuelGauge({
           width={120}
           height={120}
           viewBox="0 0 120 120"
-          style={{ filter: glowFilter }}
         >
           {/* Background ring */}
           <circle
@@ -54,7 +46,7 @@ export function FuelGauge({
             cy={60}
             r={RADIUS}
             fill="none"
-            stroke="rgba(255,255,255,0.08)"
+            stroke="#e7e5e4"
             strokeWidth={8}
           />
           {/* Value ring */}
@@ -84,7 +76,7 @@ export function FuelGauge({
             y={56}
             textAnchor="middle"
             dominantBaseline="middle"
-            fill="white"
+            fill="#1c1917"
             fontSize={20}
             fontWeight={600}
             fontFamily="inherit"
@@ -97,7 +89,7 @@ export function FuelGauge({
             y={74}
             textAnchor="middle"
             dominantBaseline="middle"
-            fill="rgba(168,162,158,0.8)"
+            fill="#78716c"
             fontSize={10}
             fontFamily="inherit"
           >
@@ -107,9 +99,9 @@ export function FuelGauge({
       </div>
 
       <div className="text-center">
-        <p className="text-sm font-medium text-white">{label}</p>
+        <p className="text-sm font-medium text-stone-800">{label}</p>
         <p className="text-xs text-stone-500">{baseName}</p>
-        <p className="mt-0.5 text-xs text-stone-500">
+        <p className="mt-0.5 text-xs text-stone-400">
           {formatNumber(volumeRemaining)} л
         </p>
       </div>
