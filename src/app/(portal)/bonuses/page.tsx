@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { MotionContainer, MotionItem } from "@/components/shared/motion-container";
 import { PageHeader } from "@/components/shared/page-header";
 import { MiniKpiCard } from "@/components/shared/mini-kpi-card";
+import { AiInsightCard } from "@/components/shared/ai-insight-card";
 import {
   Select,
   SelectContent,
@@ -141,6 +142,15 @@ export default function BonusesPage() {
             <ManagerVolumeChart data={managerStats} />
           )}
         </div>
+      </MotionItem>
+
+      <MotionItem>
+        <AiInsightCard title="Расчёт бонусов">
+          Лидер продаж — <strong>{totals.topManager}</strong>.
+          За выбранный период начислено бонусов на{" "}
+          <strong>{formatCurrency(totals.totalBonus)}</strong> (ставка {BONUS_RATE_PER_LITER} сум/л).
+          Рекомендуем выплатить бонусы в первые 5 дней следующего месяца для повышения мотивации.
+        </AiInsightCard>
       </MotionItem>
 
       <MotionItem>

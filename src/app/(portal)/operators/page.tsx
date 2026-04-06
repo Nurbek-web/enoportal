@@ -11,6 +11,8 @@ import { ru } from "date-fns/locale";
 import { MotionContainer, MotionItem } from "@/components/shared/motion-container";
 import { PageHeader } from "@/components/shared/page-header";
 import { StatusBadge } from "@/components/shared/status-badge";
+import { MiniKpiCard } from "@/components/shared/mini-kpi-card";
+import { AiInsightCard } from "@/components/shared/ai-insight-card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Table,
@@ -98,6 +100,13 @@ export default function OperatorsPage() {
       : byGlobal.filter((op) => op.base === baseFilter);
   }, [selectedBase, baseFilter]);
 
+  const shiftKpis = useMemo(() => {
+    const onShift = filteredOperators.filter((op) => getShiftStatus(op.shiftStartDate, today) === "on_shift").length;
+    const offShift = filteredOperators.filter((op) => getShiftStatus(op.shiftStartDate, today) === "off_shift").length;
+    const handover = filteredOperators.filter((op) => getShiftStatus(op.shiftStartDate, today) === "handover").length;
+    return { total: filteredOperators.length, onShift, offShift, handover };
+  }, [filteredOperators, today]);
+
   const calendarDays = useMemo(() => {
     const monthStart = startOfMonth(today);
     const monthEnd = endOfMonth(today);
@@ -118,6 +127,15 @@ export default function OperatorsPage() {
           title="Операторы и вахты"
           description="Управление персоналом и графиком вахт"
         />
+      </MotionItem>
+
+      <MotionItem>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <MiniKpiCard label="Всего операторов" value={String(shiftKpis.total)} />
+          <MiniKpiCard label="На вахте сейчас" value={String(shiftKpis.onShift)} />
+          <MiniKpiCard label="На выходном" value={String(shiftKpis.offShift)} />
+          <MiniKpiCard label="Пересменка" value={String(shiftKpis.handover)} />
+        </div>
       </MotionItem>
 
       <MotionItem>
@@ -236,6 +254,18 @@ export default function OperatorsPage() {
             </div>
           </div>
         </div>
+      </MotionItem>
+
+      <MotionItem>
+        <AiInsightCard title="Рекомендация по вахтам">
+          {shiftKpis.onShift} из {shiftKpis.total} операторов сейчас на вахте.{" "}
+          {shiftKpis.handover > 0 && (
+            <>
+              <strong>{shiftKpis.handover}</strong> сотрудника на пересменке — не планируйте новые смены на ближайшие сутки.{" "}
+            </>
+          )}
+          Следующая крупная ротация через 3 дня: рекомендуем заранее подтвердить билеты в разделе Логистика.
+        </AiInsightCard>
       </MotionItem>
 
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
