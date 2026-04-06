@@ -117,7 +117,7 @@ export default function LogisticsPage() {
                 {upcomingTrips.map((trip) => {
                   const op = operatorMap.get(trip.operatorId);
                   return (
-                    <TableRow key={trip.id} className="border-b border-stone-100">
+                    <TableRow key={trip.id} className="border-b border-stone-100 hover:bg-stone-50 transition-colors duration-150">
                       <TableCell className="font-medium text-stone-900">{op?.name ?? "—"}</TableCell>
                       <TableCell className="text-stone-600">{trip.direction}</TableCell>
                       <TableCell className="tabular-nums text-stone-600">{formatDateShort(trip.date)}</TableCell>

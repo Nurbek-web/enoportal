@@ -212,7 +212,7 @@ export default function DashboardPage() {
             <h3 className="text-sm font-medium text-stone-800 mb-4">Топ-5 клиентов</h3>
             <Table>
               <TableHeader>
-                <TableRow>
+                <TableRow className="border-b border-stone-200 hover:bg-transparent">
                   <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">
                     Компания
                   </TableHead>
@@ -229,14 +229,14 @@ export default function DashboardPage() {
               </TableHeader>
               <TableBody>
                 {topClients.map((row) => (
-                  <TableRow key={row.clientId}>
+                  <TableRow key={row.clientId} className="border-b border-stone-100 hover:bg-stone-50 transition-colors duration-150">
                     <TableCell className="text-sm text-stone-700 font-medium">
                       {row.client?.companyName ?? "—"}
                     </TableCell>
-                    <TableCell className="text-sm text-stone-600 text-right">
+                    <TableCell className="text-sm tabular-nums text-stone-600 text-right">
                       {formatVolume(row.volume)}
                     </TableCell>
-                    <TableCell className="text-sm text-stone-600 text-right">
+                    <TableCell className="text-sm tabular-nums text-stone-600 text-right">
                       {row.count}
                     </TableCell>
                     <TableCell className="text-right">

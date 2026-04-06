@@ -189,7 +189,7 @@ export default function ExpensesPage() {
                 {expenseList.map((exp, idx) => {
                   const op = operatorMap.get(exp.operatorId);
                   return (
-                    <TableRow key={exp.id} className="border-b border-stone-100">
+                    <TableRow key={exp.id} className="border-b border-stone-100 hover:bg-stone-50 transition-colors duration-150">
                       <TableCell className="font-medium text-stone-600">{idx + 1}</TableCell>
                       <TableCell className="tabular-nums text-stone-600">{formatDateShort(exp.date)}</TableCell>
                       <TableCell className="font-medium text-stone-900">{op?.name ?? "—"}</TableCell>

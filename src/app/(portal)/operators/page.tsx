@@ -135,12 +135,12 @@ export default function OperatorsPage() {
         <div className="bg-white rounded-2xl border border-stone-200/50 shadow-sm shadow-stone-900/[0.04] p-5">
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>Имя</TableHead>
-                <TableHead>Телефон</TableHead>
-                <TableHead>База</TableHead>
-                <TableHead>Статус</TableHead>
-                <TableHead>Telegram ID</TableHead>
+              <TableRow className="border-b border-stone-200 hover:bg-transparent">
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Имя</TableHead>
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Телефон</TableHead>
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">База</TableHead>
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Статус</TableHead>
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Telegram ID</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -149,12 +149,12 @@ export default function OperatorsPage() {
                 return (
                   <TableRow
                     key={op.id}
-                    className="cursor-pointer"
+                    className="border-b border-stone-100 hover:bg-blue-50/50 cursor-pointer transition-colors duration-150"
                     onClick={() => handleRowClick(op)}
                   >
-                    <TableCell className="font-medium">{op.name}</TableCell>
-                    <TableCell>{op.phone}</TableCell>
-                    <TableCell>{BASE_LABELS[op.base]}</TableCell>
+                    <TableCell className="font-medium text-stone-900">{op.name}</TableCell>
+                    <TableCell className="tabular-nums text-stone-600">{op.phone}</TableCell>
+                    <TableCell className="text-stone-600">{BASE_LABELS[op.base]}</TableCell>
                     <TableCell>
                       <StatusBadge status={status} />
                     </TableCell>

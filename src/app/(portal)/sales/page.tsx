@@ -259,7 +259,7 @@ export default function SalesPage() {
                 return (
                   <TableRow
                     key={deal.id}
-                    className="cursor-pointer border-b border-stone-100 hover:bg-blue-50/50"
+                    className="cursor-pointer border-b border-stone-100 hover:bg-blue-50/50 transition-colors duration-150"
                     onClick={() => setSelectedDeal(deal)}
                   >
                     <TableCell className="font-medium text-stone-600">{idx + 1}</TableCell>

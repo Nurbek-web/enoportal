@@ -166,7 +166,7 @@ export default function ClientsPage() {
               {filteredClients.map((client) => (
                 <TableRow
                   key={client.id}
-                  className="cursor-pointer border-b border-stone-100 hover:bg-blue-50/50"
+                  className="cursor-pointer border-b border-stone-100 hover:bg-blue-50/50 transition-colors duration-150"
                   onClick={() => setSelectedClient(client)}
                 >
                   <TableCell className="font-medium text-stone-900">

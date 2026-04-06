@@ -167,8 +167,8 @@ export default function BonusesPage() {
                   key={mgr.id}
                   className={
                     idx === 0
-                      ? "border-b border-stone-100 bg-amber-50/50"
-                      : "border-b border-stone-100"
+                      ? "border-b border-stone-100 bg-amber-50/50 hover:bg-amber-50 transition-colors duration-150"
+                      : "border-b border-stone-100 hover:bg-stone-50 transition-colors duration-150"
                   }
                 >
                   <TableCell className="font-medium text-stone-600">

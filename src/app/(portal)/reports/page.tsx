@@ -124,7 +124,7 @@ export default function ReportsPage() {
                 return (
                   <TableRow
                     key={report.id}
-                    className="cursor-pointer border-b border-stone-100 hover:bg-blue-50/50"
+                    className="cursor-pointer border-b border-stone-100 hover:bg-blue-50/50 transition-colors duration-150"
                     onClick={() => setSelectedReport(report)}
                   >
                     <TableCell className="font-medium text-stone-600">{idx + 1}</TableCell>

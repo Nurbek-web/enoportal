@@ -7,7 +7,7 @@ interface AiInsightCardProps {
 
 export function AiInsightCard({ title, children }: AiInsightCardProps) {
   return (
-    <div className="relative rounded-2xl border border-violet-200/30 bg-gradient-to-r from-violet-500/[0.04] via-blue-500/[0.04] to-violet-500/[0.04] p-5">
+    <div className="relative rounded-2xl border border-violet-200/30 bg-gradient-to-r from-violet-500/[0.04] via-blue-500/[0.04] to-violet-500/[0.04] p-5 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200">
       <div className="flex items-center gap-2 mb-3">
         <Sparkles className="h-4 w-4 text-violet-500" />
         <span className="bg-violet-100 text-violet-700 text-xs font-medium px-2 py-0.5 rounded-full">

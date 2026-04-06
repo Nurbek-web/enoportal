@@ -103,7 +103,7 @@ export default function MarketPage() {
             return (
               <div
                 key={card.fuel}
-                className="rounded-2xl border border-stone-200/50 bg-white p-5 shadow-sm shadow-stone-900/[0.04]"
+                className="rounded-2xl border border-stone-200/50 bg-white p-5 shadow-sm shadow-stone-900/[0.04] hover:-translate-y-0.5 hover:shadow-md transition-all duration-200"
               >
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-base font-semibold text-stone-900">{card.fuel}</span>
@@ -179,7 +179,7 @@ export default function MarketPage() {
             </TableHeader>
             <TableBody>
               {regionalPrices.map((row) => (
-                <TableRow key={row.region} className="border-b border-stone-100">
+                <TableRow key={row.region} className="border-b border-stone-100 hover:bg-stone-50 transition-colors duration-150">
                   <TableCell className="font-medium text-stone-900">{row.region}</TableCell>
                   <TableCell className="text-right tabular-nums text-stone-700">{formatCurrency(row.ai92)}</TableCell>
                   <TableCell className="text-right tabular-nums text-stone-700">{formatCurrency(row.ai95)}</TableCell>

@@ -92,7 +92,7 @@ export default function TankersPage() {
                   {tankers.map((tanker) => (
                     <TableRow
                       key={tanker.id}
-                      className="cursor-pointer border-b border-stone-100 hover:bg-blue-50/50"
+                      className="cursor-pointer border-b border-stone-100 hover:bg-blue-50/50 transition-colors duration-150"
                       onClick={() => setSelectedTanker(tanker)}
                     >
                       <TableCell className="font-medium text-stone-900">{tanker.plateNumber}</TableCell>
@@ -126,7 +126,7 @@ export default function TankersPage() {
                     const tanker = tankerMap.get(payment.tankerId);
                     const deal = payment.dealId ? dealMap.get(payment.dealId) : null;
                     return (
-                      <TableRow key={payment.id} className="border-b border-stone-100">
+                      <TableRow key={payment.id} className="border-b border-stone-100 hover:bg-stone-50 transition-colors duration-150">
                         <TableCell className="text-stone-600">{formatDateShort(payment.date)}</TableCell>
                         <TableCell className="font-medium text-stone-900">{tanker?.plateNumber ?? "—"}</TableCell>
                         <TableCell className="text-right tabular-nums text-stone-700">{formatCurrency(payment.amount)}</TableCell>

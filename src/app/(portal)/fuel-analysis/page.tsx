@@ -61,7 +61,7 @@ export default function FuelAnalysisPage() {
             return (
               <div
                 key={`${item.base}-${item.fuelType}`}
-                className="bg-white rounded-2xl border border-stone-200/50 shadow-sm shadow-stone-900/[0.04] p-5"
+                className="bg-white rounded-2xl border border-stone-200/50 shadow-sm shadow-stone-900/[0.04] p-5 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200"
               >
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
