@@ -2,11 +2,21 @@
 
 import { useEffect, useState } from "react";
 
+const animatedTargets = new Set<number>();
+
 export function useCountUp(target: number, duration = 1200) {
-  const [value, setValue] = useState(0);
+  const hasAnimated = animatedTargets.has(target);
+  const [value, setValue] = useState(hasAnimated ? target : 0);
 
   useEffect(() => {
-    if (target === 0) return;
+    if (target === 0) {
+      setValue(0);
+      return;
+    }
+    if (hasAnimated) {
+      setValue(target);
+      return;
+    }
     let startTime: number | null = null;
     let animationFrame: number;
 
@@ -17,12 +27,14 @@ export function useCountUp(target: number, duration = 1200) {
       setValue(Math.floor(eased * target));
       if (progress < 1) {
         animationFrame = requestAnimationFrame(step);
+      } else {
+        animatedTargets.add(target);
       }
     };
 
     animationFrame = requestAnimationFrame(step);
     return () => cancelAnimationFrame(animationFrame);
-  }, [target, duration]);
+  }, [target, duration, hasAnimated]);
 
   return value;
 }
