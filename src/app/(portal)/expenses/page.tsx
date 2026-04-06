@@ -5,6 +5,7 @@ import { Plus, Receipt, CheckCircle2, Clock } from "lucide-react";
 import { MotionContainer, MotionItem } from "@/components/shared/motion-container";
 import { PageHeader } from "@/components/shared/page-header";
 import { StatusBadge } from "@/components/shared/status-badge";
+import { AiInsightCard } from "@/components/shared/ai-insight-card";
 import {
   Table,
   TableBody,
@@ -166,6 +167,23 @@ export default function ExpensesPage() {
             );
           })}
         </div>
+      </MotionItem>
+
+      <MotionItem>
+        <AiInsightCard title="Анализ расходов">
+          Всего заявок: <strong>{expenseList.length}</strong> на сумму{" "}
+          <strong>{formatCurrency(totalAmount)}</strong>.{" "}
+          {pendingCount > 0 ? (
+            <><strong>{pendingCount}</strong> заявок ожидают рассмотрения — проверьте и одобрите своевременно для выплаты операторам.{" "}</>
+          ) : (
+            <>Все заявки рассмотрены.</>
+          )}{" "}
+          Срочных расходов:{" "}
+          <strong>
+            {expenseList.filter((e) => e.type === "urgent").length}
+          </strong>{" "}
+          — рекомендуем контролировать долю сверхнормативных расходов.
+        </AiInsightCard>
       </MotionItem>
 
       <MotionItem>

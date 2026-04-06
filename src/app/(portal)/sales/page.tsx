@@ -5,6 +5,7 @@ import { Plus, Search } from "lucide-react";
 import { MotionContainer, MotionItem } from "@/components/shared/motion-container";
 import { PageHeader } from "@/components/shared/page-header";
 import { StatusBadge } from "@/components/shared/status-badge";
+import { AiInsightCard } from "@/components/shared/ai-insight-card";
 import { FilterBar } from "@/components/shared/filter-bar";
 import {
   Table,
@@ -122,6 +123,15 @@ export default function SalesPage() {
       return true;
     });
   }, [deals, selectedBase, statusFilter, baseFilter, fuelFilter, searchQuery, clientMap]);
+
+  const salesStats = useMemo(() => {
+    const revenue = filteredDeals.reduce((s, d) => s + d.totalAmount, 0);
+    const paid = filteredDeals.filter((d) => d.status === "paid").length;
+    const avgMargin = filteredDeals.length > 0
+      ? filteredDeals.reduce((s, d) => s + d.marginPercent, 0) / filteredDeals.length
+      : 0;
+    return { revenue, paid, total: filteredDeals.length, avgMargin };
+  }, [filteredDeals]);
 
   const computed = useMemo(() => {
     const vol = parseFloat(form.volume) || 0;
@@ -272,6 +282,20 @@ export default function SalesPage() {
             />
           </div>
         </FilterBar>
+      </MotionItem>
+
+      <MotionItem>
+        <AiInsightCard title="Анализ продаж">
+          Показано <strong>{salesStats.total} сделок</strong> · Выручка:{" "}
+          <strong>{formatCurrency(salesStats.revenue)}</strong> · Оплачено:{" "}
+          <strong>{salesStats.paid}</strong> из {salesStats.total}.{" "}
+          {salesStats.avgMargin > 0 && (
+            <>Средняя маржинальность: <strong>{formatPercent(salesStats.avgMargin)}</strong>.</>
+          )}
+          {salesStats.total > 0 && salesStats.paid / salesStats.total < 0.5 && (
+            <>{" "}Рекомендуем ускорить оплату незакрытых сделок — просроченная дебиторская задолженность может снизить оборот.</>
+          )}
+        </AiInsightCard>
       </MotionItem>
 
       <MotionItem>

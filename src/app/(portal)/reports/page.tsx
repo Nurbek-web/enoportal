@@ -29,6 +29,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { AiInsightCard } from "@/components/shared/ai-insight-card";
 import { reports as initialReports } from "@/lib/mock/reports";
 import { operators } from "@/lib/mock/operators";
 import { BASE_LABELS } from "@/lib/constants";
@@ -59,6 +60,12 @@ export default function ReportsPage() {
     });
   }, [reports, selectedBase, statusFilter, baseFilter, operatorFilter]);
 
+  const reportStats = useMemo(() => {
+    const pending = reports.filter((r) => r.status === "pending").length;
+    const synced = reports.filter((r) => r.telegramSynced).length;
+    return { pending, synced, total: reports.length };
+  }, [reports]);
+
   function updateReportStatus(id: string, status: Report["status"]) {
     setReports((prev) =>
       prev.map((r) => (r.id === id ? { ...r, status } : r))
@@ -73,6 +80,21 @@ export default function ReportsPage() {
           title="Отчёты операторов"
           description="Ежедневные отчёты с баз — синхронизация через Telegram"
         />
+      </MotionItem>
+
+      <MotionItem>
+        <AiInsightCard title="Статус отчётности">
+          Всего отчётов: <strong>{reportStats.total}</strong>.{" "}
+          {reportStats.pending > 0 ? (
+            <><strong>{reportStats.pending}</strong> на проверке — требуют подтверждения или отклонения.{" "}</>
+          ) : (
+            <>Все отчёты проверены.</>
+          )}{" "}
+          Синхронизировано через Telegram: <strong>{reportStats.synced}</strong> из {reportStats.total}.{" "}
+          {reportStats.synced < reportStats.total && (
+            <>Проверьте подключение бота для несинхронизированных операторов.</>
+          )}
+        </AiInsightCard>
       </MotionItem>
 
       <MotionItem>
