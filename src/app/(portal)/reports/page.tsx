@@ -28,7 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { reports } from "@/lib/mock/reports";
+import { reports as initialReports } from "@/lib/mock/reports";
 import { operators } from "@/lib/mock/operators";
 import { BASE_LABELS } from "@/lib/constants";
 import { useBaseFilter } from "@/contexts/base-filter-context";
@@ -38,6 +38,7 @@ import { formatDateShort, formatMass, formatPercent } from "@/lib/format";
 
 export default function ReportsPage() {
   const { selectedBase } = useBaseFilter();
+  const [reports, setReports] = useState<Report[]>(initialReports);
   const [statusFilter, setStatusFilter] = useState("all");
   const [baseFilter, setBaseFilter] = useState("all");
   const [operatorFilter, setOperatorFilter] = useState("all");
@@ -55,7 +56,14 @@ export default function ReportsPage() {
       if (operatorFilter !== "all" && r.operatorId !== operatorFilter) return false;
       return true;
     });
-  }, [selectedBase, statusFilter, baseFilter, operatorFilter]);
+  }, [reports, selectedBase, statusFilter, baseFilter, operatorFilter]);
+
+  function updateReportStatus(id: string, status: Report["status"]) {
+    setReports((prev) =>
+      prev.map((r) => (r.id === id ? { ...r, status } : r))
+    );
+    setSelectedReport(null);
+  }
 
   return (
     <MotionContainer>
@@ -165,6 +173,8 @@ export default function ReportsPage() {
         report={selectedReport}
         onClose={() => setSelectedReport(null)}
         operatorMap={operatorMap}
+        onApprove={(id) => updateReportStatus(id, "approved")}
+        onReject={(id) => updateReportStatus(id, "rejected")}
       />
     </MotionContainer>
   );
@@ -174,10 +184,14 @@ function ReportDetailSheet({
   report,
   onClose,
   operatorMap,
+  onApprove,
+  onReject,
 }: {
   report: Report | null;
   onClose: () => void;
   operatorMap: Map<string, (typeof operators)[number]>;
+  onApprove: (id: string) => void;
+  onReject: (id: string) => void;
 }) {
   if (!report) {
     return (
@@ -255,6 +269,23 @@ function ReportDetailSheet({
               }
             />
           </DetailSection>
+
+          {report.status === "pending" && (
+            <div className="flex gap-3 pt-2">
+              <button
+                onClick={() => onApprove(report.id)}
+                className="flex-1 rounded-xl bg-emerald-600 py-2.5 text-sm font-medium text-white hover:bg-emerald-700 transition-colors"
+              >
+                Подтвердить
+              </button>
+              <button
+                onClick={() => onReject(report.id)}
+                className="flex-1 rounded-xl bg-rose-600 py-2.5 text-sm font-medium text-white hover:bg-rose-700 transition-colors"
+              >
+                Отклонить
+              </button>
+            </div>
+          )}
         </div>
       </SheetContent>
     </Sheet>
@@ -270,13 +301,7 @@ function DetailSection({ title, children }: { title: string; children: React.Rea
   );
 }
 
-function DetailRow({
-  label,
-  value,
-}: {
-  label: string;
-  value: React.ReactNode;
-}) {
+function DetailRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <>
       <dt className="text-sm text-stone-500">{label}</dt>
