@@ -30,10 +30,13 @@ import {
 import { reports } from "@/lib/mock/reports";
 import { operators } from "@/lib/mock/operators";
 import { BASE_LABELS } from "@/lib/constants";
+import { useBaseFilter } from "@/contexts/base-filter-context";
+import { filterByBase } from "@/lib/filter-by-base";
 import type { Report } from "@/lib/types";
 import { formatDateShort, formatMass, formatPercent } from "@/lib/format";
 
 export default function ReportsPage() {
+  const { selectedBase } = useBaseFilter();
   const [statusFilter, setStatusFilter] = useState("all");
   const [baseFilter, setBaseFilter] = useState("all");
   const [operatorFilter, setOperatorFilter] = useState("all");
@@ -45,13 +48,13 @@ export default function ReportsPage() {
   );
 
   const filteredReports = useMemo(() => {
-    return reports.filter((r) => {
+    return filterByBase(reports, selectedBase).filter((r) => {
       if (statusFilter !== "all" && r.status !== statusFilter) return false;
       if (baseFilter !== "all" && r.base !== baseFilter) return false;
       if (operatorFilter !== "all" && r.operatorId !== operatorFilter) return false;
       return true;
     });
-  }, [statusFilter, baseFilter, operatorFilter]);
+  }, [selectedBase, statusFilter, baseFilter, operatorFilter]);
 
   return (
     <MotionContainer>

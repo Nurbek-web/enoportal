@@ -33,6 +33,7 @@ import { clients } from "@/lib/mock/clients";
 import { managers } from "@/lib/mock/managers";
 import { tankers } from "@/lib/mock/tankers";
 import { BASE_LABELS, ENO_DEAL_DEFAULTS } from "@/lib/constants";
+import { useBaseFilter } from "@/contexts/base-filter-context";
 import type { Deal, DealStatus, Base, FuelType } from "@/lib/types";
 import {
   formatCurrency,
@@ -76,6 +77,7 @@ function buildInitialForm(): NewDealForm {
 }
 
 export default function SalesPage() {
+  const { selectedBase } = useBaseFilter();
   const [statusFilter, setStatusFilter] = useState("all");
   const [baseFilter, setBaseFilter] = useState("all");
   const [fuelFilter, setFuelFilter] = useState("all");
@@ -102,6 +104,7 @@ export default function SalesPage() {
 
   const filteredDeals = useMemo(() => {
     return deals.filter((deal) => {
+      if (selectedBase !== "all" && deal.base !== selectedBase) return false;
       if (statusFilter !== "all" && deal.status !== statusFilter) return false;
       if (baseFilter !== "all" && deal.base !== baseFilter) return false;
       if (fuelFilter !== "all" && deal.fuelType !== fuelFilter) return false;
@@ -112,7 +115,7 @@ export default function SalesPage() {
       }
       return true;
     });
-  }, [statusFilter, baseFilter, fuelFilter, searchQuery, clientMap]);
+  }, [selectedBase, statusFilter, baseFilter, fuelFilter, searchQuery, clientMap]);
 
   const computed = useMemo(() => {
     const vol = parseFloat(form.volume) || 0;

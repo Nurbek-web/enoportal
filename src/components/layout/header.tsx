@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { useState } from "react";
+import { useBaseFilter } from "@/contexts/base-filter-context";
 
 const notifications = [
   { id: 1, text: "Оплатите бензовоз по сделке №18", time: "10 мин назад" },
@@ -26,12 +26,12 @@ const notifications = [
 ];
 
 export function Header() {
-  const [base, setBase] = useState("all");
+  const { selectedBase, setSelectedBase } = useBaseFilter();
 
   return (
     <header className="h-16 bg-white border-b border-stone-200 flex items-center justify-between px-6 shrink-0">
       <div className="flex items-center gap-4">
-        <Select value={base} onValueChange={setBase}>
+        <Select value={selectedBase} onValueChange={setSelectedBase}>
           <SelectTrigger className="w-[180px] h-9 text-sm border-stone-200">
             <SelectValue placeholder="Все базы" />
           </SelectTrigger>

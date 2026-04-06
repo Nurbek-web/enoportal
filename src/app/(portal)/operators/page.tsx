@@ -37,6 +37,8 @@ import { formatDateShort } from "@/lib/format";
 import { operators } from "@/lib/mock/operators";
 import type { Operator, Base } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { useBaseFilter } from "@/contexts/base-filter-context";
+import { filterByBase } from "@/lib/filter-by-base";
 
 type ShiftStatus = "on_shift" | "handover" | "off_shift";
 
@@ -82,19 +84,19 @@ const SHIFT_CELL_COLORS: Record<ShiftStatus, string> = {
 };
 
 export default function OperatorsPage() {
+  const { selectedBase } = useBaseFilter();
   const [baseFilter, setBaseFilter] = useState<"all" | Base>("all");
   const [selectedOperator, setSelectedOperator] = useState<Operator | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
 
   const today = useMemo(() => new Date(), []);
 
-  const filteredOperators = useMemo(
-    () =>
-      baseFilter === "all"
-        ? operators
-        : operators.filter((op) => op.base === baseFilter),
-    [baseFilter]
-  );
+  const filteredOperators = useMemo(() => {
+    const byGlobal = filterByBase(operators, selectedBase);
+    return baseFilter === "all"
+      ? byGlobal
+      : byGlobal.filter((op) => op.base === baseFilter);
+  }, [selectedBase, baseFilter]);
 
   const calendarDays = useMemo(() => {
     const monthStart = startOfMonth(today);

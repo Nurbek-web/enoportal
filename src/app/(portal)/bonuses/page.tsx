@@ -23,6 +23,8 @@ import {
 import { deals } from "@/lib/mock/sales";
 import { managers } from "@/lib/mock/managers";
 import { BONUS_RATE_PER_LITER } from "@/lib/constants";
+import { useBaseFilter } from "@/contexts/base-filter-context";
+import { filterByBase } from "@/lib/filter-by-base";
 import { formatCurrency, formatNumber, formatVolume } from "@/lib/format";
 
 const ManagerVolumeChart = dynamic(
@@ -55,10 +57,12 @@ interface ManagerStats {
 }
 
 export default function BonusesPage() {
+  const { selectedBase } = useBaseFilter();
   const [month, setMonth] = useState("april-2026");
 
   const managerStats = useMemo(() => {
     const { monthIndex, year } = parseMonth(month);
+    const baseFilteredDeals = filterByBase(deals, selectedBase);
 
     const statsMap = new Map<string, ManagerStats>();
 
@@ -72,7 +76,7 @@ export default function BonusesPage() {
       });
     }
 
-    for (const deal of deals) {
+    for (const deal of baseFilteredDeals) {
       const d = new Date(deal.date);
       if (d.getMonth() !== monthIndex || d.getFullYear() !== year) continue;
       const entry = statsMap.get(deal.managerId);
@@ -87,7 +91,7 @@ export default function BonusesPage() {
     });
 
     return Array.from(statsMap.values()).sort((a, b) => b.volume - a.volume);
-  }, [month]);
+  }, [month, selectedBase]);
 
   const totals = useMemo(() => {
     const totalVolume = managerStats.reduce((s, m) => s + m.volume, 0);

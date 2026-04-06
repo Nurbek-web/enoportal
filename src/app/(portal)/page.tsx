@@ -31,6 +31,8 @@ import { currentFuelStatus } from "@/lib/mock/fuel";
 import { activities } from "@/lib/mock/market";
 import { formatCurrency, formatVolume, formatPercent, formatRelativeDate } from "@/lib/format";
 import { BASE_LABELS } from "@/lib/constants";
+import { useBaseFilter } from "@/contexts/base-filter-context";
+import { filterByBase } from "@/lib/filter-by-base";
 
 const WeeklySalesChart = dynamic(
   () => import("@/components/charts/weekly-sales-chart"),
@@ -55,16 +57,30 @@ const FUEL_STATUS_DOT: Record<string, string> = {
 };
 
 export default function DashboardPage() {
-  const totalVolume = useMemo(() => deals.reduce((s, d) => s + d.volume, 0), []);
-  const totalRevenue = useMemo(() => deals.reduce((s, d) => s + d.totalAmount, 0), []);
-  const activeDeals = useMemo(() => deals.filter((d) => d.status !== "paid").length, []);
+  const { selectedBase } = useBaseFilter();
+
+  const filteredDeals = useMemo(
+    () => filterByBase(deals, selectedBase),
+    [selectedBase]
+  );
+
+  const filteredFuelStatus = useMemo(
+    () => filterByBase(currentFuelStatus, selectedBase),
+    [selectedBase]
+  );
+
+  const totalVolume = useMemo(() => filteredDeals.reduce((s, d) => s + d.volume, 0), [filteredDeals]);
+  const totalRevenue = useMemo(() => filteredDeals.reduce((s, d) => s + d.totalAmount, 0), [filteredDeals]);
+  const activeDeals = useMemo(() => filteredDeals.filter((d) => d.status !== "paid").length, [filteredDeals]);
   const avgMargin = useMemo(() => {
-    const sum = deals.reduce((s, d) => s + d.marginPercent, 0);
-    return sum / deals.length;
-  }, []);
+    if (filteredDeals.length === 0) return 0;
+    const sum = filteredDeals.reduce((s, d) => s + d.marginPercent, 0);
+    return sum / filteredDeals.length;
+  }, [filteredDeals]);
 
   const weeklyData = useMemo(() => {
-    const sorted = [...deals].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    if (filteredDeals.length === 0) return [];
+    const sorted = [...filteredDeals].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
     const latest = new Date(sorted[sorted.length - 1].date);
 
     const weekStart = new Date(latest);
@@ -77,7 +93,7 @@ export default function DashboardPage() {
       const to = new Date(from);
       to.setDate(to.getDate() + 7);
 
-      const vol = deals
+      const vol = filteredDeals
         .filter((d) => {
           const dt = new Date(d.date);
           return dt >= from && dt < to;
@@ -89,18 +105,18 @@ export default function DashboardPage() {
       weeks.push({ label: `${dd}.${mm}`, volume: vol });
     }
     return weeks;
-  }, []);
+  }, [filteredDeals]);
 
   const baseVolumes = useMemo(() => {
-    const chirchik = deals.reduce((s, d) => (d.base === "chirchik" ? s + d.volume : s), 0);
-    const akhangaran = deals.reduce((s, d) => (d.base === "akhangaran" ? s + d.volume : s), 0);
+    const chirchik = filteredDeals.reduce((s, d) => (d.base === "chirchik" ? s + d.volume : s), 0);
+    const akhangaran = filteredDeals.reduce((s, d) => (d.base === "akhangaran" ? s + d.volume : s), 0);
     const total = chirchik + akhangaran;
     return { chirchik, akhangaran, total };
-  }, []);
+  }, [filteredDeals]);
 
   const topClients = useMemo(() => {
     const map = new Map<string, { volume: number; count: number }>();
-    for (const d of deals) {
+    for (const d of filteredDeals) {
       const prev = map.get(d.clientId) || { volume: 0, count: 0 };
       map.set(d.clientId, { volume: prev.volume + d.volume, count: prev.count + 1 });
     }
@@ -111,7 +127,7 @@ export default function DashboardPage() {
       })
       .sort((a, b) => b.volume - a.volume)
       .slice(0, 5);
-  }, []);
+  }, [filteredDeals]);
 
   const recentActivities = activities.slice(0, 8);
 
@@ -250,7 +266,7 @@ export default function DashboardPage() {
 
           <AiInsightCard title="Статус топлива на базах">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {currentFuelStatus.map((fs) => (
+              {filteredFuelStatus.map((fs) => (
                 <div
                   key={`${fs.base}-${fs.fuelType}`}
                   className="rounded-xl border border-stone-200/50 bg-white p-4"

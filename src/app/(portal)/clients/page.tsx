@@ -33,6 +33,7 @@ import { Input } from "@/components/ui/input";
 import { clients } from "@/lib/mock/clients";
 import { deals } from "@/lib/mock/sales";
 import type { Client, ClientSegment, Deal } from "@/lib/types";
+import { useBaseFilter } from "@/contexts/base-filter-context";
 import {
   formatVolume,
   formatCurrency,
@@ -48,19 +49,26 @@ const ClientVolumeChart = dynamic(
 );
 
 export default function ClientsPage() {
+  const { selectedBase } = useBaseFilter();
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [segmentFilter, setSegmentFilter] = useState<"all" | ClientSegment>("all");
 
   const filteredClients = useMemo(() => {
+    const baseClients =
+      selectedBase === "all"
+        ? clients
+        : clients.filter((c) =>
+            deals.some((d) => d.clientId === c.id && d.base === selectedBase)
+          );
     const q = searchQuery.trim().toLowerCase();
-    return clients.filter((c) => {
+    return baseClients.filter((c) => {
       if (segmentFilter !== "all" && c.segment !== segmentFilter) return false;
       if (!q) return true;
       const hay = `${c.companyName} ${c.contactPerson} ${c.phone}`.toLowerCase();
       return hay.includes(q);
     });
-  }, [searchQuery, segmentFilter]);
+  }, [selectedBase, searchQuery, segmentFilter]);
 
   const stats = useMemo(() => {
     const list = filteredClients;

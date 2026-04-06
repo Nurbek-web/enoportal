@@ -9,6 +9,8 @@ import { AiInsightCard } from "@/components/shared/ai-insight-card";
 import { currentFuelStatus, fuelLevels } from "@/lib/mock/fuel";
 import { BASE_LABELS } from "@/lib/constants";
 import { formatNumber } from "@/lib/format";
+import { useBaseFilter } from "@/contexts/base-filter-context";
+import { filterByBase } from "@/lib/filter-by-base";
 
 const FuelLevelsChart = dynamic(
   () => import("@/components/charts/fuel-levels-chart"),
@@ -25,10 +27,22 @@ const STATUS_CONFIG = {
 } as const;
 
 export default function FuelAnalysisPage() {
+  const { selectedBase } = useBaseFilter();
+
+  const filteredFuelStatus = useMemo(
+    () => filterByBase(currentFuelStatus, selectedBase),
+    [selectedBase]
+  );
+
+  const filteredFuelLevels = useMemo(
+    () => filterByBase(fuelLevels, selectedBase),
+    [selectedBase]
+  );
+
   const chartData = useMemo(() => {
     const dateMap = new Map<string, Record<string, string | number>>();
 
-    for (const entry of fuelLevels) {
+    for (const entry of filteredFuelLevels) {
       const dateStr = new Date(entry.date).toLocaleDateString("ru-RU", {
         day: "2-digit",
         month: "2-digit",
@@ -41,7 +55,7 @@ export default function FuelAnalysisPage() {
     }
 
     return Array.from(dateMap.values());
-  }, []);
+  }, [filteredFuelLevels]);
 
   return (
     <MotionContainer>
@@ -54,7 +68,7 @@ export default function FuelAnalysisPage() {
 
       <MotionItem>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {currentFuelStatus.map((item) => {
+          {filteredFuelStatus.map((item) => {
             const cfg = STATUS_CONFIG[item.status];
             const baseName = BASE_LABELS[item.base];
 
