@@ -1,6 +1,4 @@
-import type { Base } from "@/lib/types";
-
-type BaseFilter = "all" | Base;
+import type { Base, BaseFilter } from "@/lib/types";
 
 export function filterByBase<T extends { base: Base }>(
   items: T[],

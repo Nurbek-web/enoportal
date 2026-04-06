@@ -1,9 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, ReactNode } from "react";
-import type { Base } from "@/lib/types";
-
-type BaseFilter = "all" | Base;
+import type { Base, BaseFilter } from "@/lib/types";
 
 interface BaseFilterContextType {
   selectedBase: BaseFilter;

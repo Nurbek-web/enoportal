@@ -126,6 +126,8 @@ export interface TankerPayment {
   dealId?: string;
 }
 
+export type BaseFilter = "all" | Base;
+
 // Activity feed item
 export interface Activity {
   id: string;

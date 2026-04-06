@@ -204,16 +204,18 @@ export default function SalesPage() {
             </SelectContent>
           </Select>
 
-          <Select value={baseFilter} onValueChange={setBaseFilter}>
-            <SelectTrigger className="w-[160px] bg-white">
-              <SelectValue placeholder="База" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Все базы</SelectItem>
-              <SelectItem value="chirchik">Чирчик</SelectItem>
-              <SelectItem value="akhangaran">Ахангаран</SelectItem>
-            </SelectContent>
-          </Select>
+          {selectedBase === "all" && (
+            <Select value={baseFilter} onValueChange={setBaseFilter}>
+              <SelectTrigger className="w-[160px] bg-white">
+                <SelectValue placeholder="База" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Все базы</SelectItem>
+                <SelectItem value="chirchik">Чирчик</SelectItem>
+                <SelectItem value="akhangaran">Ахангаран</SelectItem>
+              </SelectContent>
+            </Select>
+          )}
 
           <Select value={fuelFilter} onValueChange={setFuelFilter}>
             <SelectTrigger className="w-[160px] bg-white">
