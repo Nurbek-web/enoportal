@@ -153,15 +153,15 @@ export default function ExpensesPage() {
             return (
               <div
                 key={card.label}
-                className="rounded-2xl border border-slate-200/60 bg-white p-5 shadow-sm shadow-slate-950/[0.03]"
+                className="rounded-2xl border border-stone-200/50 bg-white p-5 shadow-sm shadow-stone-900/[0.04]"
               >
                 <div className="flex items-center gap-3">
                   <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${card.iconBg}`}>
                     <Icon className={`h-5 w-5 ${card.iconColor}`} />
                   </div>
                   <div>
-                    <p className="text-xs text-slate-500">{card.label}</p>
-                    <p className="text-lg font-semibold text-slate-900">{card.value}</p>
+                    <p className="text-xs text-stone-500">{card.label}</p>
+                    <p className="text-lg font-semibold text-stone-900">{card.value}</p>
                   </div>
                 </div>
               </div>
@@ -171,41 +171,41 @@ export default function ExpensesPage() {
       </MotionItem>
 
       <MotionItem>
-        <div className="rounded-2xl border border-slate-200/60 bg-white shadow-sm shadow-slate-950/[0.03]">
+        <div className="rounded-2xl border border-stone-200/50 bg-white shadow-sm shadow-stone-900/[0.04]">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow className="border-b border-slate-100 hover:bg-transparent">
-                  <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500">№</TableHead>
-                  <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500">Дата</TableHead>
-                  <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500">Оператор</TableHead>
-                  <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500 text-right">Сумма</TableHead>
-                  <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500">Тип</TableHead>
-                  <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500">Описание</TableHead>
-                  <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500">Статус</TableHead>
+                <TableRow className="border-b border-stone-100 hover:bg-transparent">
+                  <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">№</TableHead>
+                  <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Дата</TableHead>
+                  <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Оператор</TableHead>
+                  <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500 text-right">Сумма</TableHead>
+                  <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Тип</TableHead>
+                  <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Описание</TableHead>
+                  <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Статус</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {expenseList.map((exp, idx) => {
                   const op = operatorMap.get(exp.operatorId);
                   return (
-                    <TableRow key={exp.id} className="border-b border-slate-100">
-                      <TableCell className="font-medium text-slate-600">{idx + 1}</TableCell>
-                      <TableCell className="tabular-nums text-slate-600">{formatDateShort(exp.date)}</TableCell>
-                      <TableCell className="font-medium text-slate-900">{op?.name ?? "—"}</TableCell>
-                      <TableCell className="text-right tabular-nums text-slate-700">{formatCurrency(exp.amount)}</TableCell>
+                    <TableRow key={exp.id} className="border-b border-stone-100">
+                      <TableCell className="font-medium text-stone-600">{idx + 1}</TableCell>
+                      <TableCell className="tabular-nums text-stone-600">{formatDateShort(exp.date)}</TableCell>
+                      <TableCell className="font-medium text-stone-900">{op?.name ?? "—"}</TableCell>
+                      <TableCell className="text-right tabular-nums text-stone-700">{formatCurrency(exp.amount)}</TableCell>
                       <TableCell>
                         <span
                           className={`inline-flex items-center px-2.5 py-0.5 text-xs font-medium rounded-full ${
                             exp.type === "urgent"
                               ? "bg-rose-50 text-rose-700"
-                              : "bg-slate-100 text-slate-600"
+                              : "bg-stone-100 text-stone-600"
                           }`}
                         >
                           {exp.type === "urgent" ? "Срочные" : "Наличные"}
                         </span>
                       </TableCell>
-                      <TableCell className="max-w-[200px] truncate text-slate-600">{exp.description}</TableCell>
+                      <TableCell className="max-w-[200px] truncate text-stone-600">{exp.description}</TableCell>
                       <TableCell><StatusBadge status={exp.status} /></TableCell>
                     </TableRow>
                   );
@@ -225,7 +225,7 @@ export default function ExpensesPage() {
 
           <div className="mt-2 space-y-4">
             <div className="space-y-1.5">
-              <label className="text-sm font-medium text-slate-700">Оператор</label>
+              <label className="text-sm font-medium text-stone-700">Оператор</label>
               <Select value={operatorId} onValueChange={setOperatorId}>
                 <SelectTrigger className="bg-white">
                   <SelectValue placeholder="Выберите оператора" />
@@ -239,7 +239,7 @@ export default function ExpensesPage() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-sm font-medium text-slate-700">Сумма (сум)</label>
+              <label className="text-sm font-medium text-stone-700">Сумма (сум)</label>
               <Input
                 type="number"
                 min={0}
@@ -251,7 +251,7 @@ export default function ExpensesPage() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-sm font-medium text-slate-700">Тип расхода</label>
+              <label className="text-sm font-medium text-stone-700">Тип расхода</label>
               <Select
                 value={expenseType}
                 onValueChange={(v) => setExpenseType(v as ExpenseType)}
@@ -267,7 +267,7 @@ export default function ExpensesPage() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-sm font-medium text-slate-700">Описание</label>
+              <label className="text-sm font-medium text-stone-700">Описание</label>
               <textarea
                 rows={3}
                 placeholder="Опишите расход..."
@@ -282,7 +282,7 @@ export default function ExpensesPage() {
             <button
               type="button"
               onClick={() => handleOpenChange(false)}
-              className="rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
+              className="rounded-lg border border-stone-200 bg-white px-4 py-2.5 text-sm font-medium text-stone-700 transition-colors hover:bg-stone-50"
             >
               Отмена
             </button>

@@ -33,13 +33,13 @@ export default function ManagerVolumeChart({ data }: ManagerVolumeChartProps) {
       >
         <CartesianGrid
           horizontal={false}
-          stroke="#e2e8f0"
+          stroke="#e7e5e4"
           strokeOpacity={0.5}
         />
         <XAxis
           type="number"
           tickFormatter={(v) => `${(v / 1000).toFixed(0)}`}
-          tick={{ fontSize: 12, fill: "#94a3b8" }}
+          tick={{ fontSize: 12, fill: "#a8a29e" }}
           tickLine={false}
           axisLine={false}
           unit=" тыс. л"
@@ -48,17 +48,17 @@ export default function ManagerVolumeChart({ data }: ManagerVolumeChartProps) {
           type="category"
           dataKey="name"
           width={130}
-          tick={{ fontSize: 12, fill: "#94a3b8" }}
+          tick={{ fontSize: 12, fill: "#a8a29e" }}
           tickLine={false}
           axisLine={false}
         />
         <Tooltip
-          cursor={{ fill: "#f1f5f9" }}
+          cursor={{ fill: "#f5f5f4" }}
           content={({ active, payload }) => {
             if (!active || !payload?.length) return null;
             const item = payload[0].payload as ManagerStats;
             return (
-              <div className="rounded-xl border border-slate-200 bg-white px-3 py-2 shadow-md text-xs text-slate-700">
+              <div className="rounded-xl border border-stone-200 bg-white px-3 py-2 shadow-md text-xs text-stone-700">
                 <p className="font-medium mb-1">{item.name}</p>
                 <p>{formatNumber(item.volume)} л</p>
               </div>

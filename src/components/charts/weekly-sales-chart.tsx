@@ -27,9 +27,9 @@ function CustomTooltip({
 }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-lg bg-white px-4 py-3 shadow-lg border border-slate-100">
-      <p className="text-xs font-medium text-slate-500">{label}</p>
-      <p className="mt-1 text-sm font-semibold text-slate-900">
+    <div className="rounded-lg bg-white px-4 py-3 shadow-lg border border-stone-100">
+      <p className="text-xs font-medium text-stone-500">{label}</p>
+      <p className="mt-1 text-sm font-semibold text-stone-900">
         {formatNumber(payload[0].value)} л
       </p>
     </div>
@@ -50,15 +50,15 @@ export default function WeeklySalesChart({ data }: WeeklySalesChartProps) {
             <stop offset="100%" stopColor="#3b82f6" stopOpacity={0.4} />
           </linearGradient>
         </defs>
-        <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+        <CartesianGrid strokeDasharray="3 3" stroke="#f5f5f4" vertical={false} />
         <XAxis
           dataKey="label"
-          tick={{ fontSize: 12, fill: "#94a3b8" }}
+          tick={{ fontSize: 12, fill: "#a8a29e" }}
           axisLine={false}
           tickLine={false}
         />
         <YAxis
-          tick={{ fontSize: 12, fill: "#94a3b8" }}
+          tick={{ fontSize: 12, fill: "#a8a29e" }}
           axisLine={false}
           tickLine={false}
           tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`}

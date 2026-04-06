@@ -22,9 +22,9 @@ function CustomTooltip({
 }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-xl border border-slate-200/60 bg-white px-4 py-3 shadow-lg shadow-slate-950/[0.06]">
-      <p className="mb-1 text-xs font-medium text-slate-500">{label}</p>
-      <p className="text-sm font-semibold text-slate-900">
+    <div className="rounded-xl border border-stone-200/50 bg-white px-4 py-3 shadow-lg shadow-stone-900/[0.04]">
+      <p className="mb-1 text-xs font-medium text-stone-500">{label}</p>
+      <p className="text-sm font-semibold text-stone-900">
         {formatVolume(payload[0].value)}
       </p>
     </div>
@@ -50,18 +50,18 @@ export default function ClientVolumeChart({ data }: ClientVolumeChartProps) {
         </defs>
         <CartesianGrid
           strokeDasharray="3 3"
-          stroke="#e2e8f0"
+          stroke="#e7e5e4"
           vertical={false}
         />
         <XAxis
           dataKey="date"
-          tick={{ fontSize: 10, fill: "#94a3b8" }}
+          tick={{ fontSize: 10, fill: "#a8a29e" }}
           axisLine={false}
           tickLine={false}
           interval="preserveStartEnd"
         />
         <YAxis
-          tick={{ fontSize: 10, fill: "#94a3b8" }}
+          tick={{ fontSize: 10, fill: "#a8a29e" }}
           axisLine={false}
           tickLine={false}
           tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`}

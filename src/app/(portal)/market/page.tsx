@@ -103,10 +103,10 @@ export default function MarketPage() {
             return (
               <div
                 key={card.fuel}
-                className="rounded-2xl border border-slate-200/60 bg-white p-5 shadow-sm shadow-slate-950/[0.03]"
+                className="rounded-2xl border border-stone-200/50 bg-white p-5 shadow-sm shadow-stone-900/[0.04]"
               >
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-base font-semibold text-slate-900">{card.fuel}</span>
+                  <span className="text-base font-semibold text-stone-900">{card.fuel}</span>
                   <div
                     className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${
                       card.isLower
@@ -125,12 +125,12 @@ export default function MarketPage() {
 
                 <div className="grid grid-cols-2 gap-4 mb-3">
                   <div>
-                    <p className="text-xs text-slate-500">Ваша цена</p>
-                    <p className="text-lg font-semibold text-slate-900">{formatCurrency(card.enoPrice)}</p>
+                    <p className="text-xs text-stone-500">Ваша цена</p>
+                    <p className="text-lg font-semibold text-stone-900">{formatCurrency(card.enoPrice)}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-slate-500">Среднерыночная</p>
-                    <p className="text-lg font-semibold text-slate-900">{formatCurrency(card.marketAvg)}</p>
+                    <p className="text-xs text-stone-500">Среднерыночная</p>
+                    <p className="text-lg font-semibold text-stone-900">{formatCurrency(card.marketAvg)}</p>
                   </div>
                 </div>
 
@@ -144,18 +144,18 @@ export default function MarketPage() {
       </MotionItem>
 
       <MotionItem>
-        <div className="rounded-2xl border border-slate-200/60 bg-white p-5 shadow-sm shadow-slate-950/[0.03]">
+        <div className="rounded-2xl border border-stone-200/50 bg-white p-5 shadow-sm shadow-stone-900/[0.04]">
           <div className="mb-5">
-            <h2 className="text-sm font-semibold text-slate-900">Динамика цен за 12 недель</h2>
-            <p className="text-xs text-slate-500 mt-0.5">Средние по всем регионам</p>
+            <h2 className="text-sm font-semibold text-stone-900">Динамика цен за 12 недель</h2>
+            <p className="text-xs text-stone-500 mt-0.5">Средние по всем регионам</p>
           </div>
           <MarketPriceChart data={chartData} />
           <div className="flex items-center justify-center gap-6 mt-4">
-            <div className="flex items-center gap-2 text-sm text-slate-600">
+            <div className="flex items-center gap-2 text-sm text-stone-600">
               <span className="h-2.5 w-2.5 rounded-full bg-blue-500" />
               AI-92
             </div>
-            <div className="flex items-center gap-2 text-sm text-slate-600">
+            <div className="flex items-center gap-2 text-sm text-stone-600">
               <span className="h-2.5 w-2.5 rounded-full bg-violet-500" />
               AI-95
             </div>
@@ -164,25 +164,25 @@ export default function MarketPage() {
       </MotionItem>
 
       <MotionItem>
-        <div className="rounded-2xl border border-slate-200/60 bg-white shadow-sm shadow-slate-950/[0.03]">
-          <div className="px-5 py-4 border-b border-slate-100">
-            <h2 className="text-sm font-semibold text-slate-900">Цены по регионам</h2>
-            <p className="text-xs text-slate-500 mt-0.5">Последняя неделя</p>
+        <div className="rounded-2xl border border-stone-200/50 bg-white shadow-sm shadow-stone-900/[0.04]">
+          <div className="px-5 py-4 border-b border-stone-100">
+            <h2 className="text-sm font-semibold text-stone-900">Цены по регионам</h2>
+            <p className="text-xs text-stone-500 mt-0.5">Последняя неделя</p>
           </div>
           <Table>
             <TableHeader>
-              <TableRow className="border-b border-slate-100 hover:bg-transparent">
-                <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500">Регион</TableHead>
-                <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500 text-right">АИ-92</TableHead>
-                <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500 text-right">АИ-95</TableHead>
+              <TableRow className="border-b border-stone-100 hover:bg-transparent">
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Регион</TableHead>
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500 text-right">АИ-92</TableHead>
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500 text-right">АИ-95</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {regionalPrices.map((row) => (
-                <TableRow key={row.region} className="border-b border-slate-100">
-                  <TableCell className="font-medium text-slate-900">{row.region}</TableCell>
-                  <TableCell className="text-right tabular-nums text-slate-700">{formatCurrency(row.ai92)}</TableCell>
-                  <TableCell className="text-right tabular-nums text-slate-700">{formatCurrency(row.ai95)}</TableCell>
+                <TableRow key={row.region} className="border-b border-stone-100">
+                  <TableCell className="font-medium text-stone-900">{row.region}</TableCell>
+                  <TableCell className="text-right tabular-nums text-stone-700">{formatCurrency(row.ai92)}</TableCell>
+                  <TableCell className="text-right tabular-nums text-stone-700">{formatCurrency(row.ai95)}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

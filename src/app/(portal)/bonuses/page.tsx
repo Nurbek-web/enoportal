@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import { MotionContainer, MotionItem } from "@/components/shared/motion-container";
 import { PageHeader } from "@/components/shared/page-header";
+import { MiniKpiCard } from "@/components/shared/mini-kpi-card";
 import {
   Select,
   SelectContent,
@@ -117,34 +118,19 @@ export default function BonusesPage() {
 
       <MotionItem>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm shadow-slate-950/[0.03] p-5">
-            <p className="text-sm text-slate-500">Общий объём продаж</p>
-            <p className="mt-1 text-2xl font-semibold tracking-tight text-slate-900">
-              {formatVolume(totals.totalVolume)}
-            </p>
-          </div>
-          <div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm shadow-slate-950/[0.03] p-5">
-            <p className="text-sm text-slate-500">Общий бонус</p>
-            <p className="mt-1 text-2xl font-semibold tracking-tight text-slate-900">
-              {formatCurrency(totals.totalBonus)}
-            </p>
-          </div>
-          <div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm shadow-slate-950/[0.03] p-5">
-            <p className="text-sm text-slate-500">Лидер продаж</p>
-            <p className="mt-1 text-2xl font-semibold tracking-tight text-slate-900">
-              {totals.topManager}
-            </p>
-          </div>
+          <MiniKpiCard label="Общий объём продаж" value={formatVolume(totals.totalVolume)} />
+          <MiniKpiCard label="Общий бонус" value={formatCurrency(totals.totalBonus)} />
+          <MiniKpiCard label="Лидер продаж" value={totals.topManager} />
         </div>
       </MotionItem>
 
       <MotionItem>
-        <div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm shadow-slate-950/[0.03] p-5">
-          <p className="text-sm font-medium text-slate-700 mb-4">
+        <div className="bg-white rounded-2xl border border-stone-200/50 shadow-sm shadow-stone-900/[0.04] p-5">
+          <p className="text-sm font-medium text-stone-700 mb-4">
             Объём продаж по менеджерам
           </p>
           {managerStats.every((m) => m.volume === 0) ? (
-            <div className="flex items-center justify-center h-[220px] text-sm text-slate-400">
+            <div className="flex items-center justify-center h-[220px] text-sm text-stone-400">
               Нет данных за этот период
             </div>
           ) : (
@@ -154,23 +140,23 @@ export default function BonusesPage() {
       </MotionItem>
 
       <MotionItem>
-        <div className="rounded-2xl border border-slate-200/60 bg-white shadow-sm shadow-slate-950/[0.03]">
+        <div className="rounded-2xl border border-stone-200/50 bg-white shadow-sm shadow-stone-900/[0.04]">
           <Table>
             <TableHeader>
-              <TableRow className="border-b border-slate-100 hover:bg-transparent">
-                <TableHead className="w-12 text-xs font-medium uppercase tracking-wider text-slate-500">
+              <TableRow className="border-b border-stone-100 hover:bg-transparent">
+                <TableHead className="w-12 text-xs font-medium uppercase tracking-wider text-stone-500">
                   №
                 </TableHead>
-                <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500">
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">
                   Менеджер
                 </TableHead>
-                <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500 text-right">
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500 text-right">
                   Объём продаж (л)
                 </TableHead>
-                <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500 text-right">
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500 text-right">
                   Кол-во сделок
                 </TableHead>
-                <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500 text-right">
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500 text-right">
                   Бонус
                 </TableHead>
               </TableRow>
@@ -181,23 +167,23 @@ export default function BonusesPage() {
                   key={mgr.id}
                   className={
                     idx === 0
-                      ? "border-b border-slate-100 bg-amber-50/50"
-                      : "border-b border-slate-100"
+                      ? "border-b border-stone-100 bg-amber-50/50"
+                      : "border-b border-stone-100"
                   }
                 >
-                  <TableCell className="font-medium text-slate-600">
+                  <TableCell className="font-medium text-stone-600">
                     {idx + 1}
                   </TableCell>
-                  <TableCell className="font-medium text-slate-900">
+                  <TableCell className="font-medium text-stone-900">
                     {mgr.name}
                   </TableCell>
-                  <TableCell className="text-right tabular-nums text-slate-700">
+                  <TableCell className="text-right tabular-nums text-stone-700">
                     {formatNumber(mgr.volume)}
                   </TableCell>
-                  <TableCell className="text-right tabular-nums text-slate-700">
+                  <TableCell className="text-right tabular-nums text-stone-700">
                     {mgr.dealCount}
                   </TableCell>
-                  <TableCell className="text-right tabular-nums font-medium text-slate-900">
+                  <TableCell className="text-right tabular-nums font-medium text-stone-900">
                     {formatCurrency(mgr.bonus)}
                   </TableCell>
                 </TableRow>

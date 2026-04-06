@@ -29,13 +29,13 @@ function CustomTooltip({
 }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-xl border border-slate-200/60 bg-white px-4 py-3 shadow-lg shadow-slate-950/[0.06]">
-      <p className="mb-2 text-xs font-medium text-slate-500">{label}</p>
+    <div className="rounded-xl border border-stone-200/50 bg-white px-4 py-3 shadow-lg shadow-stone-900/[0.04]">
+      <p className="mb-2 text-xs font-medium text-stone-500">{label}</p>
       {payload.map((entry) => (
         <div key={entry.dataKey} className="flex items-center gap-2 py-0.5">
           <span className="h-2 w-2 rounded-full" style={{ backgroundColor: entry.color }} />
-          <span className="text-xs text-slate-600">{entry.name}:</span>
-          <span className="text-xs font-semibold text-slate-900">{entry.value}%</span>
+          <span className="text-xs text-stone-600">{entry.name}:</span>
+          <span className="text-xs font-semibold text-stone-900">{entry.value}%</span>
         </div>
       ))}
     </div>
@@ -58,17 +58,17 @@ export default function FuelLevelsChart({ data }: FuelLevelsChartProps) {
             </linearGradient>
           ))}
         </defs>
-        <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
+        <CartesianGrid strokeDasharray="3 3" stroke="#e7e5e4" vertical={false} />
         <XAxis
           dataKey="date"
-          tick={{ fontSize: 11, fill: "#94a3b8" }}
+          tick={{ fontSize: 11, fill: "#a8a29e" }}
           axisLine={false}
           tickLine={false}
           interval="preserveStartEnd"
         />
         <YAxis
           domain={[0, 100]}
-          tick={{ fontSize: 11, fill: "#94a3b8" }}
+          tick={{ fontSize: 11, fill: "#a8a29e" }}
           axisLine={false}
           tickLine={false}
           tickFormatter={(v) => `${v}%`}

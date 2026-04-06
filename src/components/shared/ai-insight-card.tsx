@@ -13,9 +13,9 @@ export function AiInsightCard({ title, children }: AiInsightCardProps) {
         <span className="bg-violet-100 text-violet-700 text-xs font-medium px-2 py-0.5 rounded-full">
           ИИ-рекомендация
         </span>
-        <span className="text-sm font-medium text-slate-800">{title}</span>
+        <span className="text-sm font-medium text-stone-800">{title}</span>
       </div>
-      <div className="text-sm text-slate-600">{children}</div>
+      <div className="text-sm text-stone-600">{children}</div>
     </div>
   );
 }

@@ -104,18 +104,18 @@ export default function ReportsPage() {
       </MotionItem>
 
       <MotionItem>
-        <div className="rounded-2xl border border-slate-200/60 bg-white shadow-sm shadow-slate-950/[0.03]">
+        <div className="rounded-2xl border border-stone-200/50 bg-white shadow-sm shadow-stone-900/[0.04]">
           <Table>
             <TableHeader>
-              <TableRow className="border-b border-slate-100 hover:bg-transparent">
-                <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500">№</TableHead>
-                <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500">Дата</TableHead>
-                <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500">Оператор</TableHead>
-                <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500">База</TableHead>
-                <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500">Топливо</TableHead>
-                <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500 text-right">Уровень %</TableHead>
-                <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500">Статус</TableHead>
-                <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500">Telegram</TableHead>
+              <TableRow className="border-b border-stone-100 hover:bg-transparent">
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">№</TableHead>
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Дата</TableHead>
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Оператор</TableHead>
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">База</TableHead>
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Топливо</TableHead>
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500 text-right">Уровень %</TableHead>
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Статус</TableHead>
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Telegram</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -124,15 +124,15 @@ export default function ReportsPage() {
                 return (
                   <TableRow
                     key={report.id}
-                    className="cursor-pointer border-b border-slate-100 hover:bg-blue-50/50"
+                    className="cursor-pointer border-b border-stone-100 hover:bg-blue-50/50"
                     onClick={() => setSelectedReport(report)}
                   >
-                    <TableCell className="font-medium text-slate-600">{idx + 1}</TableCell>
-                    <TableCell className="text-slate-600">{formatDateShort(report.date)}</TableCell>
-                    <TableCell className="font-medium text-slate-900">{operator?.name ?? "—"}</TableCell>
-                    <TableCell className="text-slate-600">{BASE_LABELS[report.base]}</TableCell>
-                    <TableCell className="text-slate-600">{report.fuelType}</TableCell>
-                    <TableCell className="text-right tabular-nums text-slate-700">{report.fuelLevel}%</TableCell>
+                    <TableCell className="font-medium text-stone-600">{idx + 1}</TableCell>
+                    <TableCell className="text-stone-600">{formatDateShort(report.date)}</TableCell>
+                    <TableCell className="font-medium text-stone-900">{operator?.name ?? "—"}</TableCell>
+                    <TableCell className="text-stone-600">{BASE_LABELS[report.base]}</TableCell>
+                    <TableCell className="text-stone-600">{report.fuelType}</TableCell>
+                    <TableCell className="text-right tabular-nums text-stone-700">{report.fuelLevel}%</TableCell>
                     <TableCell><StatusBadge status={report.status} /></TableCell>
                     <TableCell>
                       {report.telegramSynced && (
@@ -147,7 +147,7 @@ export default function ReportsPage() {
               })}
               {filteredReports.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={8} className="py-12 text-center text-sm text-slate-400">
+                  <TableCell colSpan={8} className="py-12 text-center text-sm text-stone-400">
                     Отчёты не найдены
                   </TableCell>
                 </TableRow>
@@ -196,8 +196,8 @@ function ReportDetailSheet({
         </SheetHeader>
 
         <div className="mt-6 space-y-6">
-          <div className="flex h-40 w-full items-center justify-center rounded-xl bg-slate-100">
-            <div className="flex flex-col items-center gap-2 text-slate-400">
+          <div className="flex h-40 w-full items-center justify-center rounded-xl bg-stone-100">
+            <div className="flex flex-col items-center gap-2 text-stone-400">
               <Camera className="h-8 w-8" />
               <span className="text-xs">Фото уровня топлива</span>
             </div>
@@ -215,7 +215,7 @@ function ReportDetailSheet({
               label="Уровень топлива"
               value={
                 <div className="flex items-center gap-3">
-                  <div className="h-2 w-24 overflow-hidden rounded-full bg-slate-200">
+                  <div className="h-2 w-24 overflow-hidden rounded-full bg-stone-200">
                     <div
                       className="h-full rounded-full bg-blue-500 transition-all"
                       style={{ width: `${report.fuelLevel}%` }}
@@ -246,7 +246,7 @@ function ReportDetailSheet({
                     Синхронизировано
                   </span>
                 ) : (
-                  <span className="text-xs text-slate-400">Не синхронизировано</span>
+                  <span className="text-xs text-stone-400">Не синхронизировано</span>
                 )
               }
             />
@@ -260,7 +260,7 @@ function ReportDetailSheet({
 function DetailSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <h3 className="mb-3 text-xs font-medium uppercase tracking-wider text-slate-500">{title}</h3>
+      <h3 className="mb-3 text-xs font-medium uppercase tracking-wider text-stone-500">{title}</h3>
       <dl className="grid grid-cols-[140px_1fr] gap-x-4 gap-y-2.5">{children}</dl>
     </div>
   );
@@ -275,8 +275,8 @@ function DetailRow({
 }) {
   return (
     <>
-      <dt className="text-sm text-slate-500">{label}</dt>
-      <dd className="text-sm text-slate-900">{value}</dd>
+      <dt className="text-sm text-stone-500">{label}</dt>
+      <dd className="text-sm text-stone-900">{value}</dd>
     </>
   );
 }

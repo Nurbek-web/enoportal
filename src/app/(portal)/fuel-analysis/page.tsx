@@ -61,18 +61,18 @@ export default function FuelAnalysisPage() {
             return (
               <div
                 key={`${item.base}-${item.fuelType}`}
-                className="bg-white rounded-2xl border border-slate-200/60 shadow-sm shadow-slate-950/[0.03] p-5"
+                className="bg-white rounded-2xl border border-stone-200/50 shadow-sm shadow-stone-900/[0.04] p-5"
               >
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
-                    <Droplets className="h-4 w-4 text-slate-400" />
-                    <span className="text-sm font-medium text-slate-800">
+                    <Droplets className="h-4 w-4 text-stone-400" />
+                    <span className="text-sm font-medium text-stone-800">
                       {baseName} — {item.fuelType}
                     </span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <span className={`h-2 w-2 rounded-full ${cfg.dot}`} />
-                    <span className="text-xs font-medium text-slate-500">{cfg.label}</span>
+                    <span className="text-xs font-medium text-stone-500">{cfg.label}</span>
                   </div>
                 </div>
 
@@ -80,14 +80,14 @@ export default function FuelAnalysisPage() {
                   {item.level}%
                 </div>
 
-                <div className="h-2 w-full rounded-full bg-slate-100 mb-3">
+                <div className="h-2 w-full rounded-full bg-stone-100 mb-3">
                   <div
                     className={`h-full rounded-full ${cfg.bg} transition-all`}
                     style={{ width: `${item.level}%` }}
                   />
                 </div>
 
-                <div className="flex items-center justify-between text-xs text-slate-500">
+                <div className="flex items-center justify-between text-xs text-stone-500">
                   <span>Осталось: {formatNumber(item.volumeRemaining)} литров</span>
                   <span>Хватит на ~{item.daysRemaining} дней</span>
                 </div>
@@ -98,8 +98,8 @@ export default function FuelAnalysisPage() {
       </MotionItem>
 
       <MotionItem>
-        <div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm shadow-slate-950/[0.03] p-5">
-          <h2 className="text-base font-semibold text-slate-800 mb-4">
+        <div className="bg-white rounded-2xl border border-stone-200/50 shadow-sm shadow-stone-900/[0.04] p-5">
+          <h2 className="text-base font-semibold text-stone-800 mb-4">
             Динамика остатков топлива (30 дней)
           </h2>
           <div className="h-80 min-h-[320px] w-full min-w-0">

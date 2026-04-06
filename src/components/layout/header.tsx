@@ -29,10 +29,10 @@ export function Header() {
   const [base, setBase] = useState("all");
 
   return (
-    <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 shrink-0">
+    <header className="h-16 bg-white border-b border-stone-200 flex items-center justify-between px-6 shrink-0">
       <div className="flex items-center gap-4">
         <Select value={base} onValueChange={setBase}>
-          <SelectTrigger className="w-[180px] h-9 text-sm border-slate-200">
+          <SelectTrigger className="w-[180px] h-9 text-sm border-stone-200">
             <SelectValue placeholder="Все базы" />
           </SelectTrigger>
           <SelectContent>
@@ -47,19 +47,19 @@ export function Header() {
         {/* Notifications */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="relative p-2 rounded-lg hover:bg-slate-100 transition-colors">
-              <Bell className="h-5 w-5 text-slate-500" />
+            <button className="relative p-2 rounded-lg hover:bg-stone-100 transition-colors">
+              <Bell className="h-5 w-5 text-stone-500" />
               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full" />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-80">
-            <div className="px-3 py-2 border-b border-slate-100">
-              <p className="text-sm font-medium text-slate-900">Уведомления</p>
+            <div className="px-3 py-2 border-b border-stone-100">
+              <p className="text-sm font-medium text-stone-900">Уведомления</p>
             </div>
             {notifications.map((n) => (
               <DropdownMenuItem key={n.id} className="flex flex-col items-start gap-0.5 px-3 py-2.5">
-                <span className="text-sm text-slate-700">{n.text}</span>
-                <span className="text-xs text-slate-400">{n.time}</span>
+                <span className="text-sm text-stone-700">{n.text}</span>
+                <span className="text-xs text-stone-400">{n.time}</span>
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>
@@ -68,17 +68,17 @@ export function Header() {
         {/* User */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-slate-100 transition-colors">
+            <button className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-stone-100 transition-colors">
               <Avatar className="h-8 w-8">
                 <AvatarFallback className="bg-blue-600 text-white text-xs font-medium">
                   АД
                 </AvatarFallback>
               </Avatar>
               <div className="hidden sm:block text-left">
-                <p className="text-sm font-medium text-slate-900">Админ</p>
-                <p className="text-xs text-slate-400">Руководство</p>
+                <p className="text-sm font-medium text-stone-900">Админ</p>
+                <p className="text-xs text-stone-400">Руководство</p>
               </div>
-              <ChevronDown className="h-4 w-4 text-slate-400 hidden sm:block" />
+              <ChevronDown className="h-4 w-4 text-stone-400 hidden sm:block" />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">

@@ -7,7 +7,7 @@ interface StatusBadgeProps {
 }
 
 export function StatusBadge({ status, className }: StatusBadgeProps) {
-  const colors = STATUS_COLORS[status] || { bg: "bg-slate-100", text: "text-slate-600" };
+  const colors = STATUS_COLORS[status] || { bg: "bg-stone-100", text: "text-stone-600" };
   const label = STATUS_LABELS[status] || status;
 
   return (

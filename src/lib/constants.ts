@@ -42,18 +42,18 @@ export const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
   new: { bg: 'bg-amber-50', text: 'text-amber-700' },
   // Operators
   on_shift: { bg: 'bg-emerald-50', text: 'text-emerald-700' },
-  off_shift: { bg: 'bg-slate-100', text: 'text-slate-600' },
+  off_shift: { bg: 'bg-stone-100', text: 'text-stone-600' },
   handover: { bg: 'bg-blue-50', text: 'text-blue-700' },
   // Tanker segments
   loyal: { bg: 'bg-emerald-50', text: 'text-emerald-700' },
-  'one-time': { bg: 'bg-slate-100', text: 'text-slate-600' },
+  'one-time': { bg: 'bg-stone-100', text: 'text-stone-600' },
   profitable: { bg: 'bg-blue-50', text: 'text-blue-700' },
   unprofitable: { bg: 'bg-rose-50', text: 'text-rose-700' },
   // Client segments
   vip: { bg: 'bg-violet-50', text: 'text-violet-700' },
   promising: { bg: 'bg-blue-50', text: 'text-blue-700' },
   declining: { bg: 'bg-rose-50', text: 'text-rose-700' },
-  novice: { bg: 'bg-slate-100', text: 'text-slate-600' },
+  novice: { bg: 'bg-stone-100', text: 'text-stone-600' },
   // Trips
   booked: { bg: 'bg-emerald-50', text: 'text-emerald-700' },
   planned: { bg: 'bg-amber-50', text: 'text-amber-700' },

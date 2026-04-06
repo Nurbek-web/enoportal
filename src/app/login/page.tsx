@@ -34,27 +34,27 @@ export default function LoginPage() {
           <h1 className="text-2xl font-semibold text-white tracking-tight">
             ENO Portal
           </h1>
-          <p className="text-sm text-slate-400 mt-1">Etive Neft Oil</p>
+          <p className="text-sm text-stone-400 mt-1">Etive Neft Oil</p>
         </div>
 
         {/* Form */}
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label className="text-sm text-slate-300">Email</Label>
+            <Label className="text-sm text-stone-300">Email</Label>
             <Input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="bg-white/10 border-white/20 text-white placeholder:text-slate-400 focus:border-blue-400 focus:ring-blue-400/20"
+              className="bg-white/10 border-white/20 text-white placeholder:text-stone-400 focus:border-blue-400 focus:ring-blue-400/20"
             />
           </div>
           <div className="space-y-2">
-            <Label className="text-sm text-slate-300">Пароль</Label>
+            <Label className="text-sm text-stone-300">Пароль</Label>
             <Input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="bg-white/10 border-white/20 text-white placeholder:text-slate-400 focus:border-blue-400 focus:ring-blue-400/20"
+              className="bg-white/10 border-white/20 text-white placeholder:text-stone-400 focus:border-blue-400 focus:ring-blue-400/20"
             />
           </div>
 
@@ -71,7 +71,7 @@ export default function LoginPage() {
               <div className="w-full border-t border-white/10" />
             </div>
             <div className="relative flex justify-center text-xs">
-              <span className="bg-transparent px-2 text-slate-500">или</span>
+              <span className="bg-transparent px-2 text-stone-500">или</span>
             </div>
           </div>
 
@@ -79,13 +79,13 @@ export default function LoginPage() {
             variant="ghost"
             onClick={handleDemo}
             disabled={loading}
-            className="w-full h-10 text-slate-300 hover:text-white hover:bg-white/10 transition-all"
+            className="w-full h-10 text-stone-300 hover:text-white hover:bg-white/10 transition-all"
           >
             Демо доступ
           </Button>
         </div>
 
-        <p className="text-xs text-slate-500 text-center mt-6">
+        <p className="text-xs text-stone-500 text-center mt-6">
           © 2026 Etive Neft Oil. Все права защищены.
         </p>
       </div>

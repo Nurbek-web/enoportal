@@ -224,7 +224,7 @@ export default function SalesPage() {
           </Select>
 
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-400" />
             <Input
               placeholder="Поиск по клиенту..."
               value={searchQuery}
@@ -236,20 +236,20 @@ export default function SalesPage() {
       </MotionItem>
 
       <MotionItem>
-        <div className="rounded-2xl border border-slate-200/60 bg-white shadow-sm shadow-slate-950/[0.03]">
+        <div className="rounded-2xl border border-stone-200/50 bg-white shadow-sm shadow-stone-900/[0.04]">
           <Table>
             <TableHeader>
-              <TableRow className="border-b border-slate-100 hover:bg-transparent">
-                <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500">№</TableHead>
-                <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500">Дата</TableHead>
-                <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500">Клиент</TableHead>
-                <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500">База</TableHead>
-                <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500">Топливо</TableHead>
-                <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500 text-right">Объём (л)</TableHead>
-                <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500 text-right">Сумма</TableHead>
-                <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500 text-right">Маржа %</TableHead>
-                <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500">Статус</TableHead>
-                <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500">Менеджер</TableHead>
+              <TableRow className="border-b border-stone-100 hover:bg-transparent">
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">№</TableHead>
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Дата</TableHead>
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Клиент</TableHead>
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">База</TableHead>
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Топливо</TableHead>
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500 text-right">Объём (л)</TableHead>
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500 text-right">Сумма</TableHead>
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500 text-right">Маржа %</TableHead>
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Статус</TableHead>
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Менеджер</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -259,25 +259,25 @@ export default function SalesPage() {
                 return (
                   <TableRow
                     key={deal.id}
-                    className="cursor-pointer border-b border-slate-100 hover:bg-blue-50/50"
+                    className="cursor-pointer border-b border-stone-100 hover:bg-blue-50/50"
                     onClick={() => setSelectedDeal(deal)}
                   >
-                    <TableCell className="font-medium text-slate-600">{idx + 1}</TableCell>
-                    <TableCell className="text-slate-600">{formatDateShort(deal.date)}</TableCell>
-                    <TableCell className="font-medium text-slate-900">{client?.companyName ?? "—"}</TableCell>
-                    <TableCell className="text-slate-600">{BASE_LABELS[deal.base]}</TableCell>
-                    <TableCell className="text-slate-600">{deal.fuelType}</TableCell>
-                    <TableCell className="text-right tabular-nums text-slate-700">{formatNumber(deal.volume)}</TableCell>
-                    <TableCell className="text-right tabular-nums text-slate-700">{formatCurrency(deal.totalAmount)}</TableCell>
-                    <TableCell className="text-right tabular-nums text-slate-700">{formatPercent(deal.marginPercent)}</TableCell>
+                    <TableCell className="font-medium text-stone-600">{idx + 1}</TableCell>
+                    <TableCell className="text-stone-600">{formatDateShort(deal.date)}</TableCell>
+                    <TableCell className="font-medium text-stone-900">{client?.companyName ?? "—"}</TableCell>
+                    <TableCell className="text-stone-600">{BASE_LABELS[deal.base]}</TableCell>
+                    <TableCell className="text-stone-600">{deal.fuelType}</TableCell>
+                    <TableCell className="text-right tabular-nums text-stone-700">{formatNumber(deal.volume)}</TableCell>
+                    <TableCell className="text-right tabular-nums text-stone-700">{formatCurrency(deal.totalAmount)}</TableCell>
+                    <TableCell className="text-right tabular-nums text-stone-700">{formatPercent(deal.marginPercent)}</TableCell>
                     <TableCell><StatusBadge status={deal.status} /></TableCell>
-                    <TableCell className="text-slate-600">{manager?.name ?? "—"}</TableCell>
+                    <TableCell className="text-stone-600">{manager?.name ?? "—"}</TableCell>
                   </TableRow>
                 );
               })}
               {filteredDeals.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={10} className="py-12 text-center text-sm text-slate-400">
+                  <TableCell colSpan={10} className="py-12 text-center text-sm text-stone-400">
                     Сделки не найдены
                   </TableCell>
                 </TableRow>
@@ -402,8 +402,8 @@ export default function SalesPage() {
               </FormField>
             </div>
 
-            <div className="rounded-xl border border-slate-200/60 bg-slate-50 p-4 space-y-3">
-              <p className="text-xs font-medium uppercase tracking-wider text-slate-500">Расчёт</p>
+            <div className="rounded-xl border border-stone-200/50 bg-stone-50 p-4 space-y-3">
+              <p className="text-xs font-medium uppercase tracking-wider text-stone-500">Расчёт</p>
               <div className="grid grid-cols-2 gap-3">
                 <ComputedField label="Сумма сделки" value={formatCurrency(computed.totalAmount)} />
                 <ComputedField label="Себестоимость" value={formatCurrency(computed.costAmount)} />
@@ -525,7 +525,7 @@ function DealDetailSheet({
 function DetailSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <h3 className="mb-3 text-xs font-medium uppercase tracking-wider text-slate-500">{title}</h3>
+      <h3 className="mb-3 text-xs font-medium uppercase tracking-wider text-stone-500">{title}</h3>
       <dl className="grid grid-cols-[140px_1fr] gap-x-4 gap-y-2.5">{children}</dl>
     </div>
   );
@@ -544,10 +544,10 @@ function DetailRow({
 }) {
   return (
     <>
-      <dt className="text-sm text-slate-500">{label}</dt>
+      <dt className="text-sm text-stone-500">{label}</dt>
       <dd
         className={`text-sm ${
-          highlight ? "font-semibold text-emerald-600" : bold ? "font-semibold text-slate-900" : "text-slate-900"
+          highlight ? "font-semibold text-emerald-600" : bold ? "font-semibold text-stone-900" : "text-stone-900"
         }`}
       >
         {value}
@@ -559,7 +559,7 @@ function DetailRow({
 function FormField({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="space-y-1.5">
-      <label className="text-sm font-medium text-slate-700">{label}</label>
+      <label className="text-sm font-medium text-stone-700">{label}</label>
       {children}
     </div>
   );
@@ -576,8 +576,8 @@ function ComputedField({
 }) {
   return (
     <div>
-      <p className="text-xs text-slate-500">{label}</p>
-      <p className={`text-sm font-semibold ${highlight ? "text-emerald-600" : "text-slate-900"}`}>{value}</p>
+      <p className="text-xs text-stone-500">{label}</p>
+      <p className={`text-sm font-semibold ${highlight ? "text-emerald-600" : "text-stone-900"}`}>{value}</p>
     </div>
   );
 }

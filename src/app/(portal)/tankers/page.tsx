@@ -75,32 +75,32 @@ export default function TankersPage() {
           </TabsList>
 
           <TabsContent value="registry">
-            <div className="mt-4 rounded-2xl border border-slate-200/60 bg-white shadow-sm shadow-slate-950/[0.03]">
+            <div className="mt-4 rounded-2xl border border-stone-200/50 bg-white shadow-sm shadow-stone-900/[0.04]">
               <Table>
                 <TableHeader>
-                  <TableRow className="border-b border-slate-100 hover:bg-transparent">
-                    <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500">Номер авто</TableHead>
-                    <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500">Водитель</TableHead>
-                    <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500">Телефон</TableHead>
-                    <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500 text-right">Вместимость</TableHead>
-                    <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500 text-right">Рейсов</TableHead>
-                    <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500 text-right">Оплачено</TableHead>
-                    <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500">Сегмент</TableHead>
+                  <TableRow className="border-b border-stone-100 hover:bg-transparent">
+                    <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Номер авто</TableHead>
+                    <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Водитель</TableHead>
+                    <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Телефон</TableHead>
+                    <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500 text-right">Вместимость</TableHead>
+                    <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500 text-right">Рейсов</TableHead>
+                    <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500 text-right">Оплачено</TableHead>
+                    <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Сегмент</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {tankers.map((tanker) => (
                     <TableRow
                       key={tanker.id}
-                      className="cursor-pointer border-b border-slate-100 hover:bg-blue-50/50"
+                      className="cursor-pointer border-b border-stone-100 hover:bg-blue-50/50"
                       onClick={() => setSelectedTanker(tanker)}
                     >
-                      <TableCell className="font-medium text-slate-900">{tanker.plateNumber}</TableCell>
-                      <TableCell className="text-slate-600">{tanker.driverName}</TableCell>
-                      <TableCell className="text-slate-600">{tanker.driverPhone}</TableCell>
-                      <TableCell className="text-right tabular-nums text-slate-700">{formatNumber(tanker.capacity)} л</TableCell>
-                      <TableCell className="text-right tabular-nums text-slate-700">{tanker.tripCount}</TableCell>
-                      <TableCell className="text-right tabular-nums text-slate-700">{formatCurrency(tanker.totalPaid)}</TableCell>
+                      <TableCell className="font-medium text-stone-900">{tanker.plateNumber}</TableCell>
+                      <TableCell className="text-stone-600">{tanker.driverName}</TableCell>
+                      <TableCell className="text-stone-600">{tanker.driverPhone}</TableCell>
+                      <TableCell className="text-right tabular-nums text-stone-700">{formatNumber(tanker.capacity)} л</TableCell>
+                      <TableCell className="text-right tabular-nums text-stone-700">{tanker.tripCount}</TableCell>
+                      <TableCell className="text-right tabular-nums text-stone-700">{formatCurrency(tanker.totalPaid)}</TableCell>
                       <TableCell><StatusBadge status={tanker.segment} /></TableCell>
                     </TableRow>
                   ))}
@@ -110,15 +110,15 @@ export default function TankersPage() {
           </TabsContent>
 
           <TabsContent value="payments">
-            <div className="mt-4 rounded-2xl border border-slate-200/60 bg-white shadow-sm shadow-slate-950/[0.03]">
+            <div className="mt-4 rounded-2xl border border-stone-200/50 bg-white shadow-sm shadow-stone-900/[0.04]">
               <Table>
                 <TableHeader>
-                  <TableRow className="border-b border-slate-100 hover:bg-transparent">
-                    <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500">Дата</TableHead>
-                    <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500">Бензовоз</TableHead>
-                    <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500 text-right">Сумма</TableHead>
-                    <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500">Тип</TableHead>
-                    <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500">Привязка к сделке</TableHead>
+                  <TableRow className="border-b border-stone-100 hover:bg-transparent">
+                    <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Дата</TableHead>
+                    <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Бензовоз</TableHead>
+                    <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500 text-right">Сумма</TableHead>
+                    <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Тип</TableHead>
+                    <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Привязка к сделке</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -126,10 +126,10 @@ export default function TankersPage() {
                     const tanker = tankerMap.get(payment.tankerId);
                     const deal = payment.dealId ? dealMap.get(payment.dealId) : null;
                     return (
-                      <TableRow key={payment.id} className="border-b border-slate-100">
-                        <TableCell className="text-slate-600">{formatDateShort(payment.date)}</TableCell>
-                        <TableCell className="font-medium text-slate-900">{tanker?.plateNumber ?? "—"}</TableCell>
-                        <TableCell className="text-right tabular-nums text-slate-700">{formatCurrency(payment.amount)}</TableCell>
+                      <TableRow key={payment.id} className="border-b border-stone-100">
+                        <TableCell className="text-stone-600">{formatDateShort(payment.date)}</TableCell>
+                        <TableCell className="font-medium text-stone-900">{tanker?.plateNumber ?? "—"}</TableCell>
+                        <TableCell className="text-right tabular-nums text-stone-700">{formatCurrency(payment.amount)}</TableCell>
                         <TableCell>
                           <span
                             className={`inline-flex items-center px-2.5 py-0.5 text-xs font-medium rounded-full ${
@@ -141,7 +141,7 @@ export default function TankersPage() {
                             {payment.type === "cash" ? "Наличные" : "Банк"}
                           </span>
                         </TableCell>
-                        <TableCell className="text-slate-600">
+                        <TableCell className="text-stone-600">
                           {deal ? `Сделка ${deal.id.replace("deal-", "№")}` : "—"}
                         </TableCell>
                       </TableRow>
@@ -223,7 +223,7 @@ function TankerDetailSheet({
           <SheetTitle>{tanker.plateNumber}</SheetTitle>
           <SheetDescription className="flex flex-wrap items-center gap-2">
             <StatusBadge status={tanker.segment} />
-            <span className="text-slate-500">
+            <span className="text-stone-500">
               {tanker.tripCount} рейсов · {formatCurrency(tanker.totalPaid)} всего
             </span>
           </SheetDescription>
@@ -231,44 +231,44 @@ function TankerDetailSheet({
 
         <div className="mt-6 space-y-6">
           <div>
-            <h3 className="mb-3 text-xs font-medium uppercase tracking-wider text-slate-500">
+            <h3 className="mb-3 text-xs font-medium uppercase tracking-wider text-stone-500">
               Водитель и контакты
             </h3>
             <dl className="grid grid-cols-[120px_1fr] gap-x-4 gap-y-2.5">
-              <dt className="text-sm text-slate-500">Водитель</dt>
-              <dd className="text-sm text-slate-900">{tanker.driverName}</dd>
-              <dt className="text-sm text-slate-500">Телефон</dt>
-              <dd className="text-sm tabular-nums text-slate-900">{tanker.driverPhone}</dd>
-              <dt className="text-sm text-slate-500">Ёмкость</dt>
-              <dd className="text-sm text-slate-900">{formatNumber(tanker.capacity)} л</dd>
+              <dt className="text-sm text-stone-500">Водитель</dt>
+              <dd className="text-sm text-stone-900">{tanker.driverName}</dd>
+              <dt className="text-sm text-stone-500">Телефон</dt>
+              <dd className="text-sm tabular-nums text-stone-900">{tanker.driverPhone}</dd>
+              <dt className="text-sm text-stone-500">Ёмкость</dt>
+              <dd className="text-sm text-stone-900">{formatNumber(tanker.capacity)} л</dd>
             </dl>
           </div>
 
           <div>
-            <h3 className="mb-3 text-xs font-medium uppercase tracking-wider text-slate-500">
+            <h3 className="mb-3 text-xs font-medium uppercase tracking-wider text-stone-500">
               Оплаты ({payments.length})
             </h3>
-            <p className="mb-2 text-sm text-slate-600">
-              Сумма по списку: <span className="font-semibold text-slate-900">{formatCurrency(paymentsTotal)}</span>
+            <p className="mb-2 text-sm text-stone-600">
+              Сумма по списку: <span className="font-semibold text-stone-900">{formatCurrency(paymentsTotal)}</span>
             </p>
             {payments.length > 0 ? (
-              <div className="rounded-xl border border-slate-200/60 overflow-hidden">
+              <div className="rounded-xl border border-stone-200/50 overflow-hidden">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-slate-100 bg-slate-50/50">
-                      <th className="px-3 py-2 text-left text-xs font-medium text-slate-500">Дата</th>
-                      <th className="px-3 py-2 text-right text-xs font-medium text-slate-500">Сумма</th>
-                      <th className="px-3 py-2 text-left text-xs font-medium text-slate-500">Тип</th>
-                      <th className="px-3 py-2 text-left text-xs font-medium text-slate-500">Сделка</th>
+                    <tr className="border-b border-stone-100 bg-stone-50/50">
+                      <th className="px-3 py-2 text-left text-xs font-medium text-stone-500">Дата</th>
+                      <th className="px-3 py-2 text-right text-xs font-medium text-stone-500">Сумма</th>
+                      <th className="px-3 py-2 text-left text-xs font-medium text-stone-500">Тип</th>
+                      <th className="px-3 py-2 text-left text-xs font-medium text-stone-500">Сделка</th>
                     </tr>
                   </thead>
                   <tbody>
                     {payments.map((p) => {
                       const deal = p.dealId ? dealMap.get(p.dealId) : null;
                       return (
-                        <tr key={p.id} className="border-b border-slate-100 last:border-0">
-                          <td className="px-3 py-2 tabular-nums text-slate-600">{formatDateShort(p.date)}</td>
-                          <td className="px-3 py-2 text-right tabular-nums font-medium text-slate-900">
+                        <tr key={p.id} className="border-b border-stone-100 last:border-0">
+                          <td className="px-3 py-2 tabular-nums text-stone-600">{formatDateShort(p.date)}</td>
+                          <td className="px-3 py-2 text-right tabular-nums font-medium text-stone-900">
                             {formatCurrency(p.amount)}
                           </td>
                           <td className="px-3 py-2">
@@ -282,7 +282,7 @@ function TankerDetailSheet({
                               {p.type === "cash" ? "Наличные" : "Банк"}
                             </span>
                           </td>
-                          <td className="px-3 py-2 text-slate-600">
+                          <td className="px-3 py-2 text-stone-600">
                             {deal ? `№ ${deal.id.replace("deal-", "")}` : "—"}
                           </td>
                         </tr>
@@ -292,7 +292,7 @@ function TankerDetailSheet({
                 </table>
               </div>
             ) : (
-              <p className="text-sm text-slate-400">Нет записей об оплатах</p>
+              <p className="text-sm text-stone-400">Нет записей об оплатах</p>
             )}
           </div>
         </div>
@@ -311,12 +311,12 @@ function KpiCard({
   value: string;
 }) {
   return (
-    <div className="rounded-2xl border border-slate-200/60 bg-white p-5 shadow-sm shadow-slate-950/[0.03]">
-      <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50">
+    <div className="rounded-2xl border border-stone-200/50 bg-white p-5 shadow-sm shadow-stone-900/[0.04]">
+      <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-stone-50">
         {icon}
       </div>
-      <p className="text-xs text-slate-500">{label}</p>
-      <p className="mt-1 text-lg font-semibold tabular-nums text-slate-900">{value}</p>
+      <p className="text-xs text-stone-500">{label}</p>
+      <p className="mt-1 text-lg font-semibold tabular-nums text-stone-900">{value}</p>
     </div>
   );
 }

@@ -6,6 +6,7 @@ import { Search } from "lucide-react";
 import { MotionContainer, MotionItem } from "@/components/shared/motion-container";
 import { PageHeader } from "@/components/shared/page-header";
 import { StatusBadge } from "@/components/shared/status-badge";
+import { MiniKpiCard } from "@/components/shared/mini-kpi-card";
 import {
   Table,
   TableBody,
@@ -116,7 +117,7 @@ export default function ClientsPage() {
             </SelectContent>
           </Select>
           <div className="relative min-w-[220px] flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-400" />
             <Input
               placeholder="Поиск: компания, контакт, телефон..."
               value={searchQuery}
@@ -129,34 +130,34 @@ export default function ClientsPage() {
 
       <MotionItem>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <MiniKpi label="Всего клиентов" value={String(stats.totalClients)} />
-          <MiniKpi label="VIP клиенты" value={String(stats.vipClients)} />
-          <MiniKpi label="Общий объём" value={formatVolume(stats.totalVolume)} />
-          <MiniKpi label="Сделок / клиент" value={String(stats.avgDeals)} />
+          <MiniKpiCard label="Всего клиентов" value={String(stats.totalClients)} />
+          <MiniKpiCard label="VIP клиенты" value={String(stats.vipClients)} />
+          <MiniKpiCard label="Общий объём" value={formatVolume(stats.totalVolume)} />
+          <MiniKpiCard label="Сделок / клиент" value={String(stats.avgDeals)} />
         </div>
       </MotionItem>
 
       <MotionItem>
-        <div className="overflow-x-auto rounded-2xl border border-slate-200/60 bg-white shadow-sm shadow-slate-950/[0.03]">
+        <div className="overflow-x-auto rounded-2xl border border-stone-200/50 bg-white shadow-sm shadow-stone-900/[0.04]">
           <Table>
             <TableHeader>
-              <TableRow className="border-b border-slate-100 hover:bg-transparent">
-                <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500">
+              <TableRow className="border-b border-stone-100 hover:bg-transparent">
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">
                   Компания
                 </TableHead>
-                <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500">
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">
                   Контакт
                 </TableHead>
-                <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500">
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">
                   Телефон
                 </TableHead>
-                <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500 text-right">
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500 text-right">
                   Объём
                 </TableHead>
-                <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500 text-right">
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500 text-right">
                   Сделок
                 </TableHead>
-                <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500">
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">
                   Сегмент
                 </TableHead>
               </TableRow>
@@ -165,22 +166,22 @@ export default function ClientsPage() {
               {filteredClients.map((client) => (
                 <TableRow
                   key={client.id}
-                  className="cursor-pointer border-b border-slate-100 hover:bg-blue-50/50"
+                  className="cursor-pointer border-b border-stone-100 hover:bg-blue-50/50"
                   onClick={() => setSelectedClient(client)}
                 >
-                  <TableCell className="font-medium text-slate-900">
+                  <TableCell className="font-medium text-stone-900">
                     {client.companyName}
                   </TableCell>
-                  <TableCell className="text-slate-600">
+                  <TableCell className="text-stone-600">
                     {client.contactPerson}
                   </TableCell>
-                  <TableCell className="text-slate-600 tabular-nums">
+                  <TableCell className="text-stone-600 tabular-nums">
                     {client.phone}
                   </TableCell>
-                  <TableCell className="text-right tabular-nums text-slate-700">
+                  <TableCell className="text-right tabular-nums text-stone-700">
                     {formatVolume(client.totalVolume)}
                   </TableCell>
-                  <TableCell className="text-right tabular-nums text-slate-700">
+                  <TableCell className="text-right tabular-nums text-stone-700">
                     {client.dealCount}
                   </TableCell>
                   <TableCell>
@@ -190,7 +191,7 @@ export default function ClientsPage() {
               ))}
               {filteredClients.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={6} className="py-12 text-center text-sm text-slate-400">
+                  <TableCell colSpan={6} className="py-12 text-center text-sm text-stone-400">
                     Клиенты не найдены
                   </TableCell>
                 </TableRow>
@@ -210,16 +211,6 @@ export default function ClientsPage() {
   );
 }
 
-function MiniKpi({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm shadow-slate-950/[0.03] p-5">
-      <p className="text-sm text-slate-500">{label}</p>
-      <p className="mt-1 text-2xl font-semibold tracking-tight text-slate-900">
-        {value}
-      </p>
-    </div>
-  );
-}
 
 function ClientDetailSheet({
   client,
@@ -256,17 +247,17 @@ function ClientDetailSheet({
 
         <div className="mt-6 space-y-6">
           <div>
-            <h3 className="mb-3 text-xs font-medium uppercase tracking-wider text-slate-500">
+            <h3 className="mb-3 text-xs font-medium uppercase tracking-wider text-stone-500">
               Информация
             </h3>
             <dl className="grid grid-cols-[120px_1fr] gap-x-4 gap-y-2.5">
-              <dt className="text-sm text-slate-500">Компания</dt>
-              <dd className="text-sm text-slate-900">{client.companyName}</dd>
-              <dt className="text-sm text-slate-500">Контакт</dt>
-              <dd className="text-sm text-slate-900">{client.contactPerson}</dd>
-              <dt className="text-sm text-slate-500">Телефон</dt>
-              <dd className="text-sm text-slate-900">{client.phone}</dd>
-              <dt className="text-sm text-slate-500">Сегмент</dt>
+              <dt className="text-sm text-stone-500">Компания</dt>
+              <dd className="text-sm text-stone-900">{client.companyName}</dd>
+              <dt className="text-sm text-stone-500">Контакт</dt>
+              <dd className="text-sm text-stone-900">{client.contactPerson}</dd>
+              <dt className="text-sm text-stone-500">Телефон</dt>
+              <dd className="text-sm text-stone-900">{client.phone}</dd>
+              <dt className="text-sm text-stone-500">Сегмент</dt>
               <dd className="text-sm">
                 <StatusBadge status={client.segment} />
               </dd>
@@ -274,24 +265,24 @@ function ClientDetailSheet({
           </div>
 
           <div>
-            <h3 className="mb-3 text-xs font-medium uppercase tracking-wider text-slate-500">
+            <h3 className="mb-3 text-xs font-medium uppercase tracking-wider text-stone-500">
               История закупок ({clientDeals.length})
             </h3>
             {clientDeals.length > 0 ? (
-              <div className="rounded-xl border border-slate-200/60 overflow-hidden">
+              <div className="rounded-xl border border-stone-200/50 overflow-hidden">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-slate-100 bg-slate-50/50">
-                      <th className="px-3 py-2 text-left text-xs font-medium text-slate-500">
+                    <tr className="border-b border-stone-100 bg-stone-50/50">
+                      <th className="px-3 py-2 text-left text-xs font-medium text-stone-500">
                         Дата
                       </th>
-                      <th className="px-3 py-2 text-right text-xs font-medium text-slate-500">
+                      <th className="px-3 py-2 text-right text-xs font-medium text-stone-500">
                         Объём
                       </th>
-                      <th className="px-3 py-2 text-right text-xs font-medium text-slate-500">
+                      <th className="px-3 py-2 text-right text-xs font-medium text-stone-500">
                         Сумма
                       </th>
-                      <th className="px-3 py-2 text-left text-xs font-medium text-slate-500">
+                      <th className="px-3 py-2 text-left text-xs font-medium text-stone-500">
                         Статус
                       </th>
                     </tr>
@@ -300,15 +291,15 @@ function ClientDetailSheet({
                     {clientDeals.map((deal) => (
                       <tr
                         key={deal.id}
-                        className="border-b border-slate-100 last:border-0"
+                        className="border-b border-stone-100 last:border-0"
                       >
-                        <td className="px-3 py-2 text-slate-600">
+                        <td className="px-3 py-2 text-stone-600">
                           {formatDateShort(deal.date)}
                         </td>
-                        <td className="px-3 py-2 text-right tabular-nums text-slate-700">
+                        <td className="px-3 py-2 text-right tabular-nums text-stone-700">
                           {formatVolume(deal.volume)}
                         </td>
-                        <td className="px-3 py-2 text-right tabular-nums text-slate-700">
+                        <td className="px-3 py-2 text-right tabular-nums text-stone-700">
                           {formatCurrency(deal.totalAmount)}
                         </td>
                         <td className="px-3 py-2">
@@ -320,16 +311,16 @@ function ClientDetailSheet({
                 </table>
               </div>
             ) : (
-              <p className="text-sm text-slate-400">Нет сделок</p>
+              <p className="text-sm text-stone-400">Нет сделок</p>
             )}
           </div>
 
           {chartData.length > 1 && (
             <div>
-              <h3 className="mb-3 text-xs font-medium uppercase tracking-wider text-slate-500">
+              <h3 className="mb-3 text-xs font-medium uppercase tracking-wider text-stone-500">
                 Динамика объёмов
               </h3>
-              <div className="h-48 min-h-[192px] w-full min-w-0 rounded-xl border border-slate-200/60 bg-slate-50/30 p-3">
+              <div className="h-48 min-h-[192px] w-full min-w-0 rounded-xl border border-stone-200/50 bg-stone-50/30 p-3">
                 <ClientVolumeChart data={chartData} />
               </div>
             </div>

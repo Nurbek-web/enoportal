@@ -7,7 +7,7 @@ export default function PortalLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-stone-50">
       <Sidebar />
       <div className="lg:pl-64 flex flex-col min-h-screen min-w-0 transition-all duration-300">
         <Header />

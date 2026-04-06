@@ -57,26 +57,26 @@ export default function LogisticsPage() {
             return (
               <div
                 key={t.id}
-                className={`rounded-2xl border bg-white p-5 shadow-sm shadow-slate-950/[0.03] ${t.cardClass}`}
+                className={`rounded-2xl border bg-white p-5 shadow-sm shadow-stone-900/[0.04] ${t.cardClass}`}
               >
                 <div className="flex items-center gap-3 mb-4">
                   <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${t.iconBg}`}>
                     <Icon className={`h-5 w-5 ${t.iconColor}`} />
                   </div>
-                  <span className="text-base font-semibold text-slate-900">{t.type}</span>
+                  <span className="text-base font-semibold text-stone-900">{t.type}</span>
                 </div>
 
                 <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-sm text-slate-600">
-                    <Banknote className="h-4 w-4 text-slate-400" />
-                    <span className="font-medium text-slate-900">{t.priceRange}</span>
+                  <div className="flex items-center gap-2 text-sm text-stone-600">
+                    <Banknote className="h-4 w-4 text-stone-400" />
+                    <span className="font-medium text-stone-900">{t.priceRange}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-slate-600">
-                    <Clock className="h-4 w-4 text-slate-400" />
+                  <div className="flex items-center gap-2 text-sm text-stone-600">
+                    <Clock className="h-4 w-4 text-stone-400" />
                     <span>{t.duration}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-slate-600">
-                    <span className="text-slate-400 text-xs">Комфорт</span>
+                  <div className="flex items-center gap-2 text-sm text-stone-600">
+                    <span className="text-stone-400 text-xs">Комфорт</span>
                     <div className="flex gap-0.5">
                       {Array.from({ length: 5 }).map((_, i) => (
                         <Star
@@ -84,7 +84,7 @@ export default function LogisticsPage() {
                           className={`h-3.5 w-3.5 ${
                             i < t.comfort
                               ? "fill-amber-400 text-amber-400"
-                              : "fill-slate-200 text-slate-200"
+                              : "fill-stone-200 text-stone-200"
                           }`}
                         />
                       ))}
@@ -98,30 +98,30 @@ export default function LogisticsPage() {
       </MotionItem>
 
       <MotionItem>
-        <div className="rounded-2xl border border-slate-200/60 bg-white shadow-sm shadow-slate-950/[0.03]">
-          <div className="px-5 py-4 border-b border-slate-100">
-            <h2 className="text-sm font-semibold text-slate-900">Ближайшие поездки</h2>
+        <div className="rounded-2xl border border-stone-200/50 bg-white shadow-sm shadow-stone-900/[0.04]">
+          <div className="px-5 py-4 border-b border-stone-100">
+            <h2 className="text-sm font-semibold text-stone-900">Ближайшие поездки</h2>
           </div>
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow className="border-b border-slate-100 hover:bg-transparent">
-                  <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500">Оператор</TableHead>
-                  <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500">Направление</TableHead>
-                  <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500">Дата выезда</TableHead>
-                  <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500">Транспорт</TableHead>
-                  <TableHead className="text-xs font-medium uppercase tracking-wider text-slate-500">Статус</TableHead>
+                <TableRow className="border-b border-stone-100 hover:bg-transparent">
+                  <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Оператор</TableHead>
+                  <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Направление</TableHead>
+                  <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Дата выезда</TableHead>
+                  <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Транспорт</TableHead>
+                  <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Статус</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {upcomingTrips.map((trip) => {
                   const op = operatorMap.get(trip.operatorId);
                   return (
-                    <TableRow key={trip.id} className="border-b border-slate-100">
-                      <TableCell className="font-medium text-slate-900">{op?.name ?? "—"}</TableCell>
-                      <TableCell className="text-slate-600">{trip.direction}</TableCell>
-                      <TableCell className="tabular-nums text-slate-600">{formatDateShort(trip.date)}</TableCell>
-                      <TableCell className="text-slate-600">{trip.transport}</TableCell>
+                    <TableRow key={trip.id} className="border-b border-stone-100">
+                      <TableCell className="font-medium text-stone-900">{op?.name ?? "—"}</TableCell>
+                      <TableCell className="text-stone-600">{trip.direction}</TableCell>
+                      <TableCell className="tabular-nums text-stone-600">{formatDateShort(trip.date)}</TableCell>
+                      <TableCell className="text-stone-600">{trip.transport}</TableCell>
                       <TableCell>
                         <StatusBadge status={trip.status} />
                       </TableCell>

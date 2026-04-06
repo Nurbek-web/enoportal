@@ -78,7 +78,7 @@ function getNextShiftChangeDate(shiftStartDate: string, today: Date): Date {
 const SHIFT_CELL_COLORS: Record<ShiftStatus, string> = {
   on_shift: "bg-emerald-500",
   handover: "bg-amber-500",
-  off_shift: "bg-slate-200",
+  off_shift: "bg-stone-200",
 };
 
 export default function OperatorsPage() {
@@ -132,7 +132,7 @@ export default function OperatorsPage() {
       </MotionItem>
 
       <MotionItem>
-        <div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm shadow-slate-950/[0.03] p-5">
+        <div className="bg-white rounded-2xl border border-stone-200/50 shadow-sm shadow-stone-900/[0.04] p-5">
           <Table>
             <TableHeader>
               <TableRow>
@@ -158,7 +158,7 @@ export default function OperatorsPage() {
                     <TableCell>
                       <StatusBadge status={status} />
                     </TableCell>
-                    <TableCell className="text-slate-500">{op.telegramId}</TableCell>
+                    <TableCell className="text-stone-500">{op.telegramId}</TableCell>
                   </TableRow>
                 );
               })}
@@ -168,8 +168,8 @@ export default function OperatorsPage() {
       </MotionItem>
 
       <MotionItem>
-        <div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm shadow-slate-950/[0.03] p-5">
-          <h2 className="text-lg font-semibold text-slate-900 mb-4">
+        <div className="bg-white rounded-2xl border border-stone-200/50 shadow-sm shadow-stone-900/[0.04] p-5">
+          <h2 className="text-lg font-semibold text-stone-900 mb-4">
             График вахт — {format(today, "LLLL yyyy", { locale: ru })}
           </h2>
 
@@ -184,8 +184,8 @@ export default function OperatorsPage() {
                     <div
                       key={dayNum}
                       className={cn(
-                        "w-7 text-center text-[10px] font-medium text-slate-400",
-                        isToday && "text-slate-900 font-semibold"
+                        "w-7 text-center text-[10px] font-medium text-stone-400",
+                        isToday && "text-stone-900 font-semibold"
                       )}
                     >
                       {dayNum}
@@ -196,7 +196,7 @@ export default function OperatorsPage() {
 
               {filteredOperators.map((op) => (
                 <div key={op.id} className="flex items-center gap-0 mb-0.5">
-                  <div className="w-36 shrink-0 text-xs text-slate-600 truncate pr-2">
+                  <div className="w-36 shrink-0 text-xs text-stone-600 truncate pr-2">
                     {op.name}
                   </div>
                   {calendarDays.map((day) => {
@@ -209,7 +209,7 @@ export default function OperatorsPage() {
                         className={cn(
                           "w-7 h-7 rounded-md flex-shrink-0",
                           SHIFT_CELL_COLORS[status],
-                          isToday && "ring-2 ring-slate-900 ring-offset-1"
+                          isToday && "ring-2 ring-stone-900 ring-offset-1"
                         )}
                       />
                     );
@@ -217,7 +217,7 @@ export default function OperatorsPage() {
                 </div>
               ))}
 
-              <div className="flex items-center gap-4 mt-4 text-xs text-slate-500">
+              <div className="flex items-center gap-4 mt-4 text-xs text-stone-500">
                 <div className="flex items-center gap-1.5">
                   <div className="w-3 h-3 rounded-sm bg-emerald-500" />
                   <span>На вахте</span>
@@ -227,7 +227,7 @@ export default function OperatorsPage() {
                   <span>Пересменка</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <div className="w-3 h-3 rounded-sm bg-slate-200" />
+                  <div className="w-3 h-3 rounded-sm bg-stone-200" />
                   <span>Выходной</span>
                 </div>
               </div>
@@ -254,8 +254,8 @@ export default function OperatorsPage() {
                 label="Telegram ID"
                 value={selectedOperator.telegramId}
               />
-              <div className="flex justify-between items-center py-2 border-b border-slate-100">
-                <span className="text-sm text-slate-500">Статус</span>
+              <div className="flex justify-between items-center py-2 border-b border-stone-100">
+                <span className="text-sm text-stone-500">Статус</span>
                 <StatusBadge
                   status={getShiftStatus(selectedOperator.shiftStartDate, today)}
                 />
@@ -283,9 +283,9 @@ export default function OperatorsPage() {
 
 function DetailRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex justify-between items-center py-2 border-b border-slate-100">
-      <span className="text-sm text-slate-500">{label}</span>
-      <span className="text-sm font-medium text-slate-900">{value}</span>
+    <div className="flex justify-between items-center py-2 border-b border-stone-100">
+      <span className="text-sm text-stone-500">{label}</span>
+      <span className="text-sm font-medium text-stone-900">{value}</span>
     </div>
   );
 }
