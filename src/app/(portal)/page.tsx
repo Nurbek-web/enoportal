@@ -27,6 +27,7 @@ import {
 
 import { deals } from "@/lib/mock/sales";
 import { clients } from "@/lib/mock/clients";
+import { managers } from "@/lib/mock/managers";
 import { currentFuelStatus } from "@/lib/mock/fuel";
 import { activities } from "@/lib/mock/market";
 import { formatCurrency, formatVolume, formatPercent, formatRelativeDate } from "@/lib/format";
@@ -128,6 +129,38 @@ export default function DashboardPage() {
       .sort((a, b) => b.volume - a.volume)
       .slice(0, 5);
   }, [filteredDeals]);
+
+  const topManagers = useMemo(() => {
+    const statsMap = new Map<string, { name: string; volume: number; dealCount: number }>();
+    for (const mgr of managers) {
+      statsMap.set(mgr.id, { name: mgr.name, volume: 0, dealCount: 0 });
+    }
+    for (const d of filteredDeals) {
+      const entry = statsMap.get(d.managerId);
+      if (entry) {
+        entry.volume += d.volume;
+        entry.dealCount += 1;
+      }
+    }
+    return Array.from(statsMap.values())
+      .sort((a, b) => b.volume - a.volume)
+      .slice(0, 5);
+  }, [filteredDeals]);
+
+  const aiForecast = useMemo(() => {
+    const sorted = [...filteredDeals].sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+    const recentWeekVol = sorted
+      .filter((d) => {
+        const diff = (Date.now() - new Date(d.date).getTime()) / (1000 * 60 * 60 * 24);
+        return diff <= 7;
+      })
+      .reduce((s, d) => s + d.volume, 0);
+    const topClient = topClients[0];
+    const criticalFuel = filteredFuelStatus.find((f) => f.status === "critical");
+    return { recentWeekVol, topClient, criticalFuel };
+  }, [filteredDeals, topClients, filteredFuelStatus]);
 
   const recentActivities = activities.slice(0, 8);
 
@@ -297,6 +330,69 @@ export default function DashboardPage() {
                   </div>
                 </div>
               ))}
+            </div>
+          </AiInsightCard>
+        </div>
+      </MotionItem>
+
+      <MotionItem>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="bg-white rounded-2xl border border-stone-200/50 shadow-sm shadow-stone-900/[0.04] p-5">
+            <h3 className="text-sm font-medium text-stone-800 mb-4">Рейтинг продажников</h3>
+            <Table>
+              <TableHeader>
+                <TableRow className="border-b border-stone-200 hover:bg-transparent">
+                  <TableHead className="w-8 text-xs font-medium uppercase tracking-wider text-stone-500">#</TableHead>
+                  <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Менеджер</TableHead>
+                  <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500 text-right">Объём</TableHead>
+                  <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500 text-right">Сделок</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {topManagers.map((mgr, idx) => (
+                  <TableRow
+                    key={mgr.name}
+                    className={
+                      idx === 0
+                        ? "border-b border-stone-100 bg-amber-50/40"
+                        : "border-b border-stone-100 hover:bg-stone-50 transition-colors duration-150"
+                    }
+                  >
+                    <TableCell className="font-semibold text-stone-500">{idx + 1}</TableCell>
+                    <TableCell className="font-medium text-stone-900">{mgr.name}</TableCell>
+                    <TableCell className="text-right tabular-nums text-stone-600">{formatVolume(mgr.volume)}</TableCell>
+                    <TableCell className="text-right tabular-nums text-stone-600">{mgr.dealCount}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+
+          <AiInsightCard title="ИИ-прогноз на ближайшие 7 дней">
+            <div className="space-y-2 text-sm">
+              <p>
+                За последние 7 дней продано{" "}
+                <strong>{formatVolume(aiForecast.recentWeekVol)}</strong>.
+                При сохранении темпа прогнозируемая выручка за апрель составит{" "}
+                <strong>
+                  {formatCurrency(
+                    Math.round((aiForecast.recentWeekVol / 7) * 30 * (totalRevenue / (totalVolume || 1)))
+                  )}
+                </strong>.
+              </p>
+              {aiForecast.topClient?.client && (
+                <p>
+                  Приоритетный клиент:{" "}
+                  <strong>{aiForecast.topClient.client.companyName}</strong> —
+                  наибольший объём закупок, рекомендуем удержание.
+                </p>
+              )}
+              {aiForecast.criticalFuel && (
+                <p className="text-rose-600 font-medium">
+                  Критический остаток: {aiForecast.criticalFuel.fuelType} на базе{" "}
+                  {BASE_LABELS[aiForecast.criticalFuel.base]} — срочная поставка.
+                </p>
+              )}
             </div>
           </AiInsightCard>
         </div>
