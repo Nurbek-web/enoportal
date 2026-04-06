@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { TrendingDown, TrendingUp } from "lucide-react";
 import { MotionContainer, MotionItem } from "@/components/shared/motion-container";
 import { PageHeader } from "@/components/shared/page-header";
+import { AiInsightCard } from "@/components/shared/ai-insight-card";
 import {
   Table,
   TableBody,
@@ -188,6 +189,29 @@ export default function MarketPage() {
             </TableBody>
           </Table>
         </div>
+      </MotionItem>
+      <MotionItem>
+        <AiInsightCard title="Позиция ENO на рынке">
+          {comparisonCards.every((c) => c.isLower) ? (
+            <>
+              ENO продаёт оба вида топлива <strong>ниже рыночных цен</strong> — сильная конкурентная позиция для привлечения новых клиентов.
+              Рекомендуем рассмотреть умеренное повышение цены на AI-95 для увеличения маржи.
+            </>
+          ) : comparisonCards.some((c) => c.isLower) ? (
+            <>
+              AI-92 ENO{" "}
+              <strong>
+                {comparisonCards.find((c) => c.fuel === "AI-92")?.isLower ? "ниже" : "выше"} рынка
+              </strong>
+              . Мониторьте еженедельно — сезонные скачки цен достигают 3–5%.
+            </>
+          ) : (
+            <>
+              Цены ENO <strong>выше рынка</strong> — обоснуйте premium через сервис и надёжность поставок.
+              Рассмотрите временные скидки для удержания чувствительных к цене клиентов.
+            </>
+          )}
+        </AiInsightCard>
       </MotionItem>
     </MotionContainer>
   );

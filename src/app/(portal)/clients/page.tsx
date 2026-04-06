@@ -6,6 +6,7 @@ import { Search } from "lucide-react";
 import { MotionContainer, MotionItem } from "@/components/shared/motion-container";
 import { PageHeader } from "@/components/shared/page-header";
 import { StatusBadge } from "@/components/shared/status-badge";
+import { AiInsightCard } from "@/components/shared/ai-insight-card";
 import { FilterBar } from "@/components/shared/filter-bar";
 import { MiniKpiCard } from "@/components/shared/mini-kpi-card";
 import {
@@ -208,6 +209,22 @@ export default function ClientsPage() {
             </TableBody>
           </Table>
         </div>
+      </MotionItem>
+
+      <MotionItem>
+        <AiInsightCard title="Сегментация клиентской базы">
+          {stats.vipClients > 0 && (
+            <>
+              <strong>{stats.vipClients} VIP-клиент{stats.vipClients > 1 ? "а" : ""}</strong> обеспечивают основной объём продаж — приоритет для персонального менеджера.{" "}
+            </>
+          )}
+          {filteredClients.filter((c) => c.segment === "declining").length > 0 && (
+            <>
+              Обнаружено <strong>{filteredClients.filter((c) => c.segment === "declining").length} клиент{filteredClients.filter((c) => c.segment === "declining").length > 1 ? "а" : ""}</strong> с падающим потреблением — рекомендуем звонок или скидку для удержания.{" "}
+            </>
+          )}
+          Средний показатель: <strong>{stats.avgDeals} сделок</strong> на клиента.
+        </AiInsightCard>
       </MotionItem>
 
       <ClientDetailSheet
