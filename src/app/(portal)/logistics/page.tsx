@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Plane, Train, Bus, Star, Clock, Banknote, Plus } from "lucide-react";
+import { Plane, Train, Bus, Star, Clock, Banknote, Plus, CalendarClock } from "lucide-react";
 import { MotionContainer, MotionItem } from "@/components/shared/motion-container";
 import { PageHeader } from "@/components/shared/page-header";
 import { AiInsightCard } from "@/components/shared/ai-insight-card";
@@ -38,6 +38,31 @@ import {
 } from "@/lib/mock/logistics";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { formatDateShort, formatCurrency } from "@/lib/format";
+import { SHIFT_DAYS_ON, SHIFT_DAYS_HANDOVER, SHIFT_CYCLE_LENGTH } from "@/lib/constants";
+
+function getNextShiftStart(shiftStartDate: string): Date {
+  const today = new Date();
+  const shiftStart = new Date(shiftStartDate);
+  const daysSinceStart = Math.floor(
+    (today.getTime() - shiftStart.getTime()) / (1000 * 60 * 60 * 24)
+  );
+  const cycleDay =
+    ((daysSinceStart % SHIFT_CYCLE_LENGTH) + SHIFT_CYCLE_LENGTH) % SHIFT_CYCLE_LENGTH;
+  const daysUntilNextOn =
+    cycleDay < SHIFT_DAYS_ON
+      ? 0
+      : SHIFT_CYCLE_LENGTH - cycleDay;
+  const next = new Date(today);
+  next.setDate(next.getDate() + daysUntilNextOn);
+  return next;
+}
+
+function getShiftEndDate(shiftStartDate: string): Date {
+  const nextStart = getNextShiftStart(shiftStartDate);
+  const end = new Date(nextStart);
+  end.setDate(end.getDate() + SHIFT_DAYS_ON);
+  return end;
+}
 
 const iconMap: Record<TransportIconKey, typeof Plane> = {
   plane: Plane,
@@ -299,6 +324,20 @@ export default function LogisticsPage() {
                 </SelectContent>
               </Select>
             </div>
+
+            {formOperator && (() => {
+              const op = operators.find((o) => o.id === formOperator);
+              if (!op) return null;
+              const shiftEnd = getShiftEndDate(op.shiftStartDate);
+              return (
+                <div className="flex items-center gap-2 rounded-lg bg-blue-50 border border-blue-100 px-3 py-2 text-xs text-blue-700">
+                  <CalendarClock className="h-3.5 w-3.5 flex-shrink-0" />
+                  <span>
+                    Вахта заканчивается {formatDateShort(shiftEnd.toISOString())} — рекомендуемая дата выезда
+                  </span>
+                </div>
+              );
+            })()}
 
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-stone-700">
