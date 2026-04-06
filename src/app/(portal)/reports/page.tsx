@@ -5,6 +5,7 @@ import { Camera } from "lucide-react";
 import { MotionContainer, MotionItem } from "@/components/shared/motion-container";
 import { PageHeader } from "@/components/shared/page-header";
 import { StatusBadge } from "@/components/shared/status-badge";
+import { FilterBar } from "@/components/shared/filter-bar";
 import {
   Table,
   TableBody,
@@ -66,7 +67,7 @@ export default function ReportsPage() {
       </MotionItem>
 
       <MotionItem>
-        <div className="flex flex-wrap items-center gap-3">
+        <FilterBar>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-[160px] bg-white">
               <SelectValue placeholder="Статус" />
@@ -103,7 +104,7 @@ export default function ReportsPage() {
               ))}
             </SelectContent>
           </Select>
-        </div>
+        </FilterBar>
       </MotionItem>
 
       <MotionItem>

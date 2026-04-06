@@ -6,6 +6,7 @@ import { Search } from "lucide-react";
 import { MotionContainer, MotionItem } from "@/components/shared/motion-container";
 import { PageHeader } from "@/components/shared/page-header";
 import { StatusBadge } from "@/components/shared/status-badge";
+import { FilterBar } from "@/components/shared/filter-bar";
 import { MiniKpiCard } from "@/components/shared/mini-kpi-card";
 import {
   Table,
@@ -108,7 +109,7 @@ export default function ClientsPage() {
       </MotionItem>
 
       <MotionItem>
-        <div className="flex flex-wrap items-center gap-3">
+        <FilterBar>
           <Select
             value={segmentFilter}
             onValueChange={(v) => setSegmentFilter(v as "all" | ClientSegment)}
@@ -133,7 +134,7 @@ export default function ClientsPage() {
               className="bg-white pl-9"
             />
           </div>
-        </div>
+        </FilterBar>
       </MotionItem>
 
       <MotionItem>
