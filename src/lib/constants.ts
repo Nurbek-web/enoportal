@@ -60,6 +60,8 @@ export const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
   // Payment types
   cash: { bg: 'bg-amber-50', text: 'text-amber-700' },
   bank: { bg: 'bg-blue-50', text: 'text-blue-700' },
+  // Expense types
+  urgent: { bg: 'bg-rose-50', text: 'text-rose-700' },
 };
 
 export const STATUS_LABELS: Record<string, string> = {
@@ -85,6 +87,7 @@ export const STATUS_LABELS: Record<string, string> = {
   planned: 'Планируется',
   cash: 'Наличные',
   bank: 'Банк',
+  urgent: 'Срочные',
 };
 
 export const BASE_LABELS: Record<string, string> = {

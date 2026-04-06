@@ -193,15 +193,7 @@ export default function ExpensesPage() {
                       <TableCell className="font-medium text-stone-900">{op?.name ?? "—"}</TableCell>
                       <TableCell className="text-right tabular-nums text-stone-700">{formatCurrency(exp.amount)}</TableCell>
                       <TableCell>
-                        <span
-                          className={`inline-flex items-center px-2.5 py-0.5 text-xs font-medium rounded-full ${
-                            exp.type === "urgent"
-                              ? "bg-rose-50 text-rose-700"
-                              : "bg-stone-100 text-stone-600"
-                          }`}
-                        >
-                          {exp.type === "urgent" ? "Срочные" : "Наличные"}
-                        </span>
+                        <StatusBadge status={exp.type} />
                       </TableCell>
                       <TableCell className="max-w-[200px] truncate text-stone-600">{exp.description}</TableCell>
                       <TableCell><StatusBadge status={exp.status} /></TableCell>
