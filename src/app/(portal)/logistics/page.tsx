@@ -38,7 +38,7 @@ import {
 } from "@/lib/mock/logistics";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { formatDateShort, formatCurrency } from "@/lib/format";
-import { SHIFT_DAYS_ON, SHIFT_DAYS_HANDOVER, SHIFT_CYCLE_LENGTH } from "@/lib/constants";
+import { SHIFT_DAYS_ON, SHIFT_CYCLE_LENGTH } from "@/lib/constants";
 
 function getNextShiftStart(shiftStartDate: string): Date {
   const today = new Date();

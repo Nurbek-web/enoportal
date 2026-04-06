@@ -120,7 +120,7 @@ export default function SalesPage() {
       }
       return true;
     });
-  }, [selectedBase, statusFilter, baseFilter, fuelFilter, searchQuery, clientMap]);
+  }, [deals, selectedBase, statusFilter, baseFilter, fuelFilter, searchQuery, clientMap]);
 
   const computed = useMemo(() => {
     const vol = parseFloat(form.volume) || 0;
