@@ -29,7 +29,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { deals } from "@/lib/mock/sales";
+import { deals as initialDeals } from "@/lib/mock/sales";
 import { clients } from "@/lib/mock/clients";
 import { managers } from "@/lib/mock/managers";
 import { tankers } from "@/lib/mock/tankers";
@@ -59,10 +59,12 @@ interface NewDealForm {
   costPerLiter: string;
   tankerId: string;
   status: DealStatus;
+  date: string;
 }
 
 function buildInitialForm(): NewDealForm {
   const defaults = ENO_DEAL_DEFAULTS["AI-92"];
+  const today = new Date().toISOString().split("T")[0];
   return {
     clientId: "",
     managerId: managers[0]?.id ?? "",
@@ -74,11 +76,13 @@ function buildInitialForm(): NewDealForm {
     costPerLiter: String(defaults.cost),
     tankerId: "",
     status: "in_progress",
+    date: today,
   };
 }
 
 export default function SalesPage() {
   const { selectedBase } = useBaseFilter();
+  const [deals, setDeals] = useState<Deal[]>(initialDeals);
   const [statusFilter, setStatusFilter] = useState("all");
   const [baseFilter, setBaseFilter] = useState("all");
   const [fuelFilter, setFuelFilter] = useState("all");
@@ -176,6 +180,37 @@ export default function SalesPage() {
     setEditingField(null);
     setNewDealOpen(true);
   }, []);
+
+  const handleCreateDeal = useCallback(() => {
+    const vol = parseFloat(form.volume) || 0;
+    const price = parseFloat(form.pricePerLiter) || 0;
+    const cost = parseFloat(form.costPerLiter) || 0;
+    const totalAmount = vol * price;
+    const costAmount = vol * cost;
+    const { margin, marginPercent } = calculateMargin(totalAmount, costAmount);
+    const newDeal: Deal = {
+      id: `deal-${Date.now()}`,
+      date: new Date(form.date).toISOString(),
+      clientId: form.clientId,
+      managerId: form.managerId,
+      base: form.base,
+      fuelType: form.fuelType,
+      volume: vol,
+      mass: parseFloat(form.mass) || 0,
+      pricePerLiter: price,
+      costPerLiter: cost,
+      totalAmount,
+      costAmount,
+      margin,
+      marginPercent,
+      tankerId: form.tankerId,
+      status: form.status,
+    };
+    setDeals((prev) => [newDeal, ...prev]);
+    setNewDealOpen(false);
+    setForm(buildInitialForm());
+    setEditingField(null);
+  }, [form]);
 
   return (
     <MotionContainer>
@@ -309,6 +344,15 @@ export default function SalesPage() {
           </SheetHeader>
 
           <div className="mt-6 space-y-5">
+            <FormField label="Дата сделки">
+              <input
+                type="date"
+                value={form.date}
+                onChange={(e) => setForm((p) => ({ ...p, date: e.target.value }))}
+                className="w-full rounded-md border border-stone-200 bg-white px-3 py-2 text-sm text-stone-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </FormField>
+
             <FormField label="Клиент">
               <Select value={form.clientId} onValueChange={(v) => setForm((p) => ({ ...p, clientId: v }))}>
                 <SelectTrigger className="bg-white">
@@ -454,8 +498,9 @@ export default function SalesPage() {
             </FormField>
 
             <button
-              onClick={() => setNewDealOpen(false)}
-              className="w-full rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-blue-500"
+              onClick={handleCreateDeal}
+              disabled={!form.clientId || !form.tankerId || !form.volume}
+              className="w-full rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed"
             >
               Создать сделку
             </button>
