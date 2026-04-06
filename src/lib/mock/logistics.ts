@@ -6,6 +6,7 @@ export interface Trip {
   direction: string;
   date: string;
   transport: string;
+  price: number; // UZS
   status: 'booked' | 'planned';
 }
 
@@ -57,10 +58,10 @@ export const transportComparisonCards: Array<{
 ];
 
 export const upcomingTrips: Trip[] = [
-  { id: 'trip-001', operatorId: 'op-001', direction: 'Алматы → Ташкент', date: '2026-04-10', transport: 'Авиа', status: 'booked' },
-  { id: 'trip-002', operatorId: 'op-003', direction: 'Ташкент → Алматы', date: '2026-04-12', transport: 'Ж/Д', status: 'planned' },
-  { id: 'trip-003', operatorId: 'op-005', direction: 'Алматы → Ташкент', date: '2026-04-14', transport: 'Авиа', status: 'booked' },
-  { id: 'trip-004', operatorId: 'op-002', direction: 'Ташкент → Алматы', date: '2026-04-15', transport: 'Автобус', status: 'planned' },
-  { id: 'trip-005', operatorId: 'op-007', direction: 'Алматы → Ташкент', date: '2026-04-18', transport: 'Ж/Д', status: 'booked' },
-  { id: 'trip-006', operatorId: 'op-004', direction: 'Ташкент → Алматы', date: '2026-04-20', transport: 'Авиа', status: 'planned' },
+  { id: 'trip-001', operatorId: 'op-001', direction: 'Алматы → Ташкент', date: '2026-04-10', transport: 'Авиа',    price: 462000, status: 'booked'  },
+  { id: 'trip-002', operatorId: 'op-003', direction: 'Ташкент → Алматы', date: '2026-04-12', transport: 'Ж/Д',     price: 185000, status: 'planned' },
+  { id: 'trip-003', operatorId: 'op-005', direction: 'Алматы → Ташкент', date: '2026-04-14', transport: 'Авиа',    price: 448000, status: 'booked'  },
+  { id: 'trip-004', operatorId: 'op-002', direction: 'Ташкент → Алматы', date: '2026-04-15', transport: 'Автобус', price:  98000, status: 'planned' },
+  { id: 'trip-005', operatorId: 'op-007', direction: 'Алматы → Ташкент', date: '2026-04-18', transport: 'Ж/Д',     price: 178000, status: 'booked'  },
+  { id: 'trip-006', operatorId: 'op-004', direction: 'Ташкент → Алматы', date: '2026-04-20', transport: 'Авиа',    price: 455000, status: 'planned' },
 ];
