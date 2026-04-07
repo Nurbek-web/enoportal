@@ -16,17 +16,19 @@ import {
 } from "@/components/ui/select";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useBaseFilter } from "@/contexts/base-filter-context";
+import { useRole } from "@/contexts/role-context";
 
 const notifications = [
   { id: 1, text: "Оплатите бензовоз по сделке №18", time: "10 мин назад" },
   { id: 2, text: "Отчёт оператора Каримов ожидает проверки", time: "25 мин назад" },
-  { id: 3, text: "АИ-92 на базе Чирчик: осталось на 5 дней", time: "1 час назад" },
+  { id: 3, text: "АИ-92 на базе Ахангаран: осталось 52 500 л — внимание", time: "1 час назад" },
   { id: 4, text: "Новая сделка от клиента ООО Нефтемаркет", time: "2 часа назад" },
-  { id: 5, text: "АИ-95 на базе Ахангаран: критический уровень", time: "3 часа назад" },
+  { id: 5, text: "АИ-95 на базе Чирчик: осталось 129 600 л — норма", time: "3 часа назад" },
 ];
 
 export function Header() {
   const { selectedBase, setSelectedBase } = useBaseFilter();
+  const { role, setRole } = useRole();
 
   return (
     <header className="h-16 bg-white border-b border-stone-200 flex items-center justify-between px-6 shrink-0">
@@ -44,6 +46,30 @@ export function Header() {
       </div>
 
       <div className="flex items-center gap-3">
+        {/* Role toggle */}
+        <div className="hidden sm:flex items-center rounded-lg border border-stone-200 bg-stone-50 p-0.5 text-xs font-medium">
+          <button
+            onClick={() => setRole("admin")}
+            className={`rounded-md px-3 py-1.5 transition-all duration-150 ${
+              role === "admin"
+                ? "bg-white text-stone-900 shadow-sm"
+                : "text-stone-400 hover:text-stone-600"
+            }`}
+          >
+            Руководитель
+          </button>
+          <button
+            onClick={() => setRole("operator")}
+            className={`rounded-md px-3 py-1.5 transition-all duration-150 ${
+              role === "operator"
+                ? "bg-white text-stone-900 shadow-sm"
+                : "text-stone-400 hover:text-stone-600"
+            }`}
+          >
+            Оператор
+          </button>
+        </div>
+
         {/* Notifications */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

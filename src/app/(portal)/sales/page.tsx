@@ -32,12 +32,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { deals as initialDeals } from "@/lib/mock/sales";
-import { clients } from "@/lib/mock/clients";
+import { clients as initialClients } from "@/lib/mock/clients";
 import { managers } from "@/lib/mock/managers";
-import { tankers } from "@/lib/mock/tankers";
-import { BASE_LABELS, ENO_DEAL_DEFAULTS } from "@/lib/constants";
+import { tankers as initialTankers } from "@/lib/mock/tankers";
+import { BASE_LABELS, ENO_DEAL_DEFAULTS, BASE_FUEL_MAP } from "@/lib/constants";
 import { useBaseFilter } from "@/contexts/base-filter-context";
-import type { Deal, DealStatus, Base, FuelType } from "@/lib/types";
+import { useRole } from "@/contexts/role-context";
+import type { Deal, DealStatus, Base, FuelType, Client, Tanker } from "@/lib/types";
 import {
   formatCurrency,
   formatNumber,
@@ -65,13 +66,14 @@ interface NewDealForm {
 }
 
 function buildInitialForm(): NewDealForm {
-  const defaults = ENO_DEAL_DEFAULTS["AI-92"];
+  // chirchik → AI-95 per BASE_FUEL_MAP
+  const defaults = ENO_DEAL_DEFAULTS["AI-95"];
   const today = new Date().toISOString().split("T")[0];
   return {
     clientId: "",
     managerId: managers[0]?.id ?? "",
     base: "chirchik",
-    fuelType: "AI-92",
+    fuelType: "AI-95",
     volume: "",
     mass: "",
     pricePerLiter: String(defaults.price),
@@ -84,7 +86,12 @@ function buildInitialForm(): NewDealForm {
 
 export default function SalesPage() {
   const { selectedBase } = useBaseFilter();
+  const { role } = useRole();
+
   const [deals, setDeals] = useState<Deal[]>(initialDeals);
+  const [clientList, setClientList] = useState<Client[]>(initialClients);
+  const [tankerList, setTankerList] = useState<Tanker[]>(initialTankers);
+
   const [statusFilter, setStatusFilter] = useState("all");
   const [baseFilter, setBaseFilter] = useState("all");
   const [fuelFilter, setFuelFilter] = useState("all");
@@ -96,17 +103,28 @@ export default function SalesPage() {
   const [form, setForm] = useState<NewDealForm>(() => buildInitialForm());
   const [editingField, setEditingField] = useState<"volume" | "mass" | null>(null);
 
+  // New client inline form
+  const [newClientName, setNewClientName] = useState("");
+  const [newClientContact, setNewClientContact] = useState("");
+  const [newClientPhone, setNewClientPhone] = useState("");
+
+  // New tanker inline form
+  const [newTankerPlate, setNewTankerPlate] = useState("");
+  const [newTankerDriver, setNewTankerDriver] = useState("");
+  const [newTankerPhone, setNewTankerPhone] = useState("");
+  const [newTankerCapacity, setNewTankerCapacity] = useState("");
+
   const clientMap = useMemo(
-    () => new Map(clients.map((c) => [c.id, c])),
-    []
+    () => new Map(clientList.map((c) => [c.id, c])),
+    [clientList]
   );
   const managerMap = useMemo(
     () => new Map(managers.map((m) => [m.id, m])),
     []
   );
   const tankerMap = useMemo(
-    () => new Map(tankers.map((t) => [t.id, t])),
-    []
+    () => new Map(tankerList.map((t) => [t.id, t])),
+    [tankerList]
   );
 
   const filteredDeals = useMemo(() => {
@@ -127,9 +145,10 @@ export default function SalesPage() {
   const salesStats = useMemo(() => {
     const revenue = filteredDeals.reduce((s, d) => s + d.totalAmount, 0);
     const paid = filteredDeals.filter((d) => d.status === "paid").length;
-    const avgMargin = filteredDeals.length > 0
-      ? filteredDeals.reduce((s, d) => s + d.marginPercent, 0) / filteredDeals.length
-      : 0;
+    const avgMargin =
+      filteredDeals.length > 0
+        ? filteredDeals.reduce((s, d) => s + d.marginPercent, 0) / filteredDeals.length
+        : 0;
     return { revenue, paid, total: filteredDeals.length, avgMargin };
   }, [filteredDeals]);
 
@@ -163,22 +182,25 @@ export default function SalesPage() {
     [form.fuelType]
   );
 
-  const handleFuelTypeChange = useCallback(
-    (ft: FuelType) => {
-      const defaults = ENO_DEAL_DEFAULTS[ft];
+  // When base changes, auto-set fuel type from BASE_FUEL_MAP
+  const handleBaseChange = useCallback(
+    (newBase: Base) => {
+      const newFuelType = BASE_FUEL_MAP[newBase];
+      const defaults = ENO_DEAL_DEFAULTS[newFuelType];
       setForm((prev) => {
         const next = {
           ...prev,
-          fuelType: ft,
+          base: newBase,
+          fuelType: newFuelType,
           pricePerLiter: defaults.price.toString(),
           costPerLiter: defaults.cost.toString(),
         };
         if (editingField === "volume" && prev.volume) {
           const vol = parseFloat(prev.volume) || 0;
-          next.mass = vol > 0 ? volumeToMass(vol, ft).toFixed(2) : "";
+          next.mass = vol > 0 ? volumeToMass(vol, newFuelType).toFixed(2) : "";
         } else if (editingField === "mass" && prev.mass) {
           const m = parseFloat(prev.mass) || 0;
-          next.volume = m > 0 ? Math.round(massToVolume(m, ft)).toString() : "";
+          next.volume = m > 0 ? Math.round(massToVolume(m, newFuelType)).toString() : "";
         }
         return next;
       });
@@ -189,20 +211,76 @@ export default function SalesPage() {
   const openNewDeal = useCallback(() => {
     setForm(buildInitialForm());
     setEditingField(null);
+    setNewClientName("");
+    setNewClientContact("");
+    setNewClientPhone("");
+    setNewTankerPlate("");
+    setNewTankerDriver("");
+    setNewTankerPhone("");
+    setNewTankerCapacity("");
     setNewDealOpen(true);
   }, []);
 
+  const isNewClient = form.clientId === "__new__";
+  const isNewTanker = form.tankerId === "__new__";
+
+  const canSubmit =
+    (isNewClient
+      ? newClientName.trim().length > 0 && newClientContact.trim().length > 0 && newClientPhone.trim().length > 0
+      : !!form.clientId) &&
+    (isNewTanker
+      ? newTankerPlate.trim().length > 0 && newTankerDriver.trim().length > 0
+      : !!form.tankerId) &&
+    !!form.volume;
+
   const handleCreateDeal = useCallback(() => {
+    let clientId = form.clientId;
+    let tankerId = form.tankerId;
+
+    // Create new client if needed
+    if (isNewClient) {
+      const newClient: Client = {
+        id: `client-${Date.now()}`,
+        companyName: newClientName.trim(),
+        contactPerson: newClientContact.trim(),
+        phone: newClientPhone.trim(),
+        segment: "novice",
+        totalVolume: 0,
+        dealCount: 0,
+      };
+      setClientList((prev) => [...prev, newClient]);
+      clientId = newClient.id;
+    }
+
+    // Create new tanker if needed
+    if (isNewTanker) {
+      const newTanker: Tanker = {
+        id: `tanker-${Date.now()}`,
+        plateNumber: newTankerPlate.trim(),
+        driverName: newTankerDriver.trim(),
+        driverPhone: newTankerPhone.trim(),
+        capacity: parseInt(newTankerCapacity) || 20000,
+        tripCount: 0,
+        totalPaid: 0,
+        segment: "one-time",
+        rating: 0,
+        reliability: 100,
+      };
+      setTankerList((prev) => [...prev, newTanker]);
+      tankerId = newTanker.id;
+    }
+
     const vol = parseFloat(form.volume) || 0;
     const price = parseFloat(form.pricePerLiter) || 0;
     const cost = parseFloat(form.costPerLiter) || 0;
     const totalAmount = vol * price;
     const costAmount = vol * cost;
     const { margin, marginPercent } = calculateMargin(totalAmount, costAmount);
+
     const newDeal: Deal = {
       id: `deal-${Date.now()}`,
       date: new Date(form.date).toISOString(),
-      clientId: form.clientId,
+      clientId,
       managerId: form.managerId,
       base: form.base,
       fuelType: form.fuelType,
@@ -214,14 +292,18 @@ export default function SalesPage() {
       costAmount,
       margin,
       marginPercent,
-      tankerId: form.tankerId,
+      tankerId,
       status: form.status,
     };
     setDeals((prev) => [newDeal, ...prev]);
     setNewDealOpen(false);
     setForm(buildInitialForm());
     setEditingField(null);
-  }, [form]);
+  }, [
+    form,
+    isNewClient, newClientName, newClientContact, newClientPhone,
+    isNewTanker, newTankerPlate, newTankerDriver, newTankerPhone, newTankerCapacity,
+  ]);
 
   return (
     <MotionContainer>
@@ -310,7 +392,9 @@ export default function SalesPage() {
                 <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Топливо</TableHead>
                 <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500 text-right">Объём (л)</TableHead>
                 <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500 text-right">Сумма</TableHead>
-                <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500 text-right">Маржа %</TableHead>
+                {role === "admin" && (
+                  <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500 text-right">Маржа %</TableHead>
+                )}
                 <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Статус</TableHead>
                 <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Менеджер</TableHead>
               </TableRow>
@@ -332,7 +416,9 @@ export default function SalesPage() {
                     <TableCell className="text-stone-600">{deal.fuelType}</TableCell>
                     <TableCell className="text-right tabular-nums text-stone-700">{formatNumber(deal.volume)}</TableCell>
                     <TableCell className="text-right tabular-nums text-stone-700">{formatCurrency(deal.totalAmount)}</TableCell>
-                    <TableCell className="text-right tabular-nums text-stone-700">{formatPercent(deal.marginPercent)}</TableCell>
+                    {role === "admin" && (
+                      <TableCell className="text-right tabular-nums text-stone-700">{formatPercent(deal.marginPercent)}</TableCell>
+                    )}
                     <TableCell><StatusBadge status={deal.status} /></TableCell>
                     <TableCell className="text-stone-600">{manager?.name ?? "—"}</TableCell>
                   </TableRow>
@@ -340,7 +426,7 @@ export default function SalesPage() {
               })}
               {filteredDeals.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={10} className="py-12 text-center text-sm text-stone-400">
+                  <TableCell colSpan={role === "admin" ? 10 : 9} className="py-12 text-center text-sm text-stone-400">
                     Сделки не найдены
                   </TableCell>
                 </TableRow>
@@ -358,6 +444,7 @@ export default function SalesPage() {
         tankerMap={tankerMap}
       />
 
+      {/* New Deal Sheet */}
       <Sheet open={newDealOpen} onOpenChange={setNewDealOpen}>
         <SheetContent side="right" className="w-[480px] overflow-y-auto">
           <SheetHeader>
@@ -375,17 +462,47 @@ export default function SalesPage() {
               />
             </FormField>
 
+            {/* Client selector with new client option */}
             <FormField label="Клиент">
-              <Select value={form.clientId} onValueChange={(v) => setForm((p) => ({ ...p, clientId: v }))}>
+              <Select
+                value={form.clientId}
+                onValueChange={(v) => setForm((p) => ({ ...p, clientId: v }))}
+              >
                 <SelectTrigger className="bg-white">
                   <SelectValue placeholder="Выберите клиента" />
                 </SelectTrigger>
                 <SelectContent>
-                  {clients.map((c) => (
+                  <SelectItem value="__new__">
+                    <span className="font-medium text-blue-600">+ Новый клиент</span>
+                  </SelectItem>
+                  {clientList.map((c) => (
                     <SelectItem key={c.id} value={c.id}>{c.companyName}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
+              {isNewClient && (
+                <div className="mt-2 space-y-2 rounded-xl border border-blue-200 bg-blue-50/40 p-3">
+                  <p className="text-xs font-medium text-blue-700 mb-2">Новый клиент</p>
+                  <Input
+                    placeholder="Название компании *"
+                    value={newClientName}
+                    onChange={(e) => setNewClientName(e.target.value)}
+                    className="bg-white text-sm h-8"
+                  />
+                  <Input
+                    placeholder="Контактное лицо *"
+                    value={newClientContact}
+                    onChange={(e) => setNewClientContact(e.target.value)}
+                    className="bg-white text-sm h-8"
+                  />
+                  <Input
+                    placeholder="Телефон *"
+                    value={newClientPhone}
+                    onChange={(e) => setNewClientPhone(e.target.value)}
+                    className="bg-white text-sm h-8"
+                  />
+                </div>
+              )}
             </FormField>
 
             <FormField label="Менеджер">
@@ -405,7 +522,7 @@ export default function SalesPage() {
               <FormField label="База">
                 <Select
                   value={form.base}
-                  onValueChange={(v) => setForm((p) => ({ ...p, base: v as Base }))}
+                  onValueChange={(v) => handleBaseChange(v as Base)}
                 >
                   <SelectTrigger className="bg-white">
                     <SelectValue />
@@ -418,18 +535,10 @@ export default function SalesPage() {
               </FormField>
 
               <FormField label="Топливо">
-                <Select
-                  value={form.fuelType}
-                  onValueChange={(v) => handleFuelTypeChange(v as FuelType)}
-                >
-                  <SelectTrigger className="bg-white">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="AI-92">AI-92</SelectItem>
-                    <SelectItem value="AI-95">AI-95</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className="flex h-9 items-center rounded-md border border-stone-200 bg-stone-50 px-3 gap-2">
+                  <span className="text-sm font-medium text-stone-800">{form.fuelType}</span>
+                  <span className="text-xs text-stone-400">— от базы</span>
+                </div>
               </FormField>
             </div>
 
@@ -455,52 +564,98 @@ export default function SalesPage() {
               </FormField>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <FormField label="Цена за литр (сум)">
-                <Input
-                  type="number"
-                  value={form.pricePerLiter}
-                  onChange={(e) => setForm((p) => ({ ...p, pricePerLiter: e.target.value }))}
-                  className="bg-white"
-                />
-              </FormField>
-              <FormField label="Себестоимость за литр">
-                <Input
-                  type="number"
-                  value={form.costPerLiter}
-                  onChange={(e) => setForm((p) => ({ ...p, costPerLiter: e.target.value }))}
-                  className="bg-white"
-                />
-              </FormField>
-            </div>
+            <FormField label="Цена за литр (сум)">
+              <Input
+                type="number"
+                value={form.pricePerLiter}
+                onChange={(e) => setForm((p) => ({ ...p, pricePerLiter: e.target.value }))}
+                className="bg-white"
+              />
+            </FormField>
 
-            <div className="rounded-xl border border-stone-200/50 bg-stone-50 p-4 space-y-3">
-              <p className="text-xs font-medium uppercase tracking-wider text-stone-500">Расчёт</p>
-              <div className="grid grid-cols-2 gap-3">
-                <ComputedField label="Сумма сделки" value={formatCurrency(computed.totalAmount)} />
-                <ComputedField label="Себестоимость" value={formatCurrency(computed.costAmount)} />
-                <ComputedField label="Маржа" value={formatCurrency(computed.margin)} />
-                <ComputedField
-                  label="Маржинальность"
-                  value={formatPercent(computed.marginPercent)}
-                  highlight={computed.marginPercent > 0}
-                />
+            {role === "admin" ? (
+              <>
+                <FormField label="Себестоимость за литр">
+                  <Input
+                    type="number"
+                    value={form.costPerLiter}
+                    onChange={(e) => setForm((p) => ({ ...p, costPerLiter: e.target.value }))}
+                    className="bg-white"
+                  />
+                </FormField>
+
+                <div className="rounded-xl border border-stone-200/50 bg-stone-50 p-4 space-y-3">
+                  <p className="text-xs font-medium uppercase tracking-wider text-stone-500">Расчёт</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <ComputedField label="Сумма сделки" value={formatCurrency(computed.totalAmount)} />
+                    <ComputedField label="Себестоимость" value={formatCurrency(computed.costAmount)} />
+                    <ComputedField label="Маржа" value={formatCurrency(computed.margin)} />
+                    <ComputedField
+                      label="Маржинальность"
+                      value={formatPercent(computed.marginPercent)}
+                      highlight={computed.marginPercent > 0}
+                    />
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="rounded-xl border border-rose-200 bg-rose-50/40 px-4 py-3">
+                <p className="text-sm font-medium text-rose-600">
+                  Пройдите авторизацию для доступа к данным себестоимости и маржи
+                </p>
               </div>
-            </div>
+            )}
 
+            {/* Tanker selector with new tanker option */}
             <FormField label="Бензовоз">
-              <Select value={form.tankerId} onValueChange={(v) => setForm((p) => ({ ...p, tankerId: v }))}>
+              <Select
+                value={form.tankerId}
+                onValueChange={(v) => setForm((p) => ({ ...p, tankerId: v }))}
+              >
                 <SelectTrigger className="bg-white">
                   <SelectValue placeholder="Выберите бензовоз" />
                 </SelectTrigger>
                 <SelectContent>
-                  {tankers.map((t) => (
+                  <SelectItem value="__new__">
+                    <span className="font-medium text-blue-600">+ Новый бензовоз</span>
+                  </SelectItem>
+                  {tankerList.map((t) => (
                     <SelectItem key={t.id} value={t.id}>
                       {t.plateNumber} — {t.driverName}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
+              {isNewTanker && (
+                <div className="mt-2 space-y-2 rounded-xl border border-blue-200 bg-blue-50/40 p-3">
+                  <p className="text-xs font-medium text-blue-700 mb-2">Новый бензовоз</p>
+                  <Input
+                    placeholder="Гос. номер (01 A 123 BA) *"
+                    value={newTankerPlate}
+                    onChange={(e) => setNewTankerPlate(e.target.value)}
+                    className="bg-white text-sm h-8"
+                  />
+                  <Input
+                    placeholder="ФИО водителя *"
+                    value={newTankerDriver}
+                    onChange={(e) => setNewTankerDriver(e.target.value)}
+                    className="bg-white text-sm h-8"
+                  />
+                  <Input
+                    placeholder="Телефон водителя"
+                    value={newTankerPhone}
+                    onChange={(e) => setNewTankerPhone(e.target.value)}
+                    className="bg-white text-sm h-8"
+                  />
+                  <Input
+                    placeholder="Вместимость (литры, по умолч. 20 000)"
+                    type="number"
+                    value={newTankerCapacity}
+                    onChange={(e) => setNewTankerCapacity(e.target.value)}
+                    className="bg-white text-sm h-8"
+                  />
+                </div>
+              )}
             </FormField>
 
             <FormField label="Статус">
@@ -521,7 +676,7 @@ export default function SalesPage() {
 
             <Button
               onClick={handleCreateDeal}
-              disabled={!form.clientId || !form.tankerId || !form.volume}
+              disabled={!canSubmit}
               className="w-full bg-blue-600 hover:bg-blue-700 text-white"
             >
               Создать сделку
@@ -542,11 +697,22 @@ function DealDetailSheet({
 }: {
   deal: Deal | null;
   onClose: () => void;
-  clientMap: Map<string, (typeof clients)[number]>;
+  clientMap: Map<string, Client>;
   managerMap: Map<string, (typeof managers)[number]>;
-  tankerMap: Map<string, (typeof tankers)[number]>;
+  tankerMap: Map<string, Tanker>;
 }) {
-  if (!deal) return <Sheet open={false} onOpenChange={onClose}><SheetContent><SheetHeader><SheetTitle /></SheetHeader></SheetContent></Sheet>;
+  const { role } = useRole();
+
+  if (!deal)
+    return (
+      <Sheet open={false} onOpenChange={onClose}>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle />
+          </SheetHeader>
+        </SheetContent>
+      </Sheet>
+    );
 
   const client = clientMap.get(deal.clientId);
   const manager = managerMap.get(deal.managerId);
@@ -576,18 +742,34 @@ function DealDetailSheet({
             <DetailRow label="Объём" value={formatVolume(deal.volume)} />
             <DetailRow label="Масса" value={formatMass(deal.mass)} />
             <DetailRow label="Цена за литр" value={formatCurrency(deal.pricePerLiter)} />
-            <DetailRow label="Себестоимость за литр" value={formatCurrency(deal.costPerLiter)} />
             <DetailRow label="Сумма сделки" value={formatCurrency(deal.totalAmount)} bold />
-            <DetailRow label="Себестоимость" value={formatCurrency(deal.costAmount)} />
-            <DetailRow label="Маржа" value={formatCurrency(deal.margin)} highlight />
-            <DetailRow label="Маржинальность" value={formatPercent(deal.marginPercent)} highlight />
+            {role === "admin" ? (
+              <>
+                <DetailRow label="Себестоимость за литр" value={formatCurrency(deal.costPerLiter)} />
+                <DetailRow label="Себестоимость" value={formatCurrency(deal.costAmount)} />
+                <DetailRow label="Маржа" value={formatCurrency(deal.margin)} highlight />
+                <DetailRow label="Маржинальность" value={formatPercent(deal.marginPercent)} highlight />
+              </>
+            ) : (
+              <>
+                <dt className="text-sm text-stone-500 col-span-2" />
+                <dd className="col-span-2">
+                  <p className="text-sm font-medium text-rose-500">
+                    Пройдите авторизацию для доступа
+                  </p>
+                </dd>
+              </>
+            )}
           </DetailSection>
 
           <DetailSection title="Логистика">
             <DetailRow label="Бензовоз" value={tanker?.plateNumber ?? "—"} />
             <DetailRow label="Водитель" value={tanker?.driverName ?? "—"} />
             <DetailRow label="Телефон водителя" value={tanker?.driverPhone ?? "—"} />
-            <DetailRow label="Ёмкость цистерны" value={tanker ? formatVolume(tanker.capacity) : "—"} />
+            <DetailRow
+              label="Ёмкость цистерны"
+              value={tanker ? formatVolume(tanker.capacity) : "—"}
+            />
           </DetailSection>
         </div>
       </SheetContent>
@@ -620,7 +802,11 @@ function DetailRow({
       <dt className="text-sm text-stone-500">{label}</dt>
       <dd
         className={`text-sm ${
-          highlight ? "font-semibold text-emerald-600" : bold ? "font-semibold text-stone-900" : "text-stone-900"
+          highlight
+            ? "font-semibold text-emerald-600"
+            : bold
+            ? "font-semibold text-stone-900"
+            : "text-stone-900"
         }`}
       >
         {value}
@@ -650,7 +836,9 @@ function ComputedField({
   return (
     <div>
       <p className="text-xs text-stone-500">{label}</p>
-      <p className={`text-sm font-semibold ${highlight ? "text-emerald-600" : "text-stone-900"}`}>{value}</p>
+      <p className={`text-sm font-semibold ${highlight ? "text-emerald-600" : "text-stone-900"}`}>
+        {value}
+      </p>
     </div>
   );
 }

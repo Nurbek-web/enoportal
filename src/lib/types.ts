@@ -63,7 +63,7 @@ export type Base = 'chirchik' | 'akhangaran';
 export type DealStatus = 'in_progress' | 'shipped' | 'paid';
 export type ReportStatus = 'pending' | 'approved' | 'rejected';
 export type ExpenseStatus = 'new' | 'approved' | 'rejected';
-export type ExpenseType = 'cash' | 'urgent';
+export type ExpenseType = 'cash' | 'bank';
 export type PaymentType = 'cash' | 'bank';
 
 // Sales deal (сделка)

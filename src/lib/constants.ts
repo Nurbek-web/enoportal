@@ -12,6 +12,12 @@ export const BASES = [
 
 export const FUEL_TYPES = ['AI-92', 'AI-95'] as const;
 
+/** Each base distributes exactly one fuel type */
+export const BASE_FUEL_MAP = {
+  chirchik: 'AI-95',
+  akhangaran: 'AI-92',
+} as const;
+
 /** ENO reference retail prices (сум/л) — market comparison & sales form defaults */
 export const ENO_PRICES = {
   'AI-92': 10800,
@@ -85,8 +91,8 @@ export const STATUS_LABELS: Record<string, string> = {
   novice: 'Новый',
   booked: 'Забронирован',
   planned: 'Планируется',
-  cash: 'Наличные',
-  bank: 'Банк',
+  cash: 'Нал',
+  bank: 'Безнал',
   urgent: 'Срочные',
 };
 

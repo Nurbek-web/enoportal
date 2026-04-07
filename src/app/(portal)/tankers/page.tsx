@@ -165,27 +165,39 @@ export default function TankersPage() {
               <Table>
                 <TableHeader>
                   <TableRow className="border-b border-stone-100 hover:bg-transparent">
-                    <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Дата</TableHead>
+                    <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Дата сделки</TableHead>
+                    <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Дата оплаты</TableHead>
                     <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Бензовоз</TableHead>
                     <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500 text-right">Сумма</TableHead>
                     <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Тип</TableHead>
-                    <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Привязка к сделке</TableHead>
+                    <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Сделка</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {tankerPayments.map((payment) => {
                     const tanker = tankerMap.get(payment.tankerId);
                     const deal = payment.dealId ? dealMap.get(payment.dealId) : null;
+                    const dealDate = deal?.date ?? null;
+                    const isLatePayment = dealDate
+                      ? (new Date(payment.date).getTime() - new Date(dealDate).getTime()) > 7 * 24 * 60 * 60 * 1000
+                      : false;
                     return (
                       <TableRow key={payment.id} className="border-b border-stone-100 hover:bg-stone-50 transition-colors duration-150">
-                        <TableCell className="text-stone-600">{formatDateShort(payment.date)}</TableCell>
+                        <TableCell className="tabular-nums text-stone-600">
+                          {dealDate ? (
+                            <span className={isLatePayment ? "text-amber-600 font-medium" : ""}>
+                              {formatDateShort(dealDate)}
+                            </span>
+                          ) : "—"}
+                        </TableCell>
+                        <TableCell className="tabular-nums text-stone-600">{formatDateShort(payment.date)}</TableCell>
                         <TableCell className="font-medium text-stone-900">{tanker?.plateNumber ?? "—"}</TableCell>
                         <TableCell className="text-right tabular-nums text-stone-700">{formatCurrency(payment.amount)}</TableCell>
                         <TableCell>
                           <StatusBadge status={payment.type} />
                         </TableCell>
                         <TableCell className="text-stone-600">
-                          {deal ? `Сделка ${deal.id.replace("deal-", "№")}` : "—"}
+                          {deal ? `№ ${deal.id.replace("deal-", "")}` : "—"}
                         </TableCell>
                       </TableRow>
                     );
@@ -346,17 +358,28 @@ function TankerDetailSheet({
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b border-stone-100 bg-stone-50/50">
-                        <th className="px-3 py-2 text-left text-xs font-medium text-stone-500">Дата</th>
+                        <th className="px-3 py-2 text-left text-xs font-medium text-stone-500">Дата сделки</th>
+                        <th className="px-3 py-2 text-left text-xs font-medium text-stone-500">Дата оплаты</th>
                         <th className="px-3 py-2 text-right text-xs font-medium text-stone-500">Сумма</th>
                         <th className="px-3 py-2 text-left text-xs font-medium text-stone-500">Тип</th>
-                        <th className="px-3 py-2 text-left text-xs font-medium text-stone-500">Сделка</th>
+                        <th className="px-3 py-2 text-left text-xs font-medium text-stone-500">№</th>
                       </tr>
                     </thead>
                     <tbody>
                       {payments.map((p) => {
                         const deal = p.dealId ? dealMap.get(p.dealId) : null;
+                        const isLate = deal
+                          ? (new Date(p.date).getTime() - new Date(deal.date).getTime()) > 7 * 24 * 60 * 60 * 1000
+                          : false;
                         return (
                           <tr key={p.id} className="border-b border-stone-100 last:border-0">
+                            <td className="px-3 py-2 tabular-nums">
+                              {deal ? (
+                                <span className={isLate ? "text-amber-600 font-medium" : "text-stone-600"}>
+                                  {formatDateShort(deal.date)}
+                                </span>
+                              ) : <span className="text-stone-400">—</span>}
+                            </td>
                             <td className="px-3 py-2 tabular-nums text-stone-600">{formatDateShort(p.date)}</td>
                             <td className="px-3 py-2 text-right tabular-nums font-medium text-stone-900">
                               {formatCurrency(p.amount)}

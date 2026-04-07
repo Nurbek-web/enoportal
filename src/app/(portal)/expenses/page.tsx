@@ -276,8 +276,8 @@ export default function ExpensesPage() {
               </p>
             )}
             <p>
-              Срочных расходов:{" "}
-              <strong>{expenseList.filter((e) => e.type === "urgent").length}</strong> — рекомендуем контролировать долю сверхнормативных расходов.
+              Безнал расходов:{" "}
+              <strong>{expenseList.filter((e) => e.type === "bank").length}</strong> — рекомендуем контролировать долю безналичных расходов.
             </p>
           </div>
         </AiInsightCard>
@@ -365,8 +365,8 @@ export default function ExpensesPage() {
                   <SelectValue placeholder="Выберите тип" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="cash">Наличные</SelectItem>
-                  <SelectItem value="urgent">Срочные</SelectItem>
+                  <SelectItem value="cash">Нал</SelectItem>
+                  <SelectItem value="bank">Безнал</SelectItem>
                 </SelectContent>
               </Select>
             </div>
