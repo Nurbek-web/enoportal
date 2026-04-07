@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Image from "next/image";
 import { Camera } from "lucide-react";
 import { MotionContainer, MotionItem } from "@/components/shared/motion-container";
 import { PageHeader } from "@/components/shared/page-header";
@@ -240,10 +241,11 @@ function ReportDetailSheet({
           <div className="relative overflow-hidden rounded-xl bg-stone-100">
             {report.photoUrl ? (
               <>
-                <img
+                <Image
                   src={report.photoUrl}
                   alt="Фото уровня топлива"
-                  className="h-40 w-full rounded-xl object-cover"
+                  fill
+                  className="rounded-xl object-cover"
                   onError={(e) => {
                     (e.currentTarget as HTMLImageElement).style.display = "none";
                     (e.currentTarget.nextElementSibling as HTMLElement | null)?.style?.setProperty("display", "flex");

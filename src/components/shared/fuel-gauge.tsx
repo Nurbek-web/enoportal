@@ -24,10 +24,9 @@ export function FuelGauge({
   baseName,
   level,
   status,
-  daysRemaining,
   volumeRemaining,
   index = 0,
-}: FuelGaugeProps) {
+}: Omit<FuelGaugeProps, 'daysRemaining'> & { daysRemaining?: number }) {
   const strokeColor = STATUS_STROKE[status];
   const target = CIRCUMFERENCE - (CIRCUMFERENCE * level) / 100;
   const delay = index * 150;

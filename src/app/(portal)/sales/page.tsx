@@ -297,6 +297,7 @@ export default function SalesPage() {
     setEditingField(null);
   }, [
     form,
+    isDelivery,
     isNewClient, newClientName, newClientContact, newClientPhone,
     isNewTanker, newTankerPlate, newTankerDriver, newTankerPhone, newTankerCapacity,
   ]);
