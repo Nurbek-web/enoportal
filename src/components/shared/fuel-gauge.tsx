@@ -83,17 +83,17 @@ export function FuelGauge({
           >
             {level}%
           </text>
-          {/* Days remaining */}
+          {/* Volume remaining */}
           <text
             x={60}
             y={74}
             textAnchor="middle"
             dominantBaseline="middle"
             fill="#78716c"
-            fontSize={10}
+            fontSize={9}
             fontFamily="inherit"
           >
-            ~{daysRemaining} дн.
+            {formatNumber(volumeRemaining)} л
           </text>
         </svg>
       </div>
@@ -101,9 +101,6 @@ export function FuelGauge({
       <div className="text-center">
         <p className="text-sm font-medium text-stone-800">{label}</p>
         <p className="text-xs text-stone-500">{baseName}</p>
-        <p className="mt-0.5 text-xs text-stone-400">
-          {formatNumber(volumeRemaining)} л
-        </p>
       </div>
     </div>
   );

@@ -69,7 +69,7 @@ export default function TankersPage() {
     const paidDealIds = new Set(tankerPayments.filter((p) => p.dealId).map((p) => p.dealId!));
     const result = new Map<string, string[]>();
     for (const deal of deals) {
-      if (deal.status === "in_progress" && !paidDealIds.has(deal.id)) {
+      if (deal.status !== "deal_closed" && !paidDealIds.has(deal.id)) {
         const existing = result.get(deal.tankerId) ?? [];
         existing.push(deal.id);
         result.set(deal.tankerId, existing);

@@ -105,8 +105,9 @@ When adding/editing deals or reports, always use `BASE_FUEL_MAP[base]` to determ
 The portal has two demo roles: `'admin'` (Руководитель) and `'operator'` (Оператор). The active role is toggled via a pill in the header and stored in `RoleContext`.
 
 - Access with `const { role } = useRole()` from `@/contexts/role-context`
-- **Admin**: sees all data including cost/margin/price fields
-- **Operator**: cost per liter, margin, and margin% fields are hidden in sales form + detail sheet; replaced with a red `"Пройдите авторизацию для доступа"` message
+- **Admin**: sees all data including cost/margin/price fields in the deal detail sheet
+- **Operator**: cost per liter, margin, and margin% are hidden in the detail sheet; replaced with a red `"Пройдите авторизацию для доступа"` message
+- The new deal creation form does **not** show cost/cost input for either role — cost is auto-set from `ENO_DEAL_DEFAULTS` behind the scenes
 
 When adding new sensitive fields, check `role === 'admin'` before rendering them.
 
@@ -156,10 +157,17 @@ Always use `<StatusBadge status={value} />` — never inline colored spans.
 All status keys and their colors/labels live in `lib/constants.ts` (`STATUS_COLORS`, `STATUS_LABELS`).
 To add a new status: add entries to both maps in constants.ts.
 
-Current status keys: `in_progress`, `shipped`, `paid`, `pending`, `approved`, `rejected`, `new`,
+Current status keys:
+
+**Deal pipeline (9 steps, in order):**
+`client_request`, `terms_negotiation`, `awaiting_payment`, `paid`, `approved_for_shipment`, `shipped`, `documents_done`, `invoice_accepted`, `deal_closed`
+
+**Other statuses:** `in_progress` (legacy — kept in constants for compat), `pending`, `approved`, `rejected`, `new`,
 `on_shift`, `off_shift`, `handover`, `loyal`, `one-time`, `profitable`, `unprofitable`,
 `vip`, `promising`, `declining`, `booked`, `planned`,
 `cash`, `bank` (payment types and expense types)
+
+**Active deals** = everything except `deal_closed` (used for KPI counts on dashboard and sales page).
 
 ## Mock Data Conventions
 
@@ -177,6 +185,7 @@ Current status keys: `in_progress`, `shipped`, `paid`, `pending`, `approved`, `r
 - `TankerTrip` interface exists in `types.ts`; mock data in `mock/tankers.ts` as `tankerTrips`
 - `operatorBudgets` exported from `mock/expenses.ts` — monthly allocations per operator
 - `TankerPayment.type` is `PaymentType = 'cash' | 'bank'`; `Expense.type` is `ExpenseType = 'cash' | 'bank'`
+- `Deal.deliveryType` is `DeliveryType = 'delivery' | 'pickup'`; `'delivery'` shows tanker selector, `'pickup'` (самовывоз) hides it and sets `tankerId = ""`
 
 ## Page Patterns
 
@@ -187,6 +196,11 @@ Use `side="right" className="w-[480px] overflow-y-auto"`. See `tankers/page.tsx`
 ### New item dialog/sheet
 Small forms (≤4 fields): `Dialog`. Large forms: `Sheet`.
 All form fields must be controlled (`value` + `onChange`). Submit must do something visible (add to list, close dialog). Validate before submit.
+
+### Deal form specifics
+- **Delivery type**: The form has a "Способ доставки" select (`delivery` / `pickup`). The tanker selector only appears when `delivery` is chosen. For `pickup` (самовывоз), no tanker is required.
+- **Cost per liter**: NOT shown in the new deal form. It is auto-set from `ENO_DEAL_DEFAULTS[fuelType].cost` so the Deal object always has valid cost/margin data. Cost and margin are only visible in the **detail sheet** for admins.
+- **Status default**: New deals start as `client_request`.
 
 ### Inline entity creation in forms
 Sales form supports creating a new client or tanker without leaving the sheet:
@@ -242,7 +256,14 @@ Content can mix static text with dynamic computed values (JSX expressions are fi
 <FuelGauge label="AI-95" baseName="Чирчик" level={72} status="ok" daysRemaining={18} volumeRemaining={45000} index={0} />
 ```
 SVG ring gauge. `status` drives color (ok=emerald, warning=amber, critical=rose). `index` staggers the fill animation by 150ms per gauge. Light background only (stone palette text/strokes).
+The ring shows `{level}%` and `{volumeRemaining} л` inside. `daysRemaining` is kept in the interface for data purposes but is **not** rendered (volume is shown instead — days are not reliable since one client can buy everything).
 Note: with the base-fuel mapping, Чирчик always shows AI-95 and Ахангаран always shows AI-92.
+
+### KpiCard with link
+`KpiCard` accepts an optional `href` prop. When provided, the card is wrapped in a `<Link>` and becomes clickable (navigates to that route). Use this for KPIs that drill down into a detail page:
+```tsx
+<KpiCard title="Активные сделки" value={activeDeals} icon={ShoppingCart} accentColor="amber" href="/sales" />
+```
 
 ## Adding a New Page
 

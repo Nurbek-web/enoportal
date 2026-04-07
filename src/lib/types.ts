@@ -60,11 +60,21 @@ export interface TankerTrip {
 
 export type FuelType = 'AI-92' | 'AI-95';
 export type Base = 'chirchik' | 'akhangaran';
-export type DealStatus = 'in_progress' | 'shipped' | 'paid';
+export type DealStatus =
+  | 'client_request'
+  | 'terms_negotiation'
+  | 'awaiting_payment'
+  | 'paid'
+  | 'approved_for_shipment'
+  | 'shipped'
+  | 'documents_done'
+  | 'invoice_accepted'
+  | 'deal_closed';
 export type ReportStatus = 'pending' | 'approved' | 'rejected';
 export type ExpenseStatus = 'new' | 'approved' | 'rejected';
 export type ExpenseType = 'cash' | 'bank';
 export type PaymentType = 'cash' | 'bank';
+export type DeliveryType = 'delivery' | 'pickup';
 
 // Sales deal (сделка)
 export interface Deal {
@@ -83,6 +93,7 @@ export interface Deal {
   margin: number; // UZS
   marginPercent: number;
   tankerId: string;
+  deliveryType: DeliveryType;
   status: DealStatus;
 }
 

@@ -23,7 +23,8 @@ export const deals: Deal[] = [
     margin: 17500000,
     marginPercent: 5.74,
     tankerId: tankers[0].id,
-    status: 'paid',
+    deliveryType: 'delivery',
+    status: 'deal_closed',
   },
   {
     id: 'deal-002',
@@ -41,7 +42,8 @@ export const deals: Deal[] = [
     margin: 12000000,
     marginPercent: 5.53,
     tankerId: tankers[1].id,
-    status: 'paid',
+    deliveryType: 'pickup',
+    status: 'deal_closed',
   },
   {
     id: 'deal-003',
@@ -59,7 +61,8 @@ export const deals: Deal[] = [
     margin: 5600000,
     marginPercent: 5.74,
     tankerId: tankers[2].id,
-    status: 'paid',
+    deliveryType: 'delivery',
+    status: 'deal_closed',
   },
   {
     id: 'deal-004',
@@ -77,7 +80,8 @@ export const deals: Deal[] = [
     margin: 10800000,
     marginPercent: 5.58,
     tankerId: tankers[3].id,
-    status: 'paid',
+    deliveryType: 'delivery',
+    status: 'deal_closed',
   },
   {
     id: 'deal-005',
@@ -95,7 +99,8 @@ export const deals: Deal[] = [
     margin: 8400000,
     marginPercent: 5.74,
     tankerId: tankers[4].id,
-    status: 'paid',
+    deliveryType: 'pickup',
+    status: 'deal_closed',
   },
   {
     id: 'deal-006',
@@ -113,7 +118,8 @@ export const deals: Deal[] = [
     margin: 6500000,
     marginPercent: 5.99,
     tankerId: tankers[0].id,
-    status: 'paid',
+    deliveryType: 'delivery',
+    status: 'deal_closed',
   },
   {
     id: 'deal-007',
@@ -131,7 +137,8 @@ export const deals: Deal[] = [
     margin: 15400000,
     marginPercent: 5.71,
     tankerId: tankers[1].id,
-    status: 'paid',
+    deliveryType: 'pickup',
+    status: 'invoice_accepted',
   },
   {
     id: 'deal-008',
@@ -149,7 +156,8 @@ export const deals: Deal[] = [
     margin: 3850000,
     marginPercent: 5.12,
     tankerId: tankers[2].id,
-    status: 'paid',
+    deliveryType: 'delivery',
+    status: 'invoice_accepted',
   },
   {
     id: 'deal-009',
@@ -167,7 +175,8 @@ export const deals: Deal[] = [
     margin: 19600000,
     marginPercent: 5.74,
     tankerId: tankers[3].id,
-    status: 'paid',
+    deliveryType: 'delivery',
+    status: 'documents_done',
   },
   {
     id: 'deal-010',
@@ -185,7 +194,8 @@ export const deals: Deal[] = [
     margin: 3900000,
     marginPercent: 6.02,
     tankerId: tankers[4].id,
-    status: 'paid',
+    deliveryType: 'pickup',
+    status: 'documents_done',
   },
   {
     id: 'deal-011',
@@ -203,6 +213,7 @@ export const deals: Deal[] = [
     margin: 10500000,
     marginPercent: 5.74,
     tankerId: tankers[0].id,
+    deliveryType: 'delivery',
     status: 'shipped',
   },
   {
@@ -221,6 +232,7 @@ export const deals: Deal[] = [
     margin: 5400000,
     marginPercent: 5.53,
     tankerId: tankers[1].id,
+    deliveryType: 'pickup',
     status: 'shipped',
   },
   {
@@ -239,7 +251,8 @@ export const deals: Deal[] = [
     margin: 8400000,
     marginPercent: 5.74,
     tankerId: tankers[2].id,
-    status: 'shipped',
+    deliveryType: 'delivery',
+    status: 'approved_for_shipment',
   },
   {
     id: 'deal-014',
@@ -257,7 +270,8 @@ export const deals: Deal[] = [
     margin: 9600000,
     marginPercent: 5.58,
     tankerId: tankers[3].id,
-    status: 'shipped',
+    deliveryType: 'delivery',
+    status: 'approved_for_shipment',
   },
   {
     id: 'deal-015',
@@ -275,7 +289,8 @@ export const deals: Deal[] = [
     margin: 14000000,
     marginPercent: 5.74,
     tankerId: tankers[4].id,
-    status: 'shipped',
+    deliveryType: 'pickup',
+    status: 'paid',
   },
   {
     id: 'deal-016',
@@ -293,7 +308,8 @@ export const deals: Deal[] = [
     margin: 6600000,
     marginPercent: 5.61,
     tankerId: tankers[0].id,
-    status: 'shipped',
+    deliveryType: 'delivery',
+    status: 'paid',
   },
   {
     id: 'deal-017',
@@ -311,7 +327,8 @@ export const deals: Deal[] = [
     margin: 6300000,
     marginPercent: 5.71,
     tankerId: tankers[1].id,
-    status: 'shipped',
+    deliveryType: 'pickup',
+    status: 'awaiting_payment',
   },
   {
     id: 'deal-018',
@@ -329,7 +346,8 @@ export const deals: Deal[] = [
     margin: 9100000,
     marginPercent: 5.99,
     tankerId: tankers[2].id,
-    status: 'shipped',
+    deliveryType: 'delivery',
+    status: 'awaiting_payment',
   },
   {
     id: 'deal-019',
@@ -347,7 +365,8 @@ export const deals: Deal[] = [
     margin: 12600000,
     marginPercent: 5.74,
     tankerId: tankers[3].id,
-    status: 'in_progress',
+    deliveryType: 'delivery',
+    status: 'terms_negotiation',
   },
   {
     id: 'deal-020',
@@ -365,7 +384,8 @@ export const deals: Deal[] = [
     margin: 18000000,
     marginPercent: 5.5,
     tankerId: tankers[4].id,
-    status: 'in_progress',
+    deliveryType: 'pickup',
+    status: 'terms_negotiation',
   },
   {
     id: 'deal-021',
@@ -383,7 +403,8 @@ export const deals: Deal[] = [
     margin: 4900000,
     marginPercent: 5.74,
     tankerId: tankers[0].id,
-    status: 'in_progress',
+    deliveryType: 'delivery',
+    status: 'client_request',
   },
   {
     id: 'deal-022',
@@ -401,7 +422,8 @@ export const deals: Deal[] = [
     margin: 7800000,
     marginPercent: 5.56,
     tankerId: tankers[1].id,
-    status: 'in_progress',
+    deliveryType: 'pickup',
+    status: 'awaiting_payment',
   },
   {
     id: 'deal-023',
@@ -419,7 +441,8 @@ export const deals: Deal[] = [
     margin: 16800000,
     marginPercent: 5.74,
     tankerId: tankers[2].id,
-    status: 'in_progress',
+    deliveryType: 'delivery',
+    status: 'terms_negotiation',
   },
   {
     id: 'deal-024',
@@ -437,7 +460,8 @@ export const deals: Deal[] = [
     margin: 6000000,
     marginPercent: 5.56,
     tankerId: tankers[3].id,
-    status: 'in_progress',
+    deliveryType: 'delivery',
+    status: 'client_request',
   },
   {
     id: 'deal-025',
@@ -455,7 +479,8 @@ export const deals: Deal[] = [
     margin: 5600000,
     marginPercent: 5.74,
     tankerId: tankers[4].id,
-    status: 'in_progress',
+    deliveryType: 'pickup',
+    status: 'awaiting_payment',
   },
   {
     id: 'deal-026',
@@ -473,7 +498,8 @@ export const deals: Deal[] = [
     margin: 11400000,
     marginPercent: 5.53,
     tankerId: tankers[0].id,
-    status: 'in_progress',
+    deliveryType: 'delivery',
+    status: 'terms_negotiation',
   },
   {
     id: 'deal-027',
@@ -491,7 +517,8 @@ export const deals: Deal[] = [
     margin: 11200000,
     marginPercent: 5.74,
     tankerId: tankers[1].id,
-    status: 'in_progress',
+    deliveryType: 'pickup',
+    status: 'client_request',
   },
   {
     id: 'deal-028',
@@ -509,7 +536,8 @@ export const deals: Deal[] = [
     margin: 6600000,
     marginPercent: 5.56,
     tankerId: tankers[2].id,
-    status: 'in_progress',
+    deliveryType: 'delivery',
+    status: 'terms_negotiation',
   },
   {
     id: 'deal-029',
@@ -527,7 +555,8 @@ export const deals: Deal[] = [
     margin: 14700000,
     marginPercent: 5.74,
     tankerId: tankers[3].id,
-    status: 'in_progress',
+    deliveryType: 'delivery',
+    status: 'client_request',
   },
   {
     id: 'deal-030',
@@ -545,6 +574,7 @@ export const deals: Deal[] = [
     margin: 5400000,
     marginPercent: 5.56,
     tankerId: tankers[4].id,
-    status: 'in_progress',
+    deliveryType: 'pickup',
+    status: 'client_request',
   },
 ];

@@ -86,7 +86,7 @@ export default function DashboardPage() {
 
   const totalVolume = useMemo(() => filteredDeals.reduce((s, d) => s + d.volume, 0), [filteredDeals]);
   const totalRevenue = useMemo(() => filteredDeals.reduce((s, d) => s + d.totalAmount, 0), [filteredDeals]);
-  const activeDeals = useMemo(() => filteredDeals.filter((d) => d.status !== "paid").length, [filteredDeals]);
+  const activeDeals = useMemo(() => filteredDeals.filter((d) => d.status !== "deal_closed").length, [filteredDeals]);
   const avgMargin = useMemo(() => {
     if (filteredDeals.length === 0) return 0;
     return filteredDeals.reduce((s, d) => s + d.marginPercent, 0) / filteredDeals.length;
@@ -228,7 +228,7 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <KpiCard title="Объём продаж" value={totalVolume} format={formatVolume} icon={Droplets} accentColor="blue" trend={{ value: 12.3, positive: true }} />
           <KpiCard title="Выручка" value={totalRevenue} format={formatCurrency} icon={TrendingUp} accentColor="emerald" trend={{ value: 8.5, positive: true }} />
-          <KpiCard title="Активные сделки" value={activeDeals} icon={ShoppingCart} accentColor="amber" trend={{ value: 2.1, positive: false }} />
+          <KpiCard title="Активные сделки" value={activeDeals} icon={ShoppingCart} accentColor="amber" trend={{ value: 2.1, positive: false }} href="/sales" />
           <KpiCard title="Средняя маржа" value={avgMargin} format={formatPercent} icon={BarChart3} accentColor="violet" trend={{ value: 5.7, positive: true }} />
         </div>
       </MotionItem>

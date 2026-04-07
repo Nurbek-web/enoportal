@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCountUp } from "@/hooks/use-count-up";
 import { cn } from "@/lib/utils";
 import { LucideIcon } from "lucide-react";
@@ -11,6 +12,7 @@ interface KpiCardProps {
   icon: LucideIcon;
   trend?: { value: number; positive: boolean };
   accentColor: "blue" | "emerald" | "amber" | "violet";
+  href?: string;
 }
 
 const accentMap = {
@@ -20,16 +22,17 @@ const accentMap = {
   violet:  { border: "border-t-violet-500",  iconBg: "bg-violet-50",  iconText: "text-violet-600",  tint: "bg-violet-50/40"  },
 };
 
-export function KpiCard({ title, value, format, icon: Icon, trend, accentColor }: KpiCardProps) {
+export function KpiCard({ title, value, format, icon: Icon, trend, accentColor, href }: KpiCardProps) {
   const animatedValue = useCountUp(value);
   const accent = accentMap[accentColor];
   const displayValue = format ? format(animatedValue) : animatedValue.toLocaleString("ru-RU");
 
-  return (
+  const card = (
     <div
       className={cn(
         "rounded-2xl border border-stone-200/50 border-t-2 shadow-sm shadow-stone-900/[0.04] p-5",
         "hover:-translate-y-0.5 hover:shadow-md transition-all duration-200",
+        href && "cursor-pointer",
         accent.tint,
         accent.border
       )}
@@ -62,4 +65,9 @@ export function KpiCard({ title, value, format, icon: Icon, trend, accentColor }
       </div>
     </div>
   );
+
+  if (href) {
+    return <Link href={href} className="block">{card}</Link>;
+  }
+  return card;
 }

@@ -38,7 +38,7 @@ import { tankers as initialTankers } from "@/lib/mock/tankers";
 import { BASE_LABELS, ENO_DEAL_DEFAULTS, BASE_FUEL_MAP } from "@/lib/constants";
 import { useBaseFilter } from "@/contexts/base-filter-context";
 import { useRole } from "@/contexts/role-context";
-import type { Deal, DealStatus, Base, FuelType, Client, Tanker } from "@/lib/types";
+import type { Deal, DealStatus, Base, FuelType, Client, Tanker, DeliveryType } from "@/lib/types";
 import {
   formatCurrency,
   formatNumber,
@@ -60,6 +60,7 @@ interface NewDealForm {
   mass: string;
   pricePerLiter: string;
   costPerLiter: string;
+  deliveryType: DeliveryType;
   tankerId: string;
   status: DealStatus;
   date: string;
@@ -78,8 +79,9 @@ function buildInitialForm(): NewDealForm {
     mass: "",
     pricePerLiter: String(defaults.price),
     costPerLiter: String(defaults.cost),
+    deliveryType: "delivery",
     tankerId: "",
-    status: "in_progress",
+    status: "client_request",
     date: today,
   };
 }
@@ -144,7 +146,7 @@ export default function SalesPage() {
 
   const salesStats = useMemo(() => {
     const revenue = filteredDeals.reduce((s, d) => s + d.totalAmount, 0);
-    const paid = filteredDeals.filter((d) => d.status === "paid").length;
+    const paid = filteredDeals.filter((d) => d.status === "deal_closed").length;
     const avgMargin =
       filteredDeals.length > 0
         ? filteredDeals.reduce((s, d) => s + d.marginPercent, 0) / filteredDeals.length
@@ -152,15 +154,6 @@ export default function SalesPage() {
     return { revenue, paid, total: filteredDeals.length, avgMargin };
   }, [filteredDeals]);
 
-  const computed = useMemo(() => {
-    const vol = parseFloat(form.volume) || 0;
-    const price = parseFloat(form.pricePerLiter) || 0;
-    const cost = parseFloat(form.costPerLiter) || 0;
-    const totalAmount = vol * price;
-    const costAmount = vol * cost;
-    const { margin, marginPercent } = calculateMargin(totalAmount, costAmount);
-    return { totalAmount, costAmount, margin, marginPercent };
-  }, [form.volume, form.pricePerLiter, form.costPerLiter]);
 
   const handleVolumeChange = useCallback(
     (value: string) => {
@@ -224,13 +217,15 @@ export default function SalesPage() {
   const isNewClient = form.clientId === "__new__";
   const isNewTanker = form.tankerId === "__new__";
 
+  const isDelivery = form.deliveryType === "delivery";
+
   const canSubmit =
     (isNewClient
       ? newClientName.trim().length > 0 && newClientContact.trim().length > 0 && newClientPhone.trim().length > 0
       : !!form.clientId) &&
-    (isNewTanker
+    (!isDelivery || (isNewTanker
       ? newTankerPlate.trim().length > 0 && newTankerDriver.trim().length > 0
-      : !!form.tankerId) &&
+      : !!form.tankerId)) &&
     !!form.volume;
 
   const handleCreateDeal = useCallback(() => {
@@ -292,7 +287,8 @@ export default function SalesPage() {
       costAmount,
       margin,
       marginPercent,
-      tankerId,
+      tankerId: isDelivery ? tankerId : "",
+      deliveryType: form.deliveryType,
       status: form.status,
     };
     setDeals((prev) => [newDeal, ...prev]);
@@ -324,9 +320,15 @@ export default function SalesPage() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Все статусы</SelectItem>
-              <SelectItem value="in_progress">В работе</SelectItem>
-              <SelectItem value="shipped">Отгружено</SelectItem>
+              <SelectItem value="client_request">Запрос клиента</SelectItem>
+              <SelectItem value="terms_negotiation">Согласование условий</SelectItem>
+              <SelectItem value="awaiting_payment">Ожидание оплаты</SelectItem>
               <SelectItem value="paid">Оплачено</SelectItem>
+              <SelectItem value="approved_for_shipment">Разрешено к отгрузке</SelectItem>
+              <SelectItem value="shipped">Отгружено</SelectItem>
+              <SelectItem value="documents_done">Документы оформлены</SelectItem>
+              <SelectItem value="invoice_accepted">СФ принята</SelectItem>
+              <SelectItem value="deal_closed">Сделка закрыта</SelectItem>
             </SelectContent>
           </Select>
 
@@ -573,90 +575,76 @@ export default function SalesPage() {
               />
             </FormField>
 
-            {role === "admin" ? (
-              <>
-                <FormField label="Себестоимость за литр">
-                  <Input
-                    type="number"
-                    value={form.costPerLiter}
-                    onChange={(e) => setForm((p) => ({ ...p, costPerLiter: e.target.value }))}
-                    className="bg-white"
-                  />
-                </FormField>
 
-                <div className="rounded-xl border border-stone-200/50 bg-stone-50 p-4 space-y-3">
-                  <p className="text-xs font-medium uppercase tracking-wider text-stone-500">Расчёт</p>
-                  <div className="grid grid-cols-2 gap-3">
-                    <ComputedField label="Сумма сделки" value={formatCurrency(computed.totalAmount)} />
-                    <ComputedField label="Себестоимость" value={formatCurrency(computed.costAmount)} />
-                    <ComputedField label="Маржа" value={formatCurrency(computed.margin)} />
-                    <ComputedField
-                      label="Маржинальность"
-                      value={formatPercent(computed.marginPercent)}
-                      highlight={computed.marginPercent > 0}
-                    />
-                  </div>
-                </div>
-              </>
-            ) : (
-              <div className="rounded-xl border border-rose-200 bg-rose-50/40 px-4 py-3">
-                <p className="text-sm font-medium text-rose-600">
-                  Пройдите авторизацию для доступа к данным себестоимости и маржи
-                </p>
-              </div>
-            )}
-
-            {/* Tanker selector with new tanker option */}
-            <FormField label="Бензовоз">
+            {/* Delivery type */}
+            <FormField label="Способ доставки">
               <Select
-                value={form.tankerId}
-                onValueChange={(v) => setForm((p) => ({ ...p, tankerId: v }))}
+                value={form.deliveryType}
+                onValueChange={(v) => setForm((p) => ({ ...p, deliveryType: v as DeliveryType, tankerId: "" }))}
               >
                 <SelectTrigger className="bg-white">
-                  <SelectValue placeholder="Выберите бензовоз" />
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="__new__">
-                    <span className="font-medium text-blue-600">+ Новый бензовоз</span>
-                  </SelectItem>
-                  {tankerList.map((t) => (
-                    <SelectItem key={t.id} value={t.id}>
-                      {t.plateNumber} — {t.driverName}
-                    </SelectItem>
-                  ))}
+                  <SelectItem value="delivery">Доставка (бензовоз)</SelectItem>
+                  <SelectItem value="pickup">Самовывоз (с места)</SelectItem>
                 </SelectContent>
               </Select>
-              {isNewTanker && (
-                <div className="mt-2 space-y-2 rounded-xl border border-blue-200 bg-blue-50/40 p-3">
-                  <p className="text-xs font-medium text-blue-700 mb-2">Новый бензовоз</p>
-                  <Input
-                    placeholder="Гос. номер (01 A 123 BA) *"
-                    value={newTankerPlate}
-                    onChange={(e) => setNewTankerPlate(e.target.value)}
-                    className="bg-white text-sm h-8"
-                  />
-                  <Input
-                    placeholder="ФИО водителя *"
-                    value={newTankerDriver}
-                    onChange={(e) => setNewTankerDriver(e.target.value)}
-                    className="bg-white text-sm h-8"
-                  />
-                  <Input
-                    placeholder="Телефон водителя"
-                    value={newTankerPhone}
-                    onChange={(e) => setNewTankerPhone(e.target.value)}
-                    className="bg-white text-sm h-8"
-                  />
-                  <Input
-                    placeholder="Вместимость (литры, по умолч. 20 000)"
-                    type="number"
-                    value={newTankerCapacity}
-                    onChange={(e) => setNewTankerCapacity(e.target.value)}
-                    className="bg-white text-sm h-8"
-                  />
-                </div>
-              )}
             </FormField>
+
+            {/* Tanker selector — only shown for delivery */}
+            {isDelivery && (
+              <FormField label="Бензовоз">
+                <Select
+                  value={form.tankerId}
+                  onValueChange={(v) => setForm((p) => ({ ...p, tankerId: v }))}
+                >
+                  <SelectTrigger className="bg-white">
+                    <SelectValue placeholder="Выберите бензовоз" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__new__">
+                      <span className="font-medium text-blue-600">+ Новый бензовоз</span>
+                    </SelectItem>
+                    {tankerList.map((t) => (
+                      <SelectItem key={t.id} value={t.id}>
+                        {t.plateNumber} — {t.driverName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {isNewTanker && (
+                  <div className="mt-2 space-y-2 rounded-xl border border-blue-200 bg-blue-50/40 p-3">
+                    <p className="text-xs font-medium text-blue-700 mb-2">Новый бензовоз</p>
+                    <Input
+                      placeholder="Гос. номер (01 A 123 BA) *"
+                      value={newTankerPlate}
+                      onChange={(e) => setNewTankerPlate(e.target.value)}
+                      className="bg-white text-sm h-8"
+                    />
+                    <Input
+                      placeholder="ФИО водителя *"
+                      value={newTankerDriver}
+                      onChange={(e) => setNewTankerDriver(e.target.value)}
+                      className="bg-white text-sm h-8"
+                    />
+                    <Input
+                      placeholder="Телефон водителя"
+                      value={newTankerPhone}
+                      onChange={(e) => setNewTankerPhone(e.target.value)}
+                      className="bg-white text-sm h-8"
+                    />
+                    <Input
+                      placeholder="Вместимость (литры, по умолч. 20 000)"
+                      type="number"
+                      value={newTankerCapacity}
+                      onChange={(e) => setNewTankerCapacity(e.target.value)}
+                      className="bg-white text-sm h-8"
+                    />
+                  </div>
+                )}
+              </FormField>
+            )}
 
             <FormField label="Статус">
               <Select
@@ -667,9 +655,15 @@ export default function SalesPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="in_progress">В работе</SelectItem>
-                  <SelectItem value="shipped">Отгружено</SelectItem>
+                  <SelectItem value="client_request">Запрос клиента</SelectItem>
+                  <SelectItem value="terms_negotiation">Согласование условий</SelectItem>
+                  <SelectItem value="awaiting_payment">Ожидание оплаты</SelectItem>
                   <SelectItem value="paid">Оплачено</SelectItem>
+                  <SelectItem value="approved_for_shipment">Разрешено к отгрузке</SelectItem>
+                  <SelectItem value="shipped">Отгружено</SelectItem>
+                  <SelectItem value="documents_done">Документы оформлены</SelectItem>
+                  <SelectItem value="invoice_accepted">СФ принята</SelectItem>
+                  <SelectItem value="deal_closed">Сделка закрыта</SelectItem>
                 </SelectContent>
               </Select>
             </FormField>
@@ -763,13 +757,21 @@ function DealDetailSheet({
           </DetailSection>
 
           <DetailSection title="Логистика">
-            <DetailRow label="Бензовоз" value={tanker?.plateNumber ?? "—"} />
-            <DetailRow label="Водитель" value={tanker?.driverName ?? "—"} />
-            <DetailRow label="Телефон водителя" value={tanker?.driverPhone ?? "—"} />
             <DetailRow
-              label="Ёмкость цистерны"
-              value={tanker ? formatVolume(tanker.capacity) : "—"}
+              label="Способ доставки"
+              value={deal.deliveryType === "pickup" ? "Самовывоз (с места)" : "Доставка (бензовоз)"}
             />
+            {deal.deliveryType !== "pickup" && (
+              <>
+                <DetailRow label="Бензовоз" value={tanker?.plateNumber ?? "—"} />
+                <DetailRow label="Водитель" value={tanker?.driverName ?? "—"} />
+                <DetailRow label="Телефон водителя" value={tanker?.driverPhone ?? "—"} />
+                <DetailRow
+                  label="Ёмкость цистерны"
+                  value={tanker ? formatVolume(tanker.capacity) : "—"}
+                />
+              </>
+            )}
           </DetailSection>
         </div>
       </SheetContent>
@@ -820,25 +822,6 @@ function FormField({ label, children }: { label: string; children: React.ReactNo
     <div className="space-y-1.5">
       <label className="text-sm font-medium text-stone-700">{label}</label>
       {children}
-    </div>
-  );
-}
-
-function ComputedField({
-  label,
-  value,
-  highlight,
-}: {
-  label: string;
-  value: string;
-  highlight?: boolean;
-}) {
-  return (
-    <div>
-      <p className="text-xs text-stone-500">{label}</p>
-      <p className={`text-sm font-semibold ${highlight ? "text-emerald-600" : "text-stone-900"}`}>
-        {value}
-      </p>
     </div>
   );
 }
