@@ -45,8 +45,8 @@ src/
       market/page.tsx
   components/
     layout/sidebar.tsx          # dark gradient sidebar, collapsible
-    layout/header.tsx           # white header, notifications, avatar, base filter
-    layout/portal-providers.tsx # client wrapper that provides BaseFilterContext
+    layout/header.tsx           # white header, notifications, role toggle, base filter
+    layout/portal-providers.tsx # client wrapper: BaseFilterProvider + RoleProvider
     shared/
       kpi-card.tsx              # KPI card with count-up animation + accent tint + hover lift
       mini-kpi-card.tsx         # compact KPI card (no animation) for summary rows
@@ -68,11 +68,12 @@ src/
                                 #   table, tabs, badge, separator, avatar, scroll-area
   contexts/
     base-filter-context.tsx     # BaseFilterProvider + useBaseFilter hook
+    role-context.tsx            # RoleProvider + useRole hook (Role = 'admin' | 'operator')
   hooks/
     use-count-up.ts             # rAF-based number count-up (animates once per session)
   lib/
     types.ts                    # all shared TypeScript interfaces + BaseFilter type
-    constants.ts                # FUEL_DENSITY, BONUS_RATE_PER_LITER, BASES,
+    constants.ts                # FUEL_DENSITY, BONUS_RATE_PER_LITER, BASES, BASE_FUEL_MAP,
                                 #   STATUS_COLORS, STATUS_LABELS, ENO_PRICES, etc.
     format.ts                   # formatCurrency, formatVolume, formatDateShort, etc.
     utils.ts                    # cn() utility (clsx + tailwind-merge)
@@ -82,6 +83,39 @@ src/
       sales.ts, reports.ts, expenses.ts                   # transactions
       fuel.ts, market.ts, logistics.ts                    # standalone
 ```
+
+## Business Rules (Important)
+
+### Base-Fuel Mapping
+Each base distributes exactly one fuel type:
+- **Чирчик** → **AI-95**
+- **Ахангаран** → **AI-92**
+
+This is enforced via the `BASE_FUEL_MAP` constant in `lib/constants.ts`:
+```ts
+export const BASE_FUEL_MAP = {
+  chirchik: 'AI-95',
+  akhangaran: 'AI-92',
+} as const;
+```
+
+When adding/editing deals or reports, always use `BASE_FUEL_MAP[base]` to determine the fuel type. The new deal form auto-sets fuel type when the user picks a base — the fuel field is read-only. All mock data in `sales.ts`, `reports.ts`, and `fuel.ts` already respects this mapping.
+
+### Role-Based Access
+The portal has two demo roles: `'admin'` (Руководитель) and `'operator'` (Оператор). The active role is toggled via a pill in the header and stored in `RoleContext`.
+
+- Access with `const { role } = useRole()` from `@/contexts/role-context`
+- **Admin**: sees all data including cost/margin/price fields
+- **Operator**: cost per liter, margin, and margin% fields are hidden in sales form + detail sheet; replaced with a red `"Пройдите авторизацию для доступа"` message
+
+When adding new sensitive fields, check `role === 'admin'` before rendering them.
+
+### Expense Types
+`ExpenseType = 'cash' | 'bank'` — these represent **payment method** (нал/безнал), not urgency.
+- `cash` → label "Нал" (amber badge)
+- `bank` → label "Безнал" (blue badge)
+
+Do NOT use `'urgent'` as an expense type — it was removed.
 
 ## Design System
 
@@ -125,20 +159,24 @@ To add a new status: add entries to both maps in constants.ts.
 Current status keys: `in_progress`, `shipped`, `paid`, `pending`, `approved`, `rejected`, `new`,
 `on_shift`, `off_shift`, `handover`, `loyal`, `one-time`, `profitable`, `unprofitable`,
 `vip`, `promising`, `declining`, `booked`, `planned`,
-`cash`, `bank` (payment types), `urgent` (expense type)
+`cash`, `bank` (payment types and expense types)
 
 ## Mock Data Conventions
 
 - All data lives in `src/lib/mock/` — no inline arrays in page files
 - Uzbek names, UZ phone format (`+998 9X XXX XXXX`), Uzbek plates (`01 A 123 BA`)
-- Fuel prices: AI-92 ~10 800 сум/л, AI-95 ~12 200 сум/л
+- Fuel prices: AI-92 ~10 800 сум/л (Ахангаран), AI-95 ~12 200 сум/л (Чирчик)
 - Currency: UZS, formatted via `formatCurrency()` (e.g., `270 000 000 сум`)
 - Dates: ISO strings, displayed via `formatDateShort()` (`dd.MM.yyyy`) or `formatDate()`
 - Bases: `'chirchik'` | `'akhangaran'` (display labels via `BASE_LABELS` in constants)
+- Each base has exactly one fuel type — see `BASE_FUEL_MAP` above
+- `currentFuelStatus` in `mock/fuel.ts` has 2 entries (one per base), not 4
+- `fuelLevels` in `mock/fuel.ts` generates 30-day history for 2 series (chirchik-AI-95, akhangaran-AI-92)
 - `Tanker` has `rating` (1–5) and `reliability` (0–100%) fields
 - `Client` has optional `purchaseFrequencyDays` and `rating` fields
 - `TankerTrip` interface exists in `types.ts`; mock data in `mock/tankers.ts` as `tankerTrips`
 - `operatorBudgets` exported from `mock/expenses.ts` — monthly allocations per operator
+- `TankerPayment.type` is `PaymentType = 'cash' | 'bank'`; `Expense.type` is `ExpenseType = 'cash' | 'bank'`
 
 ## Page Patterns
 
@@ -149,6 +187,14 @@ Use `side="right" className="w-[480px] overflow-y-auto"`. See `tankers/page.tsx`
 ### New item dialog/sheet
 Small forms (≤4 fields): `Dialog`. Large forms: `Sheet`.
 All form fields must be controlled (`value` + `onChange`). Submit must do something visible (add to list, close dialog). Validate before submit.
+
+### Inline entity creation in forms
+Sales form supports creating a new client or tanker without leaving the sheet:
+- Add a `"__new__"` option at the top of the Select (styled blue with `+` prefix)
+- When selected, expand an inline mini-form below the Select
+- On submit, create the entity, add to local state, use the new id in the deal
+- Validation must require the inline form fields when `"__new__"` is active
+See `sales/page.tsx` for the reference implementation.
 
 ### Filters
 Use `<FilterBar>` from `@/components/shared/filter-bar` to wrap filter controls — don't use a raw div.
@@ -161,6 +207,12 @@ The header has a base selector (Все базы / Чирчик / Ахангар�
 - Add `selectedBase` to all relevant `useMemo` dependency arrays
 - Pages where base doesn't apply (tankers, market, expenses, logistics): no changes needed
 - Avoid adding a page-level base filter Select if the global header filter already covers it
+
+### Role filter (global)
+The header has a role toggle (Руководитель / Оператор) via `RoleContext`.
+- Consume with `const { role } = useRole()` from `@/contexts/role-context`
+- Use `role === 'admin'` to gate sensitive fields (cost, margin, cost per liter)
+- Both admin and operator can create deals/tankers — only visibility differs
 
 ### Charts
 - **Never import Recharts directly in page files** — extract to `src/components/charts/` and use `next/dynamic`
@@ -187,9 +239,10 @@ Content can mix static text with dynamic computed values (JSX expressions are fi
 
 ### FuelGauge
 ```tsx
-<FuelGauge label="AI-92" baseName="Чирчик" level={72} status="ok" daysRemaining={18} volumeRemaining={45000} index={0} />
+<FuelGauge label="AI-95" baseName="Чирчик" level={72} status="ok" daysRemaining={18} volumeRemaining={45000} index={0} />
 ```
 SVG ring gauge. `status` drives color (ok=emerald, warning=amber, critical=rose). `index` staggers the fill animation by 150ms per gauge. Light background only (stone palette text/strokes).
+Note: with the base-fuel mapping, Чирчик always shows AI-95 and Ахангаран always shows AI-92.
 
 ## Adding a New Page
 
@@ -203,6 +256,7 @@ SVG ring gauge. `status` drives color (ok=emerald, warning=amber, critical=rose)
 8. If the page has data with a `base` field, consume `useBaseFilter()` and filter with `filterByBase()`
 9. If the page has charts, extract to `src/components/charts/` and use `next/dynamic`
 10. Use only shadcn/ui components for buttons, inputs, selects, dialogs — never raw HTML form elements
+11. If the page shows cost/margin/price data, gate it with `role === 'admin'` from `useRole()`
 
 ## Language
 
