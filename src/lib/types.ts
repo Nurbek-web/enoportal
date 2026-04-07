@@ -28,6 +28,8 @@ export interface Client {
   segment: ClientSegment;
   totalVolume: number; // total liters purchased
   dealCount: number;
+  purchaseFrequencyDays?: number; // avg days between purchases
+  rating?: number; // 1-5 score
 }
 
 // Tanker truck (бензовоз)
@@ -40,6 +42,20 @@ export interface Tanker {
   tripCount: number;
   totalPaid: number; // UZS
   segment: 'loyal' | 'one-time' | 'profitable' | 'unprofitable';
+  rating: number; // 1-5
+  reliability: number; // percentage 0-100
+}
+
+// Tanker trip record
+export interface TankerTrip {
+  id: string;
+  tankerId: string;
+  dealId: string;
+  date: string;
+  route: string; // e.g. "Чирчик → Ташкент"
+  volumeDelivered: number; // liters
+  cost: number; // UZS
+  status: 'completed' | 'in_transit';
 }
 
 export type FuelType = 'AI-92' | 'AI-95';

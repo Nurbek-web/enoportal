@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import dynamic from "next/dynamic";
-import { Search } from "lucide-react";
+import { Search, Star } from "lucide-react";
 import { MotionContainer, MotionItem } from "@/components/shared/motion-container";
 import { PageHeader } from "@/components/shared/page-header";
 import { StatusBadge } from "@/components/shared/status-badge";
@@ -83,7 +83,12 @@ export default function ClientsPage() {
             list.reduce((sum, c) => sum + c.dealCount, 0) / list.length
           )
         : 0;
-    return { totalClients, vipClients, totalVolume, avgDeals };
+    const withFreq = list.filter((c) => c.purchaseFrequencyDays);
+    const avgFrequency =
+      withFreq.length > 0
+        ? Math.round(withFreq.reduce((sum, c) => sum + (c.purchaseFrequencyDays ?? 0), 0) / withFreq.length)
+        : 0;
+    return { totalClients, vipClients, totalVolume, avgDeals, avgFrequency };
   }, [filteredClients]);
 
   const clientDeals = useMemo(() => {
@@ -143,7 +148,7 @@ export default function ClientsPage() {
           <MiniKpiCard label="Всего клиентов" value={String(stats.totalClients)} />
           <MiniKpiCard label="VIP клиенты" value={String(stats.vipClients)} />
           <MiniKpiCard label="Общий объём" value={formatVolume(stats.totalVolume)} />
-          <MiniKpiCard label="Сделок / клиент" value={String(stats.avgDeals)} />
+          <MiniKpiCard label="Ср. частота закупок" value={stats.avgFrequency > 0 ? `раз в ${stats.avgFrequency} дн.` : "—"} />
         </div>
       </MotionItem>
 
@@ -166,6 +171,9 @@ export default function ClientsPage() {
                 </TableHead>
                 <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500 text-right">
                   Сделок
+                </TableHead>
+                <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500 text-right">
+                  Частота
                 </TableHead>
                 <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">
                   Сегмент
@@ -194,6 +202,9 @@ export default function ClientsPage() {
                   <TableCell className="text-right tabular-nums text-stone-700">
                     {client.dealCount}
                   </TableCell>
+                  <TableCell className="text-right tabular-nums text-stone-500 text-xs">
+                    {client.purchaseFrequencyDays ? `раз в ${client.purchaseFrequencyDays} дн.` : "—"}
+                  </TableCell>
                   <TableCell>
                     <StatusBadge status={client.segment} />
                   </TableCell>
@@ -201,7 +212,7 @@ export default function ClientsPage() {
               ))}
               {filteredClients.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={6} className="py-12 text-center text-sm text-stone-400">
+                  <TableCell colSpan={7} className="py-12 text-center text-sm text-stone-400">
                     Клиенты не найдены
                   </TableCell>
                 </TableRow>
@@ -287,6 +298,28 @@ function ClientDetailSheet({
               <dd className="text-sm">
                 <StatusBadge status={client.segment} />
               </dd>
+              {client.purchaseFrequencyDays && (
+                <>
+                  <dt className="text-sm text-stone-500">Частота закупок</dt>
+                  <dd className="text-sm text-stone-900">Каждые {client.purchaseFrequencyDays} дней</dd>
+                </>
+              )}
+              {client.rating && (
+                <>
+                  <dt className="text-sm text-stone-500">Рейтинг</dt>
+                  <dd className="text-sm">
+                    <div className="flex items-center gap-1">
+                      {Array.from({ length: 5 }, (_, i) => (
+                        <Star
+                          key={i}
+                          className={`h-3.5 w-3.5 ${i < Math.round(client.rating!) ? "fill-amber-400 text-amber-400" : "text-stone-200 fill-stone-200"}`}
+                        />
+                      ))}
+                      <span className="ml-1 text-xs text-stone-500">{client.rating.toFixed(1)}</span>
+                    </div>
+                  </dd>
+                </>
+              )}
             </dl>
           </div>
 

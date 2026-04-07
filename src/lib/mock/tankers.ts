@@ -1,4 +1,4 @@
-import type { Tanker, TankerPayment } from '@/lib/types';
+import type { Tanker, TankerPayment, TankerTrip } from '@/lib/types';
 
 export const tankers: Tanker[] = [
   {
@@ -10,6 +10,8 @@ export const tankers: Tanker[] = [
     tripCount: 12,
     totalPaid: 24000000,
     segment: 'loyal',
+    rating: 4.7,
+    reliability: 96,
   },
   {
     id: 'tnk-002',
@@ -20,6 +22,8 @@ export const tankers: Tanker[] = [
     tripCount: 15,
     totalPaid: 32000000,
     segment: 'profitable',
+    rating: 4.5,
+    reliability: 93,
   },
   {
     id: 'tnk-003',
@@ -30,6 +34,8 @@ export const tankers: Tanker[] = [
     tripCount: 8,
     totalPaid: 14000000,
     segment: 'one-time',
+    rating: 3.2,
+    reliability: 75,
   },
   {
     id: 'tnk-004',
@@ -40,6 +46,8 @@ export const tankers: Tanker[] = [
     tripCount: 10,
     totalPaid: 20000000,
     segment: 'loyal',
+    rating: 4.3,
+    reliability: 88,
   },
   {
     id: 'tnk-005',
@@ -50,6 +58,8 @@ export const tankers: Tanker[] = [
     tripCount: 11,
     totalPaid: 22000000,
     segment: 'unprofitable',
+    rating: 2.8,
+    reliability: 68,
   },
 ];
 
@@ -140,7 +150,7 @@ export const tankerPayments: TankerPayment[] = [
     tankerId: 'tnk-001',
     amount: 3400000,
     type: 'cash',
-    dealId: 'deal-019',
+    dealId: 'deal-016',
   },
   {
     id: 'tp-012',
@@ -150,4 +160,22 @@ export const tankerPayments: TankerPayment[] = [
     type: 'bank',
     dealId: 'deal-022',
   },
+];
+
+export const tankerTrips: TankerTrip[] = [
+  { id: 'tt-001', tankerId: 'tnk-001', dealId: 'deal-001', date: '2026-02-05T12:00:00.000Z', route: 'Чирчик → Ташкент', volumeDelivered: 25000, cost: 2000000, status: 'completed' },
+  { id: 'tt-002', tankerId: 'tnk-002', dealId: 'deal-002', date: '2026-02-07T14:00:00.000Z', route: 'Ахангаран → Ташкент', volumeDelivered: 20000, cost: 1800000, status: 'completed' },
+  { id: 'tt-003', tankerId: 'tnk-003', dealId: 'deal-003', date: '2026-02-10T10:00:00.000Z', route: 'Чирчик → Ташкент', volumeDelivered: 8000, cost: 900000, status: 'completed' },
+  { id: 'tt-004', tankerId: 'tnk-004', dealId: 'deal-004', date: '2026-02-12T09:00:00.000Z', route: 'Ахангаран → Ташкент', volumeDelivered: 18000, cost: 1700000, status: 'completed' },
+  { id: 'tt-005', tankerId: 'tnk-005', dealId: 'deal-005', date: '2026-02-15T11:00:00.000Z', route: 'Чирчик → Ташкент', volumeDelivered: 12000, cost: 1200000, status: 'completed' },
+  { id: 'tt-006', tankerId: 'tnk-001', dealId: 'deal-006', date: '2026-02-18T15:00:00.000Z', route: 'Ахангаран → Ташкент', volumeDelivered: 10000, cost: 1050000, status: 'completed' },
+  { id: 'tt-007', tankerId: 'tnk-002', dealId: 'deal-007', date: '2026-02-20T10:00:00.000Z', route: 'Чирчик → Ташкент', volumeDelivered: 22000, cost: 2100000, status: 'completed' },
+  { id: 'tt-008', tankerId: 'tnk-003', dealId: 'deal-008', date: '2026-02-23T13:00:00.000Z', route: 'Ахангаран → Ташкент', volumeDelivered: 7000, cost: 850000, status: 'completed' },
+  { id: 'tt-009', tankerId: 'tnk-004', dealId: 'deal-009', date: '2026-02-25T09:00:00.000Z', route: 'Чирчик → Ташкент', volumeDelivered: 28000, cost: 2600000, status: 'completed' },
+  { id: 'tt-010', tankerId: 'tnk-005', dealId: 'deal-010', date: '2026-02-28T11:00:00.000Z', route: 'Ахангаран → Ташкент', volumeDelivered: 6000, cost: 750000, status: 'completed' },
+  { id: 'tt-011', tankerId: 'tnk-001', dealId: 'deal-011', date: '2026-03-02T09:00:00.000Z', route: 'Чирчик → Ташкент', volumeDelivered: 15000, cost: 1500000, status: 'completed' },
+  { id: 'tt-012', tankerId: 'tnk-002', dealId: 'deal-012', date: '2026-03-04T11:00:00.000Z', route: 'Ахангаран → Ташкент', volumeDelivered: 9000, cost: 950000, status: 'completed' },
+  { id: 'tt-013', tankerId: 'tnk-002', dealId: 'deal-017', date: '2026-03-16T14:00:00.000Z', route: 'Чирчик → Ташкент', volumeDelivered: 9000, cost: 920000, status: 'completed' },
+  { id: 'tt-014', tankerId: 'tnk-001', dealId: 'deal-021', date: '2026-03-24T10:00:00.000Z', route: 'Чирчик → Ташкент', volumeDelivered: 7000, cost: 780000, status: 'in_transit' },
+  { id: 'tt-015', tankerId: 'tnk-003', dealId: 'deal-023', date: '2026-03-28T09:00:00.000Z', route: 'Чирчик → Ташкент', volumeDelivered: 24000, cost: 2250000, status: 'in_transit' },
 ];

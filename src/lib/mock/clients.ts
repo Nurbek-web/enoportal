@@ -9,6 +9,8 @@ export const clients: Client[] = [
     segment: 'vip',
     totalVolume: 480000,
     dealCount: 25,
+    purchaseFrequencyDays: 6,
+    rating: 4.9,
   },
   {
     id: 'cli-002',
@@ -18,6 +20,8 @@ export const clients: Client[] = [
     segment: 'vip',
     totalVolume: 420000,
     dealCount: 22,
+    purchaseFrequencyDays: 7,
+    rating: 4.7,
   },
   {
     id: 'cli-003',
@@ -27,6 +31,8 @@ export const clients: Client[] = [
     segment: 'vip',
     totalVolume: 390000,
     dealCount: 18,
+    purchaseFrequencyDays: 8,
+    rating: 4.6,
   },
   {
     id: 'cli-004',
@@ -36,6 +42,8 @@ export const clients: Client[] = [
     segment: 'promising',
     totalVolume: 280000,
     dealCount: 15,
+    purchaseFrequencyDays: 11,
+    rating: 4.1,
   },
   {
     id: 'cli-005',
@@ -45,6 +53,8 @@ export const clients: Client[] = [
     segment: 'promising',
     totalVolume: 240000,
     dealCount: 12,
+    purchaseFrequencyDays: 13,
+    rating: 3.9,
   },
   {
     id: 'cli-006',
@@ -54,6 +64,8 @@ export const clients: Client[] = [
     segment: 'promising',
     totalVolume: 210000,
     dealCount: 10,
+    purchaseFrequencyDays: 14,
+    rating: 3.7,
   },
   {
     id: 'cli-007',
@@ -63,6 +75,8 @@ export const clients: Client[] = [
     segment: 'promising',
     totalVolume: 190000,
     dealCount: 9,
+    purchaseFrequencyDays: 15,
+    rating: 3.6,
   },
   {
     id: 'cli-008',
@@ -72,6 +86,8 @@ export const clients: Client[] = [
     segment: 'novice',
     totalVolume: 85000,
     dealCount: 5,
+    purchaseFrequencyDays: 22,
+    rating: 3.0,
   },
   {
     id: 'cli-009',
@@ -81,6 +97,8 @@ export const clients: Client[] = [
     segment: 'novice',
     totalVolume: 72000,
     dealCount: 4,
+    purchaseFrequencyDays: 28,
+    rating: 3.2,
   },
   {
     id: 'cli-010',
@@ -90,6 +108,8 @@ export const clients: Client[] = [
     segment: 'novice',
     totalVolume: 65000,
     dealCount: 3,
+    purchaseFrequencyDays: 30,
+    rating: 3.1,
   },
   {
     id: 'cli-011',
@@ -99,6 +119,8 @@ export const clients: Client[] = [
     segment: 'novice',
     totalVolume: 58000,
     dealCount: 3,
+    purchaseFrequencyDays: 32,
+    rating: 2.9,
   },
   {
     id: 'cli-012',
@@ -108,6 +130,8 @@ export const clients: Client[] = [
     segment: 'novice',
     totalVolume: 52000,
     dealCount: 3,
+    purchaseFrequencyDays: 35,
+    rating: 2.8,
   },
   {
     id: 'cli-013',
@@ -117,6 +141,8 @@ export const clients: Client[] = [
     segment: 'declining',
     totalVolume: 150000,
     dealCount: 8,
+    purchaseFrequencyDays: 18,
+    rating: 2.5,
   },
   {
     id: 'cli-014',
@@ -126,6 +152,8 @@ export const clients: Client[] = [
     segment: 'declining',
     totalVolume: 120000,
     dealCount: 6,
+    purchaseFrequencyDays: 20,
+    rating: 2.3,
   },
   {
     id: 'cli-015',
@@ -135,5 +163,7 @@ export const clients: Client[] = [
     segment: 'declining',
     totalVolume: 95000,
     dealCount: 5,
+    purchaseFrequencyDays: 25,
+    rating: 2.6,
   },
 ];

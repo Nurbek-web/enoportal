@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import {
   Droplets,
   TrendingUp,
+  TrendingDown,
   ShoppingCart,
   BarChart3,
   Clock,
@@ -27,6 +28,8 @@ import {
 import { deals } from "@/lib/mock/sales";
 import { clients } from "@/lib/mock/clients";
 import { managers } from "@/lib/mock/managers";
+import { operators } from "@/lib/mock/operators";
+import { reports } from "@/lib/mock/reports";
 import { currentFuelStatus } from "@/lib/mock/fuel";
 import { activities } from "@/lib/mock/market";
 import { formatCurrency, formatVolume, formatPercent, formatRelativeDate } from "@/lib/format";
@@ -43,6 +46,14 @@ const WeeklySalesChart = dynamic(
   }
 );
 
+const PeriodComparisonChart = dynamic(
+  () => import("@/components/charts/period-comparison-chart"),
+  {
+    ssr: false,
+    loading: () => <div className="h-48 animate-pulse rounded-xl bg-stone-100" />,
+  }
+);
+
 const ACTIVITY_COLORS: Record<string, string> = {
   deal:       "bg-blue-500",
   report:     "bg-amber-500",
@@ -56,6 +67,9 @@ const STATUS_DOT: Record<string, string> = {
   warning:  "bg-amber-500",
   critical: "bg-rose-500",
 };
+
+// Use the latest deal date as reference for "today" (demo data)
+const REFERENCE_DATE = new Date("2026-04-07T00:00:00.000Z");
 
 export default function DashboardPage() {
   const { selectedBase } = useBaseFilter();
@@ -98,6 +112,39 @@ export default function DashboardPage() {
     });
   }, [filteredDeals]);
 
+  // Period comparison: last 4 weeks vs previous 4 weeks
+  const periodComparison = useMemo(() => {
+    const now = REFERENCE_DATE.getTime();
+    const weekMs = 7 * 24 * 60 * 60 * 1000;
+    return Array.from({ length: 4 }, (_, i) => {
+      const currentEnd = new Date(now - i * weekMs);
+      const currentStart = new Date(currentEnd.getTime() - weekMs);
+      const previousEnd = new Date(currentStart.getTime());
+      const previousStart = new Date(previousEnd.getTime() - weekMs);
+
+      const currentVol = filteredDeals
+        .filter((d) => { const t = new Date(d.date).getTime(); return t >= currentStart.getTime() && t < currentEnd.getTime(); })
+        .reduce((s, d) => s + d.volume, 0);
+      const previousVol = filteredDeals
+        .filter((d) => { const t = new Date(d.date).getTime(); return t >= previousStart.getTime() && t < previousEnd.getTime(); })
+        .reduce((s, d) => s + d.volume, 0);
+
+      const dd = currentStart.getDate().toString().padStart(2, "0");
+      const mm = (currentStart.getMonth() + 1).toString().padStart(2, "0");
+      return { label: `${dd}.${mm}`, current: currentVol, previous: previousVol };
+    }).reverse();
+  }, [filteredDeals]);
+
+  // Week-over-week delta
+  const weekDelta = useMemo(() => {
+    if (periodComparison.length < 2) return { value: 0, positive: true };
+    const curr = periodComparison[periodComparison.length - 1].current;
+    const prev = periodComparison[periodComparison.length - 1].previous;
+    if (prev === 0) return { value: 0, positive: true };
+    const delta = ((curr - prev) / prev) * 100;
+    return { value: Math.abs(delta), positive: delta >= 0 };
+  }, [periodComparison]);
+
   const baseVolumes = useMemo(() => {
     const chirchik = filteredDeals.reduce((s, d) => (d.base === "chirchik" ? s + d.volume : s), 0);
     const akhangaran = filteredDeals.reduce((s, d) => (d.base === "akhangaran" ? s + d.volume : s), 0);
@@ -126,14 +173,29 @@ export default function DashboardPage() {
     return Array.from(statsMap.values()).sort((a, b) => b.volume - a.volume).slice(0, 5);
   }, [filteredDeals]);
 
+  // Operator efficiency: report count + approval rate
+  const operatorEfficiency = useMemo(() => {
+    return operators.map((op) => {
+      const opReports = reports.filter((r) => r.operatorId === op.id);
+      const approved = opReports.filter((r) => r.status === "approved").length;
+      const total = opReports.length;
+      const approvalRate = total > 0 ? Math.round((approved / total) * 100) : 0;
+      return { id: op.id, name: op.name, total, approvalRate };
+    }).sort((a, b) => b.approvalRate - a.approvalRate || b.total - a.total).slice(0, 5);
+  }, []);
+
   const aiForecast = useMemo(() => {
     const recentWeekVol = filteredDeals
-      .filter((d) => (Date.now() - new Date(d.date).getTime()) / (1000 * 60 * 60 * 24) <= 7)
+      .filter((d) => (REFERENCE_DATE.getTime() - new Date(d.date).getTime()) / (1000 * 60 * 60 * 24) <= 7)
       .reduce((s, d) => s + d.volume, 0);
     const topClient = topClients[0];
     const criticalFuel = filteredFuelStatus.find((f) => f.status === "critical");
-    return { recentWeekVol, topClient, criticalFuel };
-  }, [filteredDeals, topClients, filteredFuelStatus]);
+    const warningFuel = filteredFuelStatus.filter((f) => f.status === "warning" || f.status === "critical");
+    const promisingClients = clients.filter((c) => c.segment === "promising").slice(0, 2);
+    const trendPositive = weekDelta.positive;
+    const trendPct = weekDelta.value.toFixed(1);
+    return { recentWeekVol, topClient, criticalFuel, warningFuel, promisingClients, trendPositive, trendPct };
+  }, [filteredDeals, topClients, filteredFuelStatus, weekDelta]);
 
   // Per-base worst status for pulse indicators
   const baseStatus = useMemo(() => {
@@ -207,6 +269,25 @@ export default function DashboardPage() {
                 <span className="text-sm font-semibold text-stone-900">{formatVolume(baseVolumes.total)}</span>
               </div>
             </div>
+          </div>
+        </div>
+      </MotionItem>
+
+      {/* Period Comparison */}
+      <MotionItem>
+        <div className="bg-white rounded-2xl border border-stone-200/50 shadow-sm shadow-stone-900/[0.04] p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-medium text-stone-800">Сравнение периодов</h3>
+            <div className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${weekDelta.positive ? "bg-emerald-50 text-emerald-700" : "bg-rose-50 text-rose-700"}`}>
+              {weekDelta.positive
+                ? <TrendingUp className="h-3.5 w-3.5" />
+                : <TrendingDown className="h-3.5 w-3.5" />
+              }
+              {weekDelta.positive ? "+" : "-"}{weekDelta.value.toFixed(1)}% к прошлой неделе
+            </div>
+          </div>
+          <div className="h-48 min-h-[192px] w-full min-w-0">
+            <PeriodComparisonChart data={periodComparison} />
           </div>
         </div>
       </MotionItem>
@@ -308,35 +389,88 @@ export default function DashboardPage() {
         </div>
       </MotionItem>
 
+      {/* Operator Efficiency */}
+      <MotionItem>
+        <div className="bg-white rounded-2xl border border-stone-200/50 shadow-sm shadow-stone-900/[0.04]">
+          <div className="px-5 py-4 border-b border-stone-100">
+            <h3 className="text-sm font-medium text-stone-800">Эффективность операторов</h3>
+          </div>
+          <div className="p-5 space-y-3">
+            {operatorEfficiency.map((op) => (
+              <div key={op.id} className="flex items-center gap-4">
+                <span className="w-36 text-sm font-medium text-stone-700 truncate flex-shrink-0">{op.name.split(" ")[0]} {op.name.split(" ")[1]?.[0]}.</span>
+                <div className="flex-1 h-2 rounded-full bg-stone-100 overflow-hidden">
+                  <div
+                    className={`h-full rounded-full transition-all duration-700 ${op.approvalRate >= 80 ? "bg-emerald-500" : op.approvalRate >= 60 ? "bg-amber-500" : "bg-rose-500"}`}
+                    style={{ width: `${op.approvalRate}%` }}
+                  />
+                </div>
+                <span className={`w-12 text-right text-sm font-semibold tabular-nums ${op.approvalRate >= 80 ? "text-emerald-600" : op.approvalRate >= 60 ? "text-amber-600" : "text-rose-600"}`}>
+                  {op.approvalRate}%
+                </span>
+                <span className="w-16 text-right text-xs text-stone-400 tabular-nums">{op.total} отч.</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </MotionItem>
+
       {/* AI forecast + Activity */}
       <MotionItem>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <AiInsightCard title="ИИ-прогноз на ближайшие 7 дней">
-            <div className="space-y-2 text-sm">
-              <p>
-                За последние 7 дней продано{" "}
-                <strong>{formatVolume(aiForecast.recentWeekVol)}</strong>.
-                При сохранении темпа прогнозируемая выручка за апрель составит{" "}
-                <strong>
-                  {formatCurrency(Math.round(
-                    (aiForecast.recentWeekVol / 7) * 30 * (totalRevenue / (totalVolume || 1))
-                  ))}
-                </strong>.
-              </p>
-              {aiForecast.topClient?.client && (
+          <div className="space-y-4">
+            <AiInsightCard title="ИИ-прогноз продаж">
+              <div className="space-y-2 text-sm">
                 <p>
-                  Приоритетный клиент: <strong>{aiForecast.topClient.client.companyName}</strong> —
-                  наибольший объём закупок, рекомендуем удержание.
+                  За последние 7 дней продано{" "}
+                  <strong>{formatVolume(aiForecast.recentWeekVol)}</strong>.
+                  При сохранении темпа прогнозируемая выручка за апрель составит{" "}
+                  <strong>
+                    {formatCurrency(Math.round(
+                      (aiForecast.recentWeekVol / 7) * 30 * (totalRevenue / (totalVolume || 1))
+                    ))}
+                  </strong>.
                 </p>
-              )}
-              {aiForecast.criticalFuel && (
-                <p className="text-rose-600 font-medium">
-                  ⚠ Критический остаток: {aiForecast.criticalFuel.fuelType} на базе{" "}
-                  {BASE_LABELS[aiForecast.criticalFuel.base]} — срочная поставка.
+                <p>
+                  Тренд:{" "}
+                  <span className={aiForecast.trendPositive ? "text-emerald-600 font-medium" : "text-rose-600 font-medium"}>
+                    {aiForecast.trendPositive ? "рост" : "спад"} {aiForecast.trendPositive ? "+" : "-"}{aiForecast.trendPct}%
+                  </span>{" "}
+                  по сравнению с прошлой неделей.
                 </p>
-              )}
-            </div>
-          </AiInsightCard>
+                {aiForecast.promisingClients.length > 0 && (
+                  <p>
+                    Рекомендуем акцент на перспективных клиентах:{" "}
+                    <strong>{aiForecast.promisingClients.map((c) => c.companyName).join(", ")}</strong>.
+                  </p>
+                )}
+                {aiForecast.topClient?.client && (
+                  <p>
+                    Приоритет удержания: <strong>{aiForecast.topClient.client.companyName}</strong> — наибольший объём закупок.
+                  </p>
+                )}
+              </div>
+            </AiInsightCard>
+
+            <AiInsightCard title="Прогноз дефицита топлива">
+              <div className="space-y-2 text-sm">
+                {aiForecast.warningFuel.length === 0 ? (
+                  <p>Все резервуары в норме. Плановая закупка не требуется в ближайшие 7 дней.</p>
+                ) : (
+                  aiForecast.warningFuel.map((f) => (
+                    <p key={`${f.base}-${f.fuelType}`} className={f.status === "critical" ? "text-rose-600 font-medium" : "text-amber-700"}>
+                      {f.status === "critical" ? "⚠ Критично:" : "⚡ Внимание:"}{" "}
+                      {f.fuelType} на базе {BASE_LABELS[f.base]} — остаток на{" "}
+                      <strong>{f.daysRemaining} дн.</strong> Рекомендуем срочную поставку.
+                    </p>
+                  ))
+                )}
+                <p className="text-stone-500">
+                  Оптимальный момент закупки — когда цена рынка ниже среднего на 2%+. Следите за вкладкой «Рынок».
+                </p>
+              </div>
+            </AiInsightCard>
+          </div>
 
           <div className="bg-white rounded-2xl border border-stone-200/50 shadow-sm shadow-stone-900/[0.04] p-5">
             <h3 className="text-sm font-medium text-stone-800 mb-4">Последние события</h3>

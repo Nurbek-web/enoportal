@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, useCallback } from "react";
-import { Plus, Receipt, CheckCircle2, Clock } from "lucide-react";
+import { Plus, Receipt, CheckCircle2, Clock, Wallet } from "lucide-react";
 import { MotionContainer, MotionItem } from "@/components/shared/motion-container";
 import { PageHeader } from "@/components/shared/page-header";
 import { StatusBadge } from "@/components/shared/status-badge";
@@ -32,7 +32,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { expenses as initialExpenses } from "@/lib/mock/expenses";
+import { expenses as initialExpenses, operatorBudgets } from "@/lib/mock/expenses";
 import { operators } from "@/lib/mock/operators";
 import { formatCurrency, formatDateShort } from "@/lib/format";
 import type { Expense, ExpenseType } from "@/lib/types";
@@ -51,6 +51,11 @@ export default function ExpensesPage() {
     []
   );
 
+  const budgetMap = useMemo(
+    () => new Map(operatorBudgets.map((b) => [b.operatorId, b])),
+    []
+  );
+
   const totalAmount = useMemo(
     () => expenseList.reduce((sum, e) => sum + e.amount, 0),
     [expenseList]
@@ -65,6 +70,37 @@ export default function ExpensesPage() {
   const pendingCount = useMemo(
     () => expenseList.filter((e) => e.status === "new").length,
     [expenseList]
+  );
+
+  // Per-operator budget summaries
+  const operatorBudgetSummaries = useMemo(() => {
+    const spentMap = new Map<string, number>();
+    for (const exp of expenseList) {
+      if (exp.status === "approved") {
+        spentMap.set(exp.operatorId, (spentMap.get(exp.operatorId) ?? 0) + exp.amount);
+      }
+    }
+    return operators
+      .map((op) => {
+        const budget = budgetMap.get(op.id);
+        const spent = spentMap.get(op.id) ?? 0;
+        const allocation = budget?.monthlyAllocation ?? 0;
+        const remaining = allocation - spent;
+        const percentUsed = allocation > 0 ? (spent / allocation) * 100 : 0;
+        return { op, spent, allocation, remaining, percentUsed };
+      })
+      .filter((s) => s.allocation > 0)
+      .sort((a, b) => b.percentUsed - a.percentUsed);
+  }, [expenseList, budgetMap]);
+
+  const topSpender = useMemo(
+    () => operatorBudgetSummaries[0],
+    [operatorBudgetSummaries]
+  );
+
+  const overBudgetCount = useMemo(
+    () => operatorBudgetSummaries.filter((s) => s.remaining < 0).length,
+    [operatorBudgetSummaries]
   );
 
   const summaryCards = [
@@ -88,6 +124,13 @@ export default function ExpensesPage() {
       icon: Clock,
       iconBg: "bg-amber-100",
       iconColor: "text-amber-600",
+    },
+    {
+      label: "Превышение бюджета",
+      value: overBudgetCount > 0 ? `${overBudgetCount} оператора` : "Нет",
+      icon: Wallet,
+      iconBg: overBudgetCount > 0 ? "bg-rose-100" : "bg-stone-100",
+      iconColor: overBudgetCount > 0 ? "text-rose-600" : "text-stone-400",
     },
   ];
 
@@ -146,7 +189,7 @@ export default function ExpensesPage() {
       </MotionItem>
 
       <MotionItem>
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-4">
           {summaryCards.map((card) => {
             const Icon = card.icon;
             return (
@@ -169,20 +212,74 @@ export default function ExpensesPage() {
         </div>
       </MotionItem>
 
+      {/* Per-operator budget section */}
+      <MotionItem>
+        <div className="bg-white rounded-2xl border border-stone-200/50 shadow-sm shadow-stone-900/[0.04] p-5">
+          <h3 className="text-sm font-medium text-stone-800 mb-4">Расходы по операторам (апрель 2026)</h3>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {operatorBudgetSummaries.map(({ op, spent, allocation, remaining, percentUsed }) => {
+              const isOver = remaining < 0;
+              const isWarning = !isOver && percentUsed >= 80;
+              const barColor = isOver ? "bg-rose-500" : isWarning ? "bg-amber-500" : "bg-emerald-500";
+              const barWidth = Math.min(percentUsed, 100);
+              return (
+                <div key={op.id} className={`rounded-xl border p-3.5 ${isOver ? "border-rose-200 bg-rose-50/40" : "border-stone-100"}`}>
+                  <p className="text-xs font-medium text-stone-700 truncate mb-2">{op.name.split(" ").slice(0, 2).join(" ")}</p>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-xs text-stone-500">{formatCurrency(spent)}</span>
+                    <span className="text-xs text-stone-400">/ {formatCurrency(allocation)}</span>
+                  </div>
+                  <div className="h-1.5 w-full rounded-full bg-stone-100 overflow-hidden mb-1.5">
+                    <div
+                      className={`h-full rounded-full transition-all duration-700 ${barColor}`}
+                      style={{ width: `${barWidth}%` }}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className={`text-xs font-medium ${isOver ? "text-rose-600" : "text-stone-600"}`}>
+                      {isOver ? "Превышение: " : "Остаток: "}
+                      <span className="font-semibold">{formatCurrency(Math.abs(remaining))}</span>
+                    </span>
+                    <span className={`text-xs font-semibold ${isOver ? "text-rose-600" : isWarning ? "text-amber-600" : "text-stone-500"}`}>
+                      {percentUsed.toFixed(0)}%
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </MotionItem>
+
       <MotionItem>
         <AiInsightCard title="Анализ расходов">
-          Всего заявок: <strong>{expenseList.length}</strong> на сумму{" "}
-          <strong>{formatCurrency(totalAmount)}</strong>.{" "}
-          {pendingCount > 0 ? (
-            <><strong>{pendingCount}</strong> заявок ожидают рассмотрения — проверьте и одобрите своевременно для выплаты операторам.{" "}</>
-          ) : (
-            <>Все заявки рассмотрены.</>
-          )}{" "}
-          Срочных расходов:{" "}
-          <strong>
-            {expenseList.filter((e) => e.type === "urgent").length}
-          </strong>{" "}
-          — рекомендуем контролировать долю сверхнормативных расходов.
+          <div className="space-y-1.5 text-sm">
+            <p>
+              Всего заявок: <strong>{expenseList.length}</strong> на сумму{" "}
+              <strong>{formatCurrency(totalAmount)}</strong>.{" "}
+              {pendingCount > 0 ? (
+                <><strong>{pendingCount}</strong> заявок ожидают рассмотрения — проверьте своевременно.</>
+              ) : (
+                <>Все заявки рассмотрены.</>
+              )}
+            </p>
+            {topSpender && (
+              <p>
+                Наибольший расход: <strong>{topSpender.op.name.split(" ").slice(0, 2).join(" ")}</strong> —{" "}
+                использовано <strong>{topSpender.percentUsed.toFixed(0)}%</strong> бюджета (
+                {formatCurrency(topSpender.spent)} из {formatCurrency(topSpender.allocation)}).
+              </p>
+            )}
+            {overBudgetCount > 0 && (
+              <p className="text-rose-600 font-medium">
+                ⚠ {overBudgetCount} оператор{overBudgetCount > 1 ? "а" : ""} превысил{overBudgetCount > 1 ? "и" : ""} бюджет расчётного периода — требуется согласование.
+              </p>
+            )}
+            <p>
+              Срочных расходов:{" "}
+              <strong>{expenseList.filter((e) => e.type === "urgent").length}</strong> — рекомендуем контролировать долю сверхнормативных расходов.
+            </p>
+          </div>
         </AiInsightCard>
       </MotionItem>
 

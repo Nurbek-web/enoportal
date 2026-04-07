@@ -237,12 +237,34 @@ function ReportDetailSheet({
         </SheetHeader>
 
         <div className="mt-6 space-y-6">
-          <div className="flex h-40 w-full items-center justify-center rounded-xl bg-stone-100">
-            <div className="flex flex-col items-center gap-2 text-stone-400">
-              <Camera className="h-8 w-8" />
-              <span className="text-xs">Фото уровня топлива</span>
-            </div>
+          <div className="relative overflow-hidden rounded-xl bg-stone-100">
+            {report.photoUrl ? (
+              <>
+                <img
+                  src={report.photoUrl}
+                  alt="Фото уровня топлива"
+                  className="h-40 w-full rounded-xl object-cover"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).style.display = "none";
+                    (e.currentTarget.nextElementSibling as HTMLElement | null)?.style?.setProperty("display", "flex");
+                  }}
+                />
+                <div className="hidden h-40 w-full items-center justify-center flex-col gap-2 text-stone-400 absolute inset-0">
+                  <Camera className="h-8 w-8" />
+                  <span className="text-xs">Фото уровня топлива</span>
+                </div>
+              </>
+            ) : (
+              <div className="flex h-40 w-full items-center justify-center flex-col gap-2 text-stone-400">
+                <Camera className="h-8 w-8" />
+                <span className="text-xs">Фото уровня топлива</span>
+              </div>
+            )}
           </div>
+          <Button variant="outline" size="sm" className="w-full text-stone-600">
+            <Camera className="h-4 w-4 mr-1.5" />
+            Загрузить фото
+          </Button>
 
           <DetailSection title="Основная информация">
             <DetailRow label="Дата" value={formatDateShort(report.date)} />

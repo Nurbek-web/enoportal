@@ -62,6 +62,7 @@ src/
       client-volume-chart.tsx
       market-price-chart.tsx
       manager-volume-chart.tsx
+      period-comparison-chart.tsx   # grouped bar chart: current vs previous period
     ui/                         # shadcn/ui primitives (do not edit directly)
                                 # installed: button, input, textarea, select, sheet, dialog,
                                 #   table, tabs, badge, separator, avatar, scroll-area
@@ -134,6 +135,10 @@ Current status keys: `in_progress`, `shipped`, `paid`, `pending`, `approved`, `r
 - Currency: UZS, formatted via `formatCurrency()` (e.g., `270 000 000 сум`)
 - Dates: ISO strings, displayed via `formatDateShort()` (`dd.MM.yyyy`) or `formatDate()`
 - Bases: `'chirchik'` | `'akhangaran'` (display labels via `BASE_LABELS` in constants)
+- `Tanker` has `rating` (1–5) and `reliability` (0–100%) fields
+- `Client` has optional `purchaseFrequencyDays` and `rating` fields
+- `TankerTrip` interface exists in `types.ts`; mock data in `mock/tankers.ts` as `tankerTrips`
+- `operatorBudgets` exported from `mock/expenses.ts` — monthly allocations per operator
 
 ## Page Patterns
 

@@ -1,6 +1,21 @@
 import type { Expense } from '@/lib/types';
 import { operators } from './operators';
 
+export const operatorBudgets: Array<{
+  operatorId: string;
+  monthlyAllocation: number;
+  settlementPeriod: string;
+}> = [
+  { operatorId: 'op-001', monthlyAllocation: 5000000, settlementPeriod: '2026-04' },
+  { operatorId: 'op-002', monthlyAllocation: 4500000, settlementPeriod: '2026-04' },
+  { operatorId: 'op-003', monthlyAllocation: 4500000, settlementPeriod: '2026-04' },
+  { operatorId: 'op-004', monthlyAllocation: 4000000, settlementPeriod: '2026-04' },
+  { operatorId: 'op-005', monthlyAllocation: 5000000, settlementPeriod: '2026-04' },
+  { operatorId: 'op-006', monthlyAllocation: 4500000, settlementPeriod: '2026-04' },
+  { operatorId: 'op-007', monthlyAllocation: 4000000, settlementPeriod: '2026-04' },
+  { operatorId: 'op-008', monthlyAllocation: 4500000, settlementPeriod: '2026-04' },
+];
+
 export const expenses: Expense[] = [
   {
     id: 'exp-001',
