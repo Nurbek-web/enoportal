@@ -36,6 +36,7 @@ import { clients as initialClients } from "@/lib/mock/clients";
 import { managers } from "@/lib/mock/managers";
 import { tankers as initialTankers } from "@/lib/mock/tankers";
 import { getDocumentsForDeal } from "@/lib/mock/documents";
+import { openDealDocument } from "@/lib/pdf/open-document";
 import { BASE_LABELS, ENO_DEAL_DEFAULTS, BASE_FUEL_MAP, DOCUMENT_TYPE_LABELS } from "@/lib/constants";
 import { useBaseFilter } from "@/contexts/base-filter-context";
 import { useRole } from "@/contexts/role-context";
@@ -776,7 +777,7 @@ function DealDetailSheet({
             )}
           </DetailSection>
 
-          <DealDocumentsSection deal={deal} />
+          <DealDocumentsSection deal={deal} clientMap={clientMap} tankerMap={tankerMap} />
         </div>
       </SheetContent>
     </Sheet>
@@ -819,7 +820,17 @@ const DOC_STATUS_LABELS: Record<string, string> = {
   sent: 'Отправлен',
 };
 
-function DocumentRow({ doc }: { doc: DealDocument }) {
+function DocumentRow({
+  doc,
+  deal,
+  client,
+  tanker,
+}: {
+  doc: DealDocument;
+  deal: Deal;
+  client: Client | undefined;
+  tanker: Tanker | undefined;
+}) {
   return (
     <div className="flex items-center gap-3 py-2 border-b border-stone-100 last:border-0">
       <div className="flex items-center gap-2 min-w-0 flex-1">
@@ -837,9 +848,9 @@ function DocumentRow({ doc }: { doc: DealDocument }) {
       <Button
         variant="ghost"
         size="sm"
-        className="h-7 w-7 p-0 shrink-0 text-stone-400 hover:text-stone-600"
-        onClick={() => {}}
-        title="Скачать"
+        className="h-7 w-7 p-0 shrink-0 text-stone-400 hover:text-blue-600"
+        onClick={() => openDealDocument(doc, deal, client, tanker)}
+        title="Открыть документ"
       >
         <Download className="h-3.5 w-3.5" />
       </Button>
@@ -847,10 +858,21 @@ function DocumentRow({ doc }: { doc: DealDocument }) {
   );
 }
 
-function DealDocumentsSection({ deal }: { deal: Deal }) {
+function DealDocumentsSection({
+  deal,
+  clientMap,
+  tankerMap,
+}: {
+  deal: Deal;
+  clientMap: Map<string, Client>;
+  tankerMap: Map<string, Tanker>;
+}) {
   const docs = getDocumentsForDeal(deal.id);
   const isPaid = pipelineIndex(deal.status) >= pipelineIndex('paid');
   const isShipped = pipelineIndex(deal.status) >= pipelineIndex('shipped');
+
+  const client = clientMap.get(deal.clientId);
+  const tanker = tankerMap.get(deal.tankerId);
 
   const paymentDocs = docs.filter((d) => d.type === 'invoice' || d.type === 'specification');
   const shipmentDocs = docs.filter((d) => d.type === 'waybill' || d.type === 'tax_invoice' || d.type === 'act');
@@ -873,7 +895,9 @@ function DealDocumentsSection({ deal }: { deal: Deal }) {
               После согласования сделки
             </p>
             {paymentDocs.length > 0 ? (
-              paymentDocs.map((doc) => <DocumentRow key={doc.id} doc={doc} />)
+              paymentDocs.map((doc) => (
+                <DocumentRow key={doc.id} doc={doc} deal={deal} client={client} tanker={tanker} />
+              ))
             ) : (
               <p className="py-2 text-sm text-stone-400">Нет документов</p>
             )}
@@ -889,7 +913,9 @@ function DealDocumentsSection({ deal }: { deal: Deal }) {
                 Оформляются после фактической отгрузки
               </p>
             ) : shipmentDocs.length > 0 ? (
-              shipmentDocs.map((doc) => <DocumentRow key={doc.id} doc={doc} />)
+              shipmentDocs.map((doc) => (
+                <DocumentRow key={doc.id} doc={doc} deal={deal} client={client} tanker={tanker} />
+              ))
             ) : (
               <p className="py-2 text-sm text-stone-400">Нет документов</p>
             )}
