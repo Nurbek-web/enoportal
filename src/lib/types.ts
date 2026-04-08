@@ -155,6 +155,19 @@ export interface TankerPayment {
 
 export type BaseFilter = "all" | Base;
 
+// Deal documents
+export type DealDocumentType = 'invoice' | 'specification' | 'waybill' | 'tax_invoice' | 'act';
+export type DocumentStatus = 'formed' | 'signed' | 'sent';
+
+export interface DealDocument {
+  id: string;
+  dealId: string;
+  type: DealDocumentType;
+  number: string;
+  date: string; // ISO date
+  status: DocumentStatus;
+}
+
 // Activity feed item
 export interface Activity {
   id: string;

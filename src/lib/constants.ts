@@ -35,6 +35,22 @@ export const SHIFT_DAYS_HANDOVER = 1;
 export const SHIFT_DAYS_OFF = 14;
 export const SHIFT_CYCLE_LENGTH = SHIFT_DAYS_ON + SHIFT_DAYS_HANDOVER + SHIFT_DAYS_OFF; // 29
 
+import type { DealDocumentType, DocumentStatus } from './types';
+
+export const DOCUMENT_TYPE_LABELS: Record<DealDocumentType, string> = {
+  invoice: 'Счёт',
+  specification: 'Спецификация',
+  waybill: 'ТТН',
+  tax_invoice: 'Счёт-фактура',
+  act: 'Акт',
+};
+
+export const DOCUMENT_STATUS_LABELS: Record<DocumentStatus, string> = {
+  formed: 'Сформирован',
+  signed: 'Подписан',
+  sent: 'Отправлен',
+};
+
 export const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
   // Deals
   client_request: { bg: 'bg-stone-100', text: 'text-stone-600' },
@@ -75,6 +91,10 @@ export const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
   bank: { bg: 'bg-blue-50', text: 'text-blue-700' },
   // Expense types
   urgent: { bg: 'bg-rose-50', text: 'text-rose-700' },
+  // Document statuses
+  formed: { bg: 'bg-blue-50', text: 'text-blue-700' },
+  signed: { bg: 'bg-emerald-50', text: 'text-emerald-700' },
+  sent: { bg: 'bg-violet-50', text: 'text-violet-700' },
 };
 
 export const STATUS_LABELS: Record<string, string> = {
@@ -108,6 +128,10 @@ export const STATUS_LABELS: Record<string, string> = {
   cash: 'Нал',
   bank: 'Безнал',
   urgent: 'Срочные',
+  // Document statuses
+  formed: 'Сформирован',
+  signed: 'Подписан',
+  sent: 'Отправлен',
 };
 
 export const BASE_LABELS: Record<string, string> = {

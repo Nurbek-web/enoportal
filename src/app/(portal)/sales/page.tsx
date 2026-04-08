@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, useCallback } from "react";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, FileText, Download, Receipt, Truck } from "lucide-react";
 import { MotionContainer, MotionItem } from "@/components/shared/motion-container";
 import { PageHeader } from "@/components/shared/page-header";
 import { StatusBadge } from "@/components/shared/status-badge";
@@ -35,10 +35,11 @@ import { deals as initialDeals } from "@/lib/mock/sales";
 import { clients as initialClients } from "@/lib/mock/clients";
 import { managers } from "@/lib/mock/managers";
 import { tankers as initialTankers } from "@/lib/mock/tankers";
-import { BASE_LABELS, ENO_DEAL_DEFAULTS, BASE_FUEL_MAP } from "@/lib/constants";
+import { getDocumentsForDeal } from "@/lib/mock/documents";
+import { BASE_LABELS, ENO_DEAL_DEFAULTS, BASE_FUEL_MAP, DOCUMENT_TYPE_LABELS } from "@/lib/constants";
 import { useBaseFilter } from "@/contexts/base-filter-context";
 import { useRole } from "@/contexts/role-context";
-import type { Deal, DealStatus, Base, FuelType, Client, Tanker, DeliveryType } from "@/lib/types";
+import type { Deal, DealStatus, Base, FuelType, Client, Tanker, DeliveryType, DealDocument } from "@/lib/types";
 import {
   formatCurrency,
   formatNumber,
@@ -774,9 +775,128 @@ function DealDetailSheet({
               </>
             )}
           </DetailSection>
+
+          <DealDocumentsSection deal={deal} />
         </div>
       </SheetContent>
     </Sheet>
+  );
+}
+
+const PIPELINE_ORDER: DealStatus[] = [
+  'client_request',
+  'terms_negotiation',
+  'awaiting_payment',
+  'paid',
+  'approved_for_shipment',
+  'shipped',
+  'documents_done',
+  'invoice_accepted',
+  'deal_closed',
+];
+
+function pipelineIndex(status: DealStatus): number {
+  return PIPELINE_ORDER.indexOf(status);
+}
+
+const DOCUMENT_TYPE_ICONS: Record<string, React.ReactNode> = {
+  invoice: <Receipt className="h-3.5 w-3.5 text-blue-500 shrink-0" />,
+  specification: <FileText className="h-3.5 w-3.5 text-indigo-500 shrink-0" />,
+  waybill: <Truck className="h-3.5 w-3.5 text-amber-500 shrink-0" />,
+  tax_invoice: <Receipt className="h-3.5 w-3.5 text-teal-500 shrink-0" />,
+  act: <FileText className="h-3.5 w-3.5 text-violet-500 shrink-0" />,
+};
+
+const DOC_STATUS_STYLES: Record<string, string> = {
+  formed: 'bg-blue-50 text-blue-700',
+  signed: 'bg-emerald-50 text-emerald-700',
+  sent: 'bg-violet-50 text-violet-700',
+};
+
+const DOC_STATUS_LABELS: Record<string, string> = {
+  formed: 'Сформирован',
+  signed: 'Подписан',
+  sent: 'Отправлен',
+};
+
+function DocumentRow({ doc }: { doc: DealDocument }) {
+  return (
+    <div className="flex items-center gap-3 py-2 border-b border-stone-100 last:border-0">
+      <div className="flex items-center gap-2 min-w-0 flex-1">
+        {DOCUMENT_TYPE_ICONS[doc.type]}
+        <div className="min-w-0">
+          <p className="text-sm font-medium text-stone-800 truncate">
+            {DOCUMENT_TYPE_LABELS[doc.type]}
+          </p>
+          <p className="text-xs text-stone-400">{doc.number} · {formatDateShort(doc.date)}</p>
+        </div>
+      </div>
+      <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium ${DOC_STATUS_STYLES[doc.status] ?? 'bg-stone-100 text-stone-600'}`}>
+        {DOC_STATUS_LABELS[doc.status] ?? doc.status}
+      </span>
+      <Button
+        variant="ghost"
+        size="sm"
+        className="h-7 w-7 p-0 shrink-0 text-stone-400 hover:text-stone-600"
+        onClick={() => {}}
+        title="Скачать"
+      >
+        <Download className="h-3.5 w-3.5" />
+      </Button>
+    </div>
+  );
+}
+
+function DealDocumentsSection({ deal }: { deal: Deal }) {
+  const docs = getDocumentsForDeal(deal.id);
+  const isPaid = pipelineIndex(deal.status) >= pipelineIndex('paid');
+  const isShipped = pipelineIndex(deal.status) >= pipelineIndex('shipped');
+
+  const paymentDocs = docs.filter((d) => d.type === 'invoice' || d.type === 'specification');
+  const shipmentDocs = docs.filter((d) => d.type === 'waybill' || d.type === 'tax_invoice' || d.type === 'act');
+
+  return (
+    <div>
+      <h3 className="mb-3 text-xs font-medium uppercase tracking-wider text-stone-500">
+        Документы сделки
+      </h3>
+
+      {!isPaid ? (
+        <p className="text-sm text-stone-400">
+          Документы формируются после подтверждения оплаты
+        </p>
+      ) : (
+        <div className="space-y-4">
+          {/* Step 2: payment documents */}
+          <div className="rounded-xl border border-stone-200/60 bg-stone-50/50 px-3 pt-2 pb-1">
+            <p className="mb-1 text-[11px] font-medium uppercase tracking-wider text-stone-400">
+              После согласования сделки
+            </p>
+            {paymentDocs.length > 0 ? (
+              paymentDocs.map((doc) => <DocumentRow key={doc.id} doc={doc} />)
+            ) : (
+              <p className="py-2 text-sm text-stone-400">Нет документов</p>
+            )}
+          </div>
+
+          {/* Step 3: shipment documents */}
+          <div className="rounded-xl border border-stone-200/60 bg-stone-50/50 px-3 pt-2 pb-1">
+            <p className="mb-1 text-[11px] font-medium uppercase tracking-wider text-stone-400">
+              После отгрузки
+            </p>
+            {!isShipped ? (
+              <p className="py-2 text-sm text-stone-400">
+                Оформляются после фактической отгрузки
+              </p>
+            ) : shipmentDocs.length > 0 ? (
+              shipmentDocs.map((doc) => <DocumentRow key={doc.id} doc={doc} />)
+            ) : (
+              <p className="py-2 text-sm text-stone-400">Нет документов</p>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 
