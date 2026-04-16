@@ -25,6 +25,7 @@ export const deals: Deal[] = [
     tankerId: tankers[0].id,
     deliveryType: 'delivery',
     status: 'deal_closed',
+    paymentDueDate: '2026-02-15T00:00:00.000Z',
   },
   {
     id: 'deal-002',
@@ -44,6 +45,7 @@ export const deals: Deal[] = [
     tankerId: tankers[1].id,
     deliveryType: 'pickup',
     status: 'deal_closed',
+    paymentDueDate: '2026-02-17T00:00:00.000Z',
   },
   {
     id: 'deal-003',
@@ -63,6 +65,7 @@ export const deals: Deal[] = [
     tankerId: tankers[2].id,
     deliveryType: 'delivery',
     status: 'deal_closed',
+    paymentDueDate: '2026-02-20T00:00:00.000Z',
   },
   {
     id: 'deal-004',
@@ -82,6 +85,7 @@ export const deals: Deal[] = [
     tankerId: tankers[3].id,
     deliveryType: 'delivery',
     status: 'deal_closed',
+    paymentDueDate: '2026-02-22T00:00:00.000Z',
   },
   {
     id: 'deal-005',
@@ -101,6 +105,7 @@ export const deals: Deal[] = [
     tankerId: tankers[4].id,
     deliveryType: 'pickup',
     status: 'deal_closed',
+    paymentDueDate: '2026-02-25T00:00:00.000Z',
   },
   {
     id: 'deal-006',
@@ -120,6 +125,7 @@ export const deals: Deal[] = [
     tankerId: tankers[0].id,
     deliveryType: 'delivery',
     status: 'deal_closed',
+    paymentDueDate: '2026-02-28T00:00:00.000Z',
   },
   {
     id: 'deal-007',
@@ -139,6 +145,7 @@ export const deals: Deal[] = [
     tankerId: tankers[1].id,
     deliveryType: 'pickup',
     status: 'invoice_accepted',
+    paymentDueDate: '2026-03-02T00:00:00.000Z',
   },
   {
     id: 'deal-008',
@@ -158,6 +165,7 @@ export const deals: Deal[] = [
     tankerId: tankers[2].id,
     deliveryType: 'delivery',
     status: 'invoice_accepted',
+    paymentDueDate: '2026-03-05T00:00:00.000Z',
   },
   {
     id: 'deal-009',
@@ -177,6 +185,7 @@ export const deals: Deal[] = [
     tankerId: tankers[3].id,
     deliveryType: 'delivery',
     status: 'documents_done',
+    paymentDueDate: '2026-03-07T00:00:00.000Z',
   },
   {
     id: 'deal-010',
@@ -196,6 +205,7 @@ export const deals: Deal[] = [
     tankerId: tankers[4].id,
     deliveryType: 'pickup',
     status: 'documents_done',
+    paymentDueDate: '2026-03-10T00:00:00.000Z',
   },
   {
     id: 'deal-011',
@@ -215,6 +225,7 @@ export const deals: Deal[] = [
     tankerId: tankers[0].id,
     deliveryType: 'delivery',
     status: 'shipped',
+    paymentDueDate: '2026-03-12T00:00:00.000Z',
   },
   {
     id: 'deal-012',
@@ -234,6 +245,7 @@ export const deals: Deal[] = [
     tankerId: tankers[1].id,
     deliveryType: 'pickup',
     status: 'shipped',
+    paymentDueDate: '2026-03-14T00:00:00.000Z',
   },
   {
     id: 'deal-013',
@@ -253,6 +265,7 @@ export const deals: Deal[] = [
     tankerId: tankers[2].id,
     deliveryType: 'delivery',
     status: 'approved_for_shipment',
+    paymentDueDate: '2026-03-16T00:00:00.000Z',
   },
   {
     id: 'deal-014',
@@ -272,6 +285,7 @@ export const deals: Deal[] = [
     tankerId: tankers[3].id,
     deliveryType: 'delivery',
     status: 'approved_for_shipment',
+    paymentDueDate: '2026-03-19T00:00:00.000Z',
   },
   {
     id: 'deal-015',
@@ -291,6 +305,7 @@ export const deals: Deal[] = [
     tankerId: tankers[4].id,
     deliveryType: 'pickup',
     status: 'paid',
+    paymentDueDate: '2026-03-21T00:00:00.000Z',
   },
   {
     id: 'deal-016',
@@ -310,6 +325,7 @@ export const deals: Deal[] = [
     tankerId: tankers[0].id,
     deliveryType: 'delivery',
     status: 'paid',
+    paymentDueDate: '2026-03-24T00:00:00.000Z',
   },
   {
     id: 'deal-017',
@@ -329,6 +345,7 @@ export const deals: Deal[] = [
     tankerId: tankers[1].id,
     deliveryType: 'pickup',
     status: 'awaiting_payment',
+    paymentDueDate: '2026-03-26T00:00:00.000Z',
   },
   {
     id: 'deal-018',
@@ -348,6 +365,7 @@ export const deals: Deal[] = [
     tankerId: tankers[2].id,
     deliveryType: 'delivery',
     status: 'awaiting_payment',
+    paymentDueDate: '2026-03-28T00:00:00.000Z',
   },
   {
     id: 'deal-019',
@@ -367,6 +385,7 @@ export const deals: Deal[] = [
     tankerId: tankers[3].id,
     deliveryType: 'delivery',
     status: 'terms_negotiation',
+    paymentDueDate: '2026-04-03T00:00:00.000Z',
   },
   {
     id: 'deal-020',
@@ -386,6 +405,7 @@ export const deals: Deal[] = [
     tankerId: tankers[4].id,
     deliveryType: 'pickup',
     status: 'terms_negotiation',
+    paymentDueDate: '2026-04-05T00:00:00.000Z',
   },
   {
     id: 'deal-021',
@@ -405,6 +425,7 @@ export const deals: Deal[] = [
     tankerId: tankers[0].id,
     deliveryType: 'delivery',
     status: 'client_request',
+    paymentDueDate: '2026-04-07T00:00:00.000Z',
   },
   {
     id: 'deal-022',
@@ -424,6 +445,7 @@ export const deals: Deal[] = [
     tankerId: tankers[1].id,
     deliveryType: 'pickup',
     status: 'awaiting_payment',
+    paymentDueDate: '2026-04-05T00:00:00.000Z',
   },
   {
     id: 'deal-023',
@@ -443,6 +465,7 @@ export const deals: Deal[] = [
     tankerId: tankers[2].id,
     deliveryType: 'delivery',
     status: 'terms_negotiation',
+    paymentDueDate: '2026-04-11T00:00:00.000Z',
   },
   {
     id: 'deal-024',
@@ -462,6 +485,7 @@ export const deals: Deal[] = [
     tankerId: tankers[3].id,
     deliveryType: 'delivery',
     status: 'client_request',
+    paymentDueDate: '2026-04-13T00:00:00.000Z',
   },
   {
     id: 'deal-025',
@@ -481,6 +505,7 @@ export const deals: Deal[] = [
     tankerId: tankers[4].id,
     deliveryType: 'pickup',
     status: 'awaiting_payment',
+    paymentDueDate: '2026-04-11T00:00:00.000Z',
   },
   {
     id: 'deal-026',
@@ -500,6 +525,7 @@ export const deals: Deal[] = [
     tankerId: tankers[0].id,
     deliveryType: 'delivery',
     status: 'terms_negotiation',
+    paymentDueDate: '2026-04-16T00:00:00.000Z',
   },
   {
     id: 'deal-027',
@@ -519,6 +545,7 @@ export const deals: Deal[] = [
     tankerId: tankers[1].id,
     deliveryType: 'pickup',
     status: 'client_request',
+    paymentDueDate: '2026-04-17T00:00:00.000Z',
   },
   {
     id: 'deal-028',
@@ -538,6 +565,7 @@ export const deals: Deal[] = [
     tankerId: tankers[2].id,
     deliveryType: 'delivery',
     status: 'terms_negotiation',
+    paymentDueDate: '2026-04-18T00:00:00.000Z',
   },
   {
     id: 'deal-029',
@@ -557,6 +585,7 @@ export const deals: Deal[] = [
     tankerId: tankers[3].id,
     deliveryType: 'delivery',
     status: 'client_request',
+    paymentDueDate: '2026-04-19T00:00:00.000Z',
   },
   {
     id: 'deal-030',
@@ -576,5 +605,6 @@ export const deals: Deal[] = [
     tankerId: tankers[4].id,
     deliveryType: 'pickup',
     status: 'client_request',
+    paymentDueDate: '2026-04-19T00:00:00.000Z',
   },
 ];

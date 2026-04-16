@@ -75,6 +75,7 @@ export type ExpenseStatus = 'new' | 'approved' | 'rejected';
 export type ExpenseType = 'cash' | 'bank';
 export type PaymentType = 'cash' | 'bank';
 export type DeliveryType = 'delivery' | 'pickup';
+export type OperationStatus = 'new' | 'verified' | 'error';
 
 // Sales deal (сделка)
 export interface Deal {
@@ -95,6 +96,7 @@ export interface Deal {
   tankerId: string;
   deliveryType: DeliveryType;
   status: DealStatus;
+  paymentDueDate: string;
 }
 
 // Daily operator report
@@ -175,4 +177,18 @@ export interface Activity {
   type: 'deal' | 'report' | 'expense' | 'fuel_alert' | 'payment';
   title: string;
   description: string;
+}
+
+// Fuel operation / shipment
+export interface Operation {
+  id: string;
+  date: string;
+  base: Base;
+  fuelType: FuelType;
+  volume: number;
+  tankerId: string;
+  driverName: string;
+  comment: string;
+  photoUrl?: string;
+  status: OperationStatus;
 }

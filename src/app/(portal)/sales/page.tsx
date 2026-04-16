@@ -292,6 +292,7 @@ export default function SalesPage() {
       tankerId: isDelivery ? tankerId : "",
       deliveryType: form.deliveryType,
       status: form.status,
+      paymentDueDate: new Date(new Date(form.date).getTime() + 10 * 24 * 60 * 60 * 1000).toISOString(),
     };
     setDeals((prev) => [newDeal, ...prev]);
     setNewDealOpen(false);

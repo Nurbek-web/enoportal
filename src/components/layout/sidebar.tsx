@@ -10,13 +10,12 @@ import {
   Wallet,
   Users,
   Truck,
-  Plane,
   Fuel,
   UserCheck,
-  Award,
-  TrendingUp,
   ChevronLeft,
   Menu,
+  ClipboardList,
+  CircleDollarSign,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -28,28 +27,27 @@ const navGroups = [
     ],
   },
   {
-    label: "Операции",
+    label: "Учёт",
     items: [
+      { href: "/operations", label: "Операции", icon: ClipboardList },
       { href: "/sales", label: "Продажи", icon: ShoppingCart },
-      { href: "/reports", label: "Отчёты операторов", icon: FileText },
-      { href: "/expenses", label: "Расходы", icon: Wallet },
+      { href: "/receivables", label: "Дебиторка", icon: CircleDollarSign },
     ],
   },
   {
     label: "Ресурсы",
     items: [
-      { href: "/operators", label: "Операторы и вахты", icon: Users },
+      { href: "/clients", label: "Клиенты", icon: UserCheck },
       { href: "/tankers", label: "Бензовозы", icon: Truck },
-      { href: "/logistics", label: "Логистика и билеты", icon: Plane },
+      { href: "/operators", label: "Операторы", icon: Users },
     ],
   },
   {
-    label: "Аналитика",
+    label: "Отчёты",
     items: [
-      { href: "/fuel-analysis", label: "Анализ топлива", icon: Fuel },
-      { href: "/clients", label: "Клиенты", icon: UserCheck },
-      { href: "/bonuses", label: "Бонусы", icon: Award },
-      { href: "/market", label: "Рынок топлива", icon: TrendingUp },
+      { href: "/reports", label: "Отчёты операторов", icon: FileText },
+      { href: "/expenses", label: "Расходы", icon: Wallet },
+      { href: "/fuel-analysis", label: "Топливо", icon: Fuel },
     ],
   },
 ];
@@ -155,7 +153,7 @@ export function Sidebar() {
         {!collapsed && (
           <div className="px-5 py-4 border-t border-white/10">
             <p className="text-[10px] text-stone-500 uppercase tracking-wider">Etive Neft Oil</p>
-            <p className="text-xs text-stone-400 mt-0.5">v1.0 Demo</p>
+            <p className="text-xs text-stone-400 mt-0.5">v2.0</p>
           </div>
         )}
       </aside>
