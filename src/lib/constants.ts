@@ -102,6 +102,13 @@ export const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
   overdue: { bg: 'bg-amber-50', text: 'text-amber-700' },
   critical_debt: { bg: 'bg-rose-50', text: 'text-rose-700' },
   normal_debt: { bg: 'bg-stone-100', text: 'text-stone-600' },
+  // Expense categories
+  transport: { bg: 'bg-blue-50', text: 'text-blue-700' },
+  fuel_expense: { bg: 'bg-amber-50', text: 'text-amber-700' },
+  repairs: { bg: 'bg-orange-50', text: 'text-orange-700' },
+  office: { bg: 'bg-stone-100', text: 'text-stone-600' },
+  salary: { bg: 'bg-emerald-50', text: 'text-emerald-700' },
+  other: { bg: 'bg-violet-50', text: 'text-violet-700' },
 };
 
 export const STATUS_LABELS: Record<string, string> = {
@@ -146,6 +153,13 @@ export const STATUS_LABELS: Record<string, string> = {
   overdue: 'Просрочено',
   critical_debt: 'Критично',
   normal_debt: 'В норме',
+  // Expense categories
+  transport: 'Транспорт',
+  fuel_expense: 'Топливо',
+  repairs: 'Ремонт',
+  office: 'Офис',
+  salary: 'Зарплата',
+  other: 'Прочее',
 };
 
 export const BASE_LABELS: Record<string, string> = {

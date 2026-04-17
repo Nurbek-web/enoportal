@@ -76,6 +76,7 @@ export type ExpenseType = 'cash' | 'bank';
 export type PaymentType = 'cash' | 'bank';
 export type DeliveryType = 'delivery' | 'pickup';
 export type OperationStatus = 'new' | 'verified' | 'error';
+export type ExpenseCategory = 'transport' | 'fuel' | 'repairs' | 'office' | 'salary' | 'other';
 
 // Sales deal (сделка)
 export interface Deal {
@@ -124,6 +125,7 @@ export interface Expense {
   operatorId: string;
   amount: number; // UZS
   type: ExpenseType;
+  category: ExpenseCategory;
   description: string;
   status: ExpenseStatus;
 }

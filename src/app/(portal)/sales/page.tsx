@@ -309,10 +309,12 @@ export default function SalesPage() {
     <MotionContainer>
       <MotionItem>
         <PageHeader title="Продажи">
-          <Button onClick={openNewDeal} size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
-            <Plus className="h-4 w-4 mr-1.5" />
-            Новая сделка
-          </Button>
+          {role !== "viewer" && (
+            <Button onClick={openNewDeal} size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
+              <Plus className="h-4 w-4 mr-1.5" />
+              Новая сделка
+            </Button>
+          )}
         </PageHeader>
       </MotionItem>
 

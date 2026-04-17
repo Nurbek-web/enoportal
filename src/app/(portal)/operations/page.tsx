@@ -5,6 +5,8 @@ import {
   ClipboardList,
   Plus,
   Search,
+  CheckCircle2,
+  XCircle,
 } from "lucide-react";
 import { MotionContainer, MotionItem } from "@/components/shared/motion-container";
 import { PageHeader } from "@/components/shared/page-header";
@@ -39,6 +41,7 @@ import { Textarea } from "@/components/ui/textarea";
 
 import { operations as initialOperations } from "@/lib/mock/operations";
 import { tankers } from "@/lib/mock/tankers";
+import { useRole } from "@/contexts/role-context";
 import { formatVolume, formatDateShort } from "@/lib/format";
 import { BASE_LABELS, BASE_FUEL_MAP, BASES } from "@/lib/constants";
 import { useBaseFilter } from "@/contexts/base-filter-context";
@@ -64,6 +67,7 @@ function buildInitialForm() {
 
 export default function OperationsPage() {
   const { selectedBase } = useBaseFilter();
+  const { role } = useRole();
   const [ops, setOps] = useState<Operation[]>(initialOperations);
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [search, setSearch] = useState("");
@@ -121,6 +125,13 @@ export default function OperationsPage() {
     setForm(buildInitialForm());
   }
 
+  function handleStatusChange(opId: string, newStatus: OperationStatus) {
+    setOps((prev) =>
+      prev.map((o) => (o.id === opId ? { ...o, status: newStatus } : o))
+    );
+    setSelectedOp((prev) => (prev && prev.id === opId ? { ...prev, status: newStatus } : prev));
+  }
+
   const tankerMap = useMemo(() => {
     const m = new Map<string, string>();
     for (const t of tankers) m.set(t.id, `${t.plateNumber} — ${t.driverName}`);
@@ -131,9 +142,11 @@ export default function OperationsPage() {
     <MotionContainer>
       <MotionItem>
         <PageHeader title="Операции / Отгрузки" description="Учёт отгрузок топлива по базам">
-          <Button onClick={() => setNewOpOpen(true)} className="gap-2">
-            <Plus className="h-4 w-4" /> Новая операция
-          </Button>
+          {role !== "viewer" && (
+            <Button onClick={() => setNewOpOpen(true)} className="gap-2">
+              <Plus className="h-4 w-4" /> Новая операция
+            </Button>
+          )}
         </PageHeader>
       </MotionItem>
 
@@ -290,6 +303,31 @@ export default function OperationsPage() {
                     alt="Фото операции"
                     className="w-full rounded-xl border border-stone-200"
                   />
+                </div>
+              )}
+              {role !== "viewer" && (
+                <div className="pt-4 border-t border-stone-100">
+                  <p className="text-xs font-medium text-stone-600 mb-3">Изменить статус</p>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={selectedOp.status === "verified"}
+                      onClick={() => handleStatusChange(selectedOp.id, "verified")}
+                      className="gap-1.5 text-emerald-700 border-emerald-200 hover:bg-emerald-50"
+                    >
+                      <CheckCircle2 className="h-4 w-4" /> Проверен
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={selectedOp.status === "error"}
+                      onClick={() => handleStatusChange(selectedOp.id, "error")}
+                      className="gap-1.5 text-rose-700 border-rose-200 hover:bg-rose-50"
+                    >
+                      <XCircle className="h-4 w-4" /> Ошибка
+                    </Button>
+                  </div>
                 </div>
               )}
             </div>

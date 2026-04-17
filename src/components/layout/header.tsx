@@ -48,26 +48,23 @@ export function Header() {
       <div className="flex items-center gap-3">
         {/* Role toggle */}
         <div className="hidden sm:flex items-center rounded-lg border border-stone-200 bg-stone-50 p-0.5 text-xs font-medium">
-          <button
-            onClick={() => setRole("admin")}
-            className={`rounded-md px-3 py-1.5 transition-all duration-150 ${
-              role === "admin"
-                ? "bg-white text-stone-900 shadow-sm"
-                : "text-stone-400 hover:text-stone-600"
-            }`}
-          >
-            Руководитель
-          </button>
-          <button
-            onClick={() => setRole("operator")}
-            className={`rounded-md px-3 py-1.5 transition-all duration-150 ${
-              role === "operator"
-                ? "bg-white text-stone-900 shadow-sm"
-                : "text-stone-400 hover:text-stone-600"
-            }`}
-          >
-            Оператор
-          </button>
+          {([
+            { key: "admin" as const, label: "Руководитель" },
+            { key: "operator" as const, label: "Оператор" },
+            { key: "viewer" as const, label: "Просмотр" },
+          ]).map((r) => (
+            <button
+              key={r.key}
+              onClick={() => setRole(r.key)}
+              className={`rounded-md px-3 py-1.5 transition-all duration-150 ${
+                role === r.key
+                  ? "bg-white text-stone-900 shadow-sm"
+                  : "text-stone-400 hover:text-stone-600"
+              }`}
+            >
+              {r.label}
+            </button>
+          ))}
         </div>
 
         {/* Notifications */}

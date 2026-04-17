@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState } from "react";
 
-export type Role = "admin" | "operator";
+export type Role = "admin" | "operator" | "viewer";
 
 interface RoleContextValue {
   role: Role;
