@@ -72,6 +72,17 @@ export default function ClientsPage() {
     });
   }, [selectedBase, searchQuery, segmentFilter]);
 
+  const UNPAID_STATUSES = new Set(["client_request", "terms_negotiation", "awaiting_payment"]);
+
+  const clientDebtMap = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const d of deals) {
+      if (!UNPAID_STATUSES.has(d.status)) continue;
+      map.set(d.clientId, (map.get(d.clientId) || 0) + d.totalAmount);
+    }
+    return map;
+  }, []);
+
   const stats = useMemo(() => {
     const list = filteredClients;
     const totalClients = list.length;
@@ -173,7 +184,7 @@ export default function ClientsPage() {
                   Сделок
                 </TableHead>
                 <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500 text-right">
-                  Частота
+                  Долг
                 </TableHead>
                 <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">
                   Сегмент
@@ -202,8 +213,12 @@ export default function ClientsPage() {
                   <TableCell className="text-right tabular-nums text-stone-700">
                     {client.dealCount}
                   </TableCell>
-                  <TableCell className="text-right tabular-nums text-stone-500 text-xs">
-                    {client.purchaseFrequencyDays ? `раз в ${client.purchaseFrequencyDays} дн.` : "—"}
+                  <TableCell className="text-right tabular-nums text-sm">
+                    {clientDebtMap.get(client.id) ? (
+                      <span className="font-medium text-rose-600">{formatCurrency(clientDebtMap.get(client.id)!)}</span>
+                    ) : (
+                      <span className="text-stone-400">—</span>
+                    )}
                   </TableCell>
                   <TableCell>
                     <StatusBadge status={client.segment} />

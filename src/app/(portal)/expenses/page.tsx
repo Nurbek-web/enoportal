@@ -35,15 +35,18 @@ import { Textarea } from "@/components/ui/textarea";
 import { expenses as initialExpenses, operatorBudgets } from "@/lib/mock/expenses";
 import { operators } from "@/lib/mock/operators";
 import { formatCurrency, formatDateShort } from "@/lib/format";
-import type { Expense, ExpenseType } from "@/lib/types";
+import { useRole } from "@/contexts/role-context";
+import type { Expense, ExpenseType, ExpenseCategory } from "@/lib/types";
 
 export default function ExpensesPage() {
+  const { role } = useRole();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [expenseList, setExpenseList] = useState<Expense[]>(() => [...initialExpenses]);
 
   const [operatorId, setOperatorId] = useState("");
   const [amountStr, setAmountStr] = useState("");
   const [expenseType, setExpenseType] = useState<ExpenseType | "">("");
+  const [expenseCategory, setExpenseCategory] = useState<ExpenseCategory | "">("");
   const [description, setDescription] = useState("");
 
   const operatorMap = useMemo(
@@ -138,12 +141,13 @@ export default function ExpensesPage() {
     setOperatorId("");
     setAmountStr("");
     setExpenseType("");
+    setExpenseCategory("");
     setDescription("");
   }, []);
 
   const handleSubmit = useCallback(() => {
     const amount = Math.round(parseFloat(amountStr.replace(/\s/g, "")) || 0);
-    if (!operatorId || !expenseType || amount <= 0 || !description.trim()) {
+    if (!operatorId || !expenseType || !expenseCategory || amount <= 0 || !description.trim()) {
       return;
     }
     const newExpense: Expense = {
@@ -152,13 +156,14 @@ export default function ExpensesPage() {
       operatorId,
       amount,
       type: expenseType,
+      category: expenseCategory,
       description: description.trim(),
       status: "new",
     };
     setExpenseList((prev) => [newExpense, ...prev]);
     resetForm();
     setDialogOpen(false);
-  }, [operatorId, amountStr, expenseType, description, resetForm]);
+  }, [operatorId, amountStr, expenseType, expenseCategory, description, resetForm]);
 
   const handleOpenChange = useCallback(
     (open: boolean) => {
@@ -171,6 +176,7 @@ export default function ExpensesPage() {
   const canSubmit =
     Boolean(operatorId) &&
     Boolean(expenseType) &&
+    Boolean(expenseCategory) &&
     (parseFloat(amountStr.replace(/\s/g, "")) || 0) > 0 &&
     description.trim().length > 0;
 
@@ -181,10 +187,12 @@ export default function ExpensesPage() {
           title="Расходы операторов"
           description="Заявки на расходы и контроль бюджета"
         >
-          <Button size="sm" onClick={() => setDialogOpen(true)} className="bg-blue-600 hover:bg-blue-700 text-white">
-            <Plus className="h-4 w-4 mr-1.5" />
-            Новая заявка
-          </Button>
+          {role !== "viewer" && (
+            <Button size="sm" onClick={() => setDialogOpen(true)} className="bg-blue-600 hover:bg-blue-700 text-white">
+              <Plus className="h-4 w-4 mr-1.5" />
+              Новая заявка
+            </Button>
+          )}
         </PageHeader>
       </MotionItem>
 
@@ -293,6 +301,7 @@ export default function ExpensesPage() {
                   <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Дата</TableHead>
                   <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Оператор</TableHead>
                   <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500 text-right">Сумма</TableHead>
+                  <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Категория</TableHead>
                   <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Тип</TableHead>
                   <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Описание</TableHead>
                   <TableHead className="text-xs font-medium uppercase tracking-wider text-stone-500">Статус</TableHead>
@@ -307,6 +316,9 @@ export default function ExpensesPage() {
                       <TableCell className="tabular-nums text-stone-600">{formatDateShort(exp.date)}</TableCell>
                       <TableCell className="font-medium text-stone-900">{op?.name ?? "—"}</TableCell>
                       <TableCell className="text-right tabular-nums text-stone-700">{formatCurrency(exp.amount)}</TableCell>
+                      <TableCell>
+                        <StatusBadge status={exp.category === 'fuel' ? 'fuel_expense' : exp.category} />
+                      </TableCell>
                       <TableCell>
                         <StatusBadge status={exp.type} />
                       </TableCell>
@@ -367,6 +379,26 @@ export default function ExpensesPage() {
                 <SelectContent>
                   <SelectItem value="cash">Нал</SelectItem>
                   <SelectItem value="bank">Безнал</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-stone-700">Категория</label>
+              <Select
+                value={expenseCategory}
+                onValueChange={(v) => setExpenseCategory(v as ExpenseCategory)}
+              >
+                <SelectTrigger className="bg-white">
+                  <SelectValue placeholder="Выберите категорию" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="transport">Транспорт</SelectItem>
+                  <SelectItem value="fuel">Топливо</SelectItem>
+                  <SelectItem value="repairs">Ремонт</SelectItem>
+                  <SelectItem value="office">Офис</SelectItem>
+                  <SelectItem value="salary">Зарплата</SelectItem>
+                  <SelectItem value="other">Прочее</SelectItem>
                 </SelectContent>
               </Select>
             </div>
