@@ -95,6 +95,13 @@ export const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
   formed: { bg: 'bg-blue-50', text: 'text-blue-700' },
   signed: { bg: 'bg-emerald-50', text: 'text-emerald-700' },
   sent: { bg: 'bg-violet-50', text: 'text-violet-700' },
+  // Operations
+  verified: { bg: 'bg-emerald-50', text: 'text-emerald-700' },
+  error: { bg: 'bg-rose-50', text: 'text-rose-700' },
+  // Receivables
+  overdue: { bg: 'bg-amber-50', text: 'text-amber-700' },
+  critical_debt: { bg: 'bg-rose-50', text: 'text-rose-700' },
+  normal_debt: { bg: 'bg-stone-100', text: 'text-stone-600' },
 };
 
 export const STATUS_LABELS: Record<string, string> = {
@@ -132,6 +139,13 @@ export const STATUS_LABELS: Record<string, string> = {
   formed: 'Сформирован',
   signed: 'Подписан',
   sent: 'Отправлен',
+  // Operations
+  verified: 'Проверен',
+  error: 'Ошибка',
+  // Receivables
+  overdue: 'Просрочено',
+  critical_debt: 'Критично',
+  normal_debt: 'В норме',
 };
 
 export const BASE_LABELS: Record<string, string> = {
