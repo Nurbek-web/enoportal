@@ -30,7 +30,7 @@ import { deals } from "@/lib/mock/sales";
 import { operations } from "@/lib/mock/operations";
 import { reports } from "@/lib/mock/reports";
 import { operators } from "@/lib/mock/operators";
-import { currentFuelStatus } from "@/lib/mock/fuel";
+import { computeFuelStatus } from "@/lib/compute-fuel-status";
 import { formatCurrency, formatVolume, formatDateShort } from "@/lib/format";
 import { BASE_LABELS } from "@/lib/constants";
 import { useBaseFilter } from "@/contexts/base-filter-context";
@@ -67,9 +67,11 @@ export default function DashboardPage() {
     [selectedBase]
   );
 
+  const fuelStatus = useMemo(() => computeFuelStatus(operations), []);
+
   const filteredFuelStatus = useMemo(
-    () => filterByBase(currentFuelStatus, selectedBase),
-    [selectedBase]
+    () => filterByBase(fuelStatus, selectedBase),
+    [fuelStatus, selectedBase]
   );
 
   const filteredOps = useMemo(
@@ -146,14 +148,14 @@ export default function DashboardPage() {
       chirchik: "ok",
       akhangaran: "ok",
     };
-    for (const s of currentFuelStatus) {
+    for (const s of fuelStatus) {
       const cur = result[s.base];
       if (s.status === "critical" || (s.status === "warning" && cur === "ok")) {
         result[s.base] = s.status;
       }
     }
     return result;
-  }, []);
+  }, [fuelStatus]);
 
   // Red zones
   const redZones = useMemo(() => {
