@@ -7,7 +7,9 @@ import { MotionContainer, MotionItem } from "@/components/shared/motion-containe
 import { PageHeader } from "@/components/shared/page-header";
 import { AiInsightCard } from "@/components/shared/ai-insight-card";
 import { MiniKpiCard } from "@/components/shared/mini-kpi-card";
-import { currentFuelStatus, fuelLevels } from "@/lib/mock/fuel";
+import { fuelLevels } from "@/lib/mock/fuel";
+import { operations } from "@/lib/mock/operations";
+import { computeFuelStatus } from "@/lib/compute-fuel-status";
 import { BASE_LABELS } from "@/lib/constants";
 import { formatNumber } from "@/lib/format";
 import { useBaseFilter } from "@/contexts/base-filter-context";
@@ -30,9 +32,11 @@ const STATUS_CONFIG = {
 export default function FuelAnalysisPage() {
   const { selectedBase } = useBaseFilter();
 
+  const fuelStatus = useMemo(() => computeFuelStatus(operations), []);
+
   const filteredFuelStatus = useMemo(
-    () => filterByBase(currentFuelStatus, selectedBase),
-    [selectedBase]
+    () => filterByBase(fuelStatus, selectedBase),
+    [fuelStatus, selectedBase]
   );
 
   const filteredFuelLevels = useMemo(

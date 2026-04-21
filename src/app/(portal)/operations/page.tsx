@@ -42,7 +42,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { operations as initialOperations } from "@/lib/mock/operations";
 import { tankers } from "@/lib/mock/tankers";
 import { useRole } from "@/contexts/role-context";
-import { formatVolume, formatDateShort } from "@/lib/format";
+import { computeFuelStatus } from "@/lib/compute-fuel-status";
+import { formatVolume, formatDateShort, formatNumber } from "@/lib/format";
 import { BASE_LABELS, BASE_FUEL_MAP, BASES } from "@/lib/constants";
 import { useBaseFilter } from "@/contexts/base-filter-context";
 import { filterByBase } from "@/lib/filter-by-base";
@@ -132,6 +133,8 @@ export default function OperationsPage() {
     setSelectedOp((prev) => (prev && prev.id === opId ? { ...prev, status: newStatus } : prev));
   }
 
+  const fuelStatus = useMemo(() => computeFuelStatus(ops), [ops]);
+
   const tankerMap = useMemo(() => {
     const m = new Map<string, string>();
     for (const t of tankers) m.set(t.id, `${t.plateNumber} — ${t.driverName}`);
@@ -156,6 +159,33 @@ export default function OperationsPage() {
           <MiniKpiCard label="Проверено" value={String(verifiedCount)} />
           <MiniKpiCard label="С ошибками" value={String(errorCount)} />
           <MiniKpiCard label="Объём сегодня" value={formatVolume(todayVolume)} />
+        </div>
+      </MotionItem>
+
+      {/* Fuel inventory impact */}
+      <MotionItem>
+        <div className="bg-white rounded-2xl border border-stone-200/50 shadow-sm shadow-stone-900/[0.04] p-4">
+          <h3 className="text-xs font-medium uppercase tracking-wider text-stone-500 mb-3">Остатки на базах (авто-расчёт из операций)</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {fuelStatus.map((fs) => {
+              const barColor = fs.status === "critical" ? "bg-rose-500" : fs.status === "warning" ? "bg-amber-500" : "bg-emerald-500";
+              const textColor = fs.status === "critical" ? "text-rose-600" : fs.status === "warning" ? "text-amber-600" : "text-emerald-600";
+              return (
+                <div key={fs.base} className="flex items-center gap-3">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-sm font-medium text-stone-700">{BASE_LABELS[fs.base]} — {fs.fuelType}</span>
+                      <span className={`text-sm font-semibold ${textColor}`}>{fs.level}%</span>
+                    </div>
+                    <div className="h-2 w-full rounded-full bg-stone-100">
+                      <div className={`h-full rounded-full ${barColor} transition-all`} style={{ width: `${fs.level}%` }} />
+                    </div>
+                    <p className="text-xs text-stone-400 mt-1">{formatNumber(fs.volumeRemaining)} л · ~{fs.daysRemaining} дн.</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </MotionItem>
 
